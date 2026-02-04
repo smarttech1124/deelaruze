@@ -1,0 +1,241 @@
+Role & Context
+You are a senior web designer and full-stack developer specializing in creative, artist-driven websites. Your task is to design and develop a website for the Instagram profile @deelaruze, a street-art-focused creative brand and independent art publisher.
+The website should translate the visual identity, ethos, and community-driven nature of the Instagram account into a strong digital presence.
+
+🔹 Brand Overview (Source of Truth)
+Brand name: Deelaruze
+Core focus: 
+Street art
+Sticker art
+Graffiti culture
+Independent art publishing
+Artist collaborations & community submissions
+
+Tone & personality:
+Raw, urban, authentic
+DIY / underground culture
+Global street art energy
+Community-oriented, not corporate
+
+Audience:
+Street artists & creatives
+Art collectors
+Urban culture enthusiasts
+Independent publishers & zine lovers
+
+🔹 Website Objectives
+Establish Deelaruze as a credible street-art creative platform
+Showcase artworks, publications, and collaborations
+Promote and sell independent publications & sticker packs
+Encourage community submissions and engagement
+Act as a central hub linking Instagram and future projects
+
+🔹 Required Pages & Features
+1️⃣ Homepage
+Strong visual hero section (street-art inspired)
+Short brand manifesto (DIY, street culture, community)
+Featured projects or publications (e.g. “THEEZ ARE OUR STREETZ”)
+Latest artwork or Instagram feed integration
+Clear CTAs:
+“View Projects”
+“Submit Your Art”
+“Shop”
+
+2️⃣ About / Manifesto
+Story of Deelaruze
+Philosophy: street art, collaboration, independence
+Emphasis on global culture & underground art scenes
+Raw, minimal copy — no corporate language
+
+3️⃣ Projects / Publications
+Gallery-style layout
+Individual project pages for:
+Zines
+Volumes
+Collaborative publications
+
+Each project page includes:
+Description
+Images
+Contributors
+Availability (sold out / buy)
+
+4️⃣ Shop
+Simple e-commerce functionality
+Products:
+Publications
+Sticker packs
+Limited drops
+Clean checkout flow
+Emphasis on limited / underground nature
+
+5️⃣ Community / Submissions
+Call for artists to submit work
+Submission guidelines
+Visual examples
+Contact or submission form
+Emphasis on inclusivity and collaboration
+
+6️⃣ Contact
+Contact form
+Email
+Instagram link
+Optional newsletter signup
+
+🔹 Visual & UX Direction
+Design style:
+Minimal but gritty
+Street textures (concrete, paper, ink, spray)
+High-contrast black & white with accent colors
+
+Typography:
+Bold sans-serif or distressed fonts
+Strong headlines
+Editorial layouts
+
+Layout:
+Grid-based but imperfect
+Magazine / zine influence
+
+Animations:
+Subtle hover effects
+Smooth transitions
+No heavy or flashy animations
+
+🔹 Technical Requirements
+Fully responsive (mobile-first)
+Fast load times
+SEO-ready structure
+CMS-friendly (easy to add projects & products)
+Instagram feed integration
+Scalable for future growth
+
+🔹 Deliverables
+Complete website structure
+UI/UX design system
+Frontend + backend implementation (use a serverless for the backend)
+Clean, readable code
+Deployment-ready build
+
+🔹 Final Instruction
+Design and build the website so that it feels like Deelaruze exists naturally in the street-art world — not as a polished brand, but as an authentic cultural platform rooted in creativity, independence, and community.
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+You are continuing development of Deelaruze, a production-ready, street-art-focused publishing and e-commerce platform.
+This is not a concept project — it is already fully built with frontend, backend, API routes, database models, and deployment instructions. Your job is to extend and complete the admin dashboard while respecting the existing structure, tone, and architecture.
+
+Project Overview
+Deelaruze is an independent street-art / graffiti publishing platform with:
+Underground, gritty, zine-inspired aesthetic
+DIY, anti-corporate voice
+Limited-edition publications and merch
+Community submissions and artist participation
+
+Tech Stack (Already Implemented)
+
+Frontend
+React 18
+Vite
+React Router v6
+TailwindCSS (dark, high-contrast street aesthetic)
+Lucide Icons
+Axios service layer
+Context + custom hooks for state
+
+Backend
+Node.js + Express
+MongoDB + Mongoose
+Cloudinary (image uploads)
+Stripe (payments)
+Nodemailer (email)
+JWT-ready auth structure (admin credentials already defined in .env)
+
+Existing Features (DO NOT REBUILD)
+✅ Multi-page React app
+✅ Publications, submissions, orders, contact, newsletter APIs
+✅ Admin Dashboard (Dashboard.jsx already built)
+✅ Cart + checkout flow
+✅ Cloudinary uploads
+✅ MongoDB models & controllers
+✅ REST API architecture
+✅ SEO-friendly semantic HTML
+
+Project Structure (Already Exists)
+src/
+ ├─ pages/
+ │   ├─ admin/
+ │   │   ├─ Dashboard.jsx ✅
+ │   │   ├─ Publications.jsx
+ │   │   ├─ Orders.jsx
+ │   │   ├─ Submissions.jsx
+ │   │   ├─ Messages.jsx
+ │   │   ├─ Newsletter.jsx (to be created)
+ │   │   ├─ Profile.jsx (to be created)
+ │   │   └─ NewPublication.jsx (to be created)
+ ├─ components/
+ ├─ services/
+ ├─ hooks/
+ └─ context/
+server/
+ ├─ controllers/
+ ├─ routes/
+ └─ models/
+
+Design Rules You MUST Follow
+Black background, white text
+Bold typography
+No rounded, soft, corporate UI
+Buttons feel industrial / editorial
+Clear hierarchy, admin-focused UX
+No marketing fluff
+No animations unless subtle
+
+Your Task
+
+Continue by implementing ADMIN FEATURES ONLY, specifically:
+New Publication Admin Page
+Create publication
+Upload images (Cloudinary)
+Fields: title, slug, price, description, contributors, stock, featured, status
+Publish / Draft toggle
+Newsletter Admin Page
+List subscribers
+Export emails
+Send newsletter (API-ready form)
+Subscriber count
+
+Admin Profile Page
+View admin email
+Update password securely
+Basic account security UI
+
+Constraints
+Use existing api.js Axios instance
+Assume backend routes already exist
+Do not add new libraries unless critical
+Match current admin dashboard style
+Production-ready code only
+
+Tone & Identity
+
+This platform is:
+Underground
+Independent
+Street-level
+Anti-corporate
+Built for artists, not brands
+
+Continue from here. Do NOT redesign the project. Extend it.
+
++++++++++++++++++++
+shopify info
+client id: 05bb97e803f01a2de9fb40f8d35dea94
+secret: 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
+
+catalogs API
+ID: b6f1aeaaddd7df94a963be17331ef12e
+secret: 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

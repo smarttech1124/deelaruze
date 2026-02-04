@@ -1,0 +1,19 @@
+Requirement.
+1. A Stripe Account Login Details (ensure all business verification is done with stripe for go-live)
+2. Catelogue (publications for Inventory)
+3. Publication List and Details
+4. About deelaruze, share your desire picture if available
+5. Contact information (email, phone number, social handles)
+6. Color Pallate for the website if available.
+
+###############
+# Install dev dependencies
+npm install -D @vitejs/plugin-react vite
+npm install -D tailwindcss postcss autoprefixer
+npm install -D eslint prettier
+
+# Install backend dependencies
+npm install express mongoose cors dotenv
+npm install multer cloudinary stripe nodemailer
+npm install express-validator bcryptjs jsonwebtoken
+npm install helmet express-rate-limit

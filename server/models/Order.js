@@ -1,0 +1,106 @@
+const mongoose = require('mongoose');
+
+const orderSchema = new mongoose.Schema(
+  {
+    orderNumber: {
+      type: String,
+      unique: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      trim: true,
+      lowercase: true,
+    },
+    items: [
+      {
+        publication: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Publication',
+          required: true,
+        },
+        title: String,
+        price: Number,
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+        image: String,
+      },
+    ],
+    shippingAddress: {
+      name: String,
+      line1: String,
+      line2: String,
+      city: String,
+      state: String,
+      postalCode: String,
+      country: String,
+    },
+    subtotal: {
+      type: Number,
+      required: true,
+    },
+    shippingCost: {
+      type: Number,
+      default: 0,
+    },
+    tax: {
+      type: Number,
+      default: 0,
+    },
+    total: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+      default: 'pending',
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'completed', 'failed', 'refunded'],
+      default: 'pending',
+    },
+    stripeSessionId: {
+      type: String,
+    },
+    stripePaymentIntentId: {
+      type: String,
+    },
+    trackingNumber: {
+      type: String,
+    },
+    shippedAt: {
+      type: Date,
+    },
+    deliveredAt: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Generate order number before saving
+orderSchema.pre('save', async function (next) {
+  if (!this.orderNumber) {
+    const count = await mongoose.model('Order').countDocuments();
+    this.orderNumber = `DLZ-${String(count + 1).padStart(6, '0')}`;
+  }
+  next();
+});
+
+// Index for faster queries
+orderSchema.index({ orderNumber: 1 });
+orderSchema.index({ email: 1 });
+orderSchema.index({ status: 1, createdAt: -1 });
+
+module.exports = mongoose.model('Order', orderSchema);
