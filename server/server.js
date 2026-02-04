@@ -102,3 +102,4 @@ const PORT = process.env.PORT || 5000;
 //   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
 //   console.log(`🌐 Client URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
 // }); 
+module.exports = app;
