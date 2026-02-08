@@ -189,9 +189,9 @@ const Manifesto = () => {
       <div className="manifesto-container relative z-10 max-w-5xl mx-auto">
         {/* Section Badge */}
         <div className="manifesto-fade-in text-center md:text-left">
-          <div className="mission-badge">
+          {/* <div className="mission-badge">
             SECTION 01
-          </div>
+          </div> */}
         </div>
 
         {/* Title */}
@@ -206,7 +206,7 @@ const Manifesto = () => {
         </div>
 
         {/* Content */}
-        <div className="accent-border pl-8 md:pl-12 space-y-8 relative">
+        <div className="pl-8 md:pl-12 space-y-8 relative">
           {/* Decorative Quote Mark */}
           <div className="quote-mark hidden md:block" style={{ top: '-40px', left: '-60px' }}>
             "

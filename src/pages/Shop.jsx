@@ -91,9 +91,9 @@ const Shop = () => {
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
           <div className="mb-16">
-            <div className="section-badge hero-fade">
+            {/* <div className="section-badge hero-fade">
               STORE
-            </div>
+            </div> */}
 
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
@@ -138,7 +138,7 @@ const Shop = () => {
             style={{ animationDelay: '0.6s' }}
           >
             {/* Price Range Filters */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <h3 className="text-sm text-gray-500 tracking-widest mb-3 flex items-center gap-2">
                 <DollarSign size={16} />
                 PRICE RANGE
@@ -156,7 +156,7 @@ const Shop = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Sort and Count */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 bg-white/5 border border-white/10">
@@ -214,16 +214,7 @@ const Shop = () => {
               <p className="text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
                 New drops are on the way. Check back soon or follow us on Instagram
                 for updates and exclusive previews.
-              </p>
-              <a
-                href="https://instagram.com/deelaruze"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="instagram-btn inline-flex items-center gap-3 px-8 py-4 text-white font-bold tracking-wider"
-              >
-                <Instagram size={24} />
-                FOLLOW @DEELARUZE
-              </a>
+              </p>              
             </div>
           ) : (
             /* No Results in Filter State */

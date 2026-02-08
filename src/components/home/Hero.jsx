@@ -6,16 +6,16 @@ const HeroSlider = () => {
     {
       id: 1,
       image: 'https://images.unsplash.com/photo-1473225071450-1f1462d5aa92?w=1600&h=1200&fit=crop',
-      title: 'THEEZ ARE',
-      subtitle: 'OUR STREETZ',
-      description: 'Independent art publishing for the underground',
+      title: 'DEELARUZE',
+      subtitle: '',
+      description: 'THEEZ ARE OUR STREETZ',
       accent: '#FF3366'
     },
     {
       id: 2,
       image: 'https://images.unsplash.com/photo-1594523960192-62b92c04089d?w=1600&h=1200&fit=crop',
       title: 'RAW CULTURE',
-      subtitle: 'UNFILTERED',
+      subtitle: '',
       description: 'Where authenticity meets artistic rebellion',
       accent: '#00FF94'
     },
@@ -23,7 +23,7 @@ const HeroSlider = () => {
       id: 3,
       image: 'https://images.unsplash.com/photo-1551225183-94acb7d595b6?w=1600&h=1200&fit=crop',
       title: 'UNDERGROUND',
-      subtitle: 'VOICES',
+      subtitle: '',
       description: 'Amplifying stories from the margins',
       accent: '#FFB800'
     }
@@ -176,7 +176,7 @@ const HeroSlider = () => {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {/* <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 to="/projects"
                 className="cta-button px-10 py-5 bg-white text-black font-bold text-base md:text-lg tracking-wider hover:bg-opacity-90"
@@ -196,7 +196,7 @@ const HeroSlider = () => {
               >
                 SUBMIT YOUR ART
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
 

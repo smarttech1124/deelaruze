@@ -90,6 +90,7 @@ const SubmissionForm = () => {
         onChange={handleChange}
         placeholder="What should we call you?"
         required
+        disabled
       />
 
       <Input
@@ -100,6 +101,7 @@ const SubmissionForm = () => {
         onChange={handleChange}
         placeholder="your@email.com"
         required
+        disabled
       />
 
       <Input
@@ -108,6 +110,7 @@ const SubmissionForm = () => {
         value={formData.instagram}
         onChange={handleChange}
         placeholder="@yourhandle"
+        disabled
       />
 
       <Input
@@ -119,6 +122,7 @@ const SubmissionForm = () => {
         placeholder="What drives your creativity? Where do you create? What's your story?"
         rows={6}
         required
+        disabled
       />
 
       <div>
@@ -132,6 +136,7 @@ const SubmissionForm = () => {
             accept="image/*"
             onChange={handleFileChange}
             className="hidden"
+            disabled
           />
           <Upload size={48} className="mx-auto mb-4 text-gray-500" />
           <p className="text-gray-400">
@@ -148,6 +153,7 @@ const SubmissionForm = () => {
         loading={loading}
         fullWidth
         size="lg"
+        disabled
       >
         SUBMIT YOUR WORK
       </Button>

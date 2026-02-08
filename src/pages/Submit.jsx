@@ -88,7 +88,7 @@ const Submit = () => {
                   <span 
                     className="inline-block"
                     style={{
-                      background: 'linear-gradient(135deg, #FF3366 0%, #FFB800 50%, #00FF94 100%)',
+                      background: 'linear-gradient(135deg, #FFFFFF 0%, #F2F2F2 50%, #DADADA 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text'
@@ -105,22 +105,22 @@ const Submit = () => {
           {/* Opening Statement */}
           <div className="content-reveal mb-16" style={{ animationDelay: '0.2s' }}>
             <div className="quote-highlight text-white">
-              Got something to say? We want to hear it.
+              Submissions for Theez are our streetz open January 2027'
             </div>
           </div>
 
           {/* Introduction */}
-          <div className="content-reveal mb-20 text-lg text-gray-300 leading-relaxed" style={{ animationDelay: '0.3s' }}>
+          {/* <div className="content-reveal mb-20 text-lg text-gray-300 leading-relaxed" style={{ animationDelay: '0.3s' }}>
             <p>
               Deelaruze is built on community. We're always looking for fresh voices,
               raw talent, and artists who aren't afraid to push boundaries. If your
               work lives on walls, stickers, or anywhere the establishment didn't give
               you permission—we want to see it.
             </p>
-          </div>
+          </div> */}
 
           {/* What We're Looking For */}
-          <div className="mb-20">
+          {/* <div className="mb-20">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-1 w-12 bg-gradient-to-r from-transparent via-red-500 to-transparent" />
               <h2 className="submit-title text-4xl md:text-5xl text-white">
@@ -145,10 +145,10 @@ const Submit = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Submission Guidelines */}
-          <div className="mb-20">
+          {/* <div className="mb-20">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-1 w-12 bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
               <h2 className="submit-title text-4xl md:text-5xl text-white">
@@ -176,7 +176,7 @@ const Submit = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Submission Form */}
           <div 
@@ -186,14 +186,14 @@ const Submit = () => {
             <div className="flex items-center gap-4 mb-8">
               <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" />
               <h2 className="submit-title text-4xl md:text-5xl text-white">
-                SUBMIT NOW
+                SUBMIT CLOSED
               </h2>
             </div>
             <SubmissionForm />
           </div>
 
           {/* What Happens Next */}
-          <div 
+          {/* <div 
             className="info-box content-reveal p-10"
             style={{ animationDelay: '1.5s' }}
           >
@@ -220,7 +220,7 @@ const Submit = () => {
                 </a>
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

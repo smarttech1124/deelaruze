@@ -96,9 +96,9 @@ const Contact = () => {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="mb-20">
-            <div className="section-badge hero-fade">
+            {/* <div className="section-badge hero-fade">
               CONNECT
-            </div>
+            </div> */}
 
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
@@ -109,7 +109,7 @@ const Contact = () => {
                   <span 
                     className="inline-block"
                     style={{
-                      background: 'linear-gradient(135deg, #FF3366 0%, #FFB800 50%, #00FF94 100%)',
+                      background: 'linear-gradient(135deg, #FFFFFF 0%, #F2F2F2 50%, #DADADA 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text'
@@ -119,7 +119,7 @@ const Contact = () => {
                   </span>
                 </h1>
               </div>
-              <div className="h-1 w-32 bg-gradient-to-r from-red-500 to-green-500" />
+              {/* <div className="h-1 w-32 bg-gradient-to-r from-red-500 to-green-500" /> */}
             </div>
 
             <p 

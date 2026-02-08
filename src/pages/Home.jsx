@@ -10,11 +10,11 @@ const Home = () => {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Manifesto Section */}
-      <Manifesto />
-
       {/* Featured Publications */}
-      <FeaturedPublication />
+      <FeaturedPublication /> 
+
+      {/* Manifesto Section */}
+      <Manifesto />     
 
       {/* Instagram Feed Mockup */}
       <InstagramFeed />

@@ -60,9 +60,9 @@ const About = () => {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="mb-20">
-            <div className="section-badge hero-fade">
+            {/* <div className="section-badge hero-fade">
               OUR STORY
-            </div>
+            </div> */}
             <h1 
               className="about-title hero-fade text-6xl md:text-8xl lg:text-9xl mb-8 text-white"
               style={{ animationDelay: '0.1s' }}
@@ -72,7 +72,7 @@ const About = () => {
               <span 
                 className="inline-block"
                 style={{
-                  background: 'linear-gradient(135deg, #FF3366 0%, #FFB800 50%, #00FF94 100%)',
+                  background: 'linear-gradient(135deg, #FFFFFF 0%, #F2F2F2 50%, #DADADA 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text'
@@ -81,10 +81,10 @@ const About = () => {
                 DEELARUZE
               </span>
             </h1>
-            <div 
+            {/* <div 
               className="hero-fade h-1 w-32 bg-gradient-to-r from-red-500 to-green-500"
               style={{ animationDelay: '0.2s' }}
-            />
+            /> */}
           </div>
 
           {/* Stats Grid */}
@@ -106,12 +106,7 @@ const About = () => {
             ))}
           </div>
 
-          {/* Opening Statement */}
-          <div className="content-reveal mb-16" style={{ animationDelay: '0.7s' }}>
-            <div className="quote-highlight text-white">
-              We're not a brand. We're a movement.
-            </div>
-          </div>
+         
 
           {/* Main Content */}
           <div className="space-y-8 text-lg text-gray-300 leading-relaxed mb-20">
@@ -134,7 +129,7 @@ const About = () => {
           </div>
 
           {/* Values Section */}
-          <div className="mb-20">
+          {/* <div className="mb-20">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-1 w-12 bg-gradient-to-r from-transparent via-red-500 to-transparent" />
               <h2 className="about-title text-4xl md:text-5xl text-white">
@@ -161,19 +156,11 @@ const About = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
-          {/* Mission Statement */}
-          <div className="content-reveal mb-20" style={{ animationDelay: '1.4s' }}>
-            <p className="text-lg text-gray-300 leading-relaxed">
-              Every publication we create is a collaboration with the artists who make
-              the streets come alive. We document the ephemeral, celebrate the
-              underground, and give voice to those who refuse to be silenced.
-            </p>
-          </div>
 
           {/* Process Section */}
-          <div className="mb-20">
+          {/* <div className="mb-20">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-1 w-12 bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
               <h2 className="about-title text-4xl md:text-5xl text-white">
@@ -203,43 +190,7 @@ const About = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Impact Statement */}
-          <div className="content-reveal mb-16" style={{ animationDelay: '1.6s' }}>
-            <p className="text-lg text-gray-300 leading-relaxed">
-              We've published work from over 200 artists across 40 countries. From
-              Tokyo to São Paulo, from Lagos to Berlin, from Lagos to New York—the
-              streets speak a universal language, and we're here to translate it.
-            </p>
-          </div>
-
-          {/* Closing Statement */}
-          <div className="content-reveal mb-20" style={{ animationDelay: '1.7s' }}>
-            <div className="quote-highlight text-white">
-              This is Deelaruze. This is street culture, unfiltered.
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div 
-            className="cta-box p-12 text-center content-reveal"
-            style={{ animationDelay: '1.8s' }}
-          >
-            <h2 className="about-title text-4xl md:text-5xl mb-4 text-white">
-              JOIN THE MOVEMENT
-            </h2>
-            <p className="text-gray-300 mb-8 text-lg max-w-2xl mx-auto">
-              Ready to share your work with the world? Become part of the global street art community.
-            </p>
-            <Link
-              to="/submit"
-              className="cta-button inline-flex items-center gap-3 px-10 py-5 bg-white text-black font-bold text-lg tracking-wider hover:bg-opacity-90"
-            >
-              SUBMIT YOUR ART
-              <ArrowRight size={24} />
-            </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

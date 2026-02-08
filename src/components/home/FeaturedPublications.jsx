@@ -53,9 +53,9 @@ const FeaturedPublication = () => {
             <div className="featured-container relative z-10 max-w-7xl mx-auto">
                 {/* Section Header */}
                 <div className="mb-16">
-                    <div className="section-badge mb-6">
+                    {/* <div className="section-badge mb-6">
                         SECTION 02
-                    </div>
+                    </div> */}
 
                     <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-4">
                         <div>
@@ -70,7 +70,7 @@ const FeaturedPublication = () => {
                             </p>
                         </div>
 
-                        <Link
+                        {/* <Link
                             to="/shop"
                             className="view-all-btn flex items-center gap-2 px-6 py-3 border border-white/20 text-sm font-bold text-white hover:border-red-500/50 transition-all group"
                         >
@@ -79,7 +79,19 @@ const FeaturedPublication = () => {
                                 size={16} 
                                 className="transition-transform group-hover:translate-x-1" 
                             />
-                        </Link>
+                        </Link> */}
+                    </div>
+                    <div className="content-reveal mb-20" style={{ animationDelay: '1.4s' }}>
+                        <p className="text-lg text-gray-300 leading-relaxed">
+                        Every publication we create is a collaboration with the artists who make
+                        the streets come alive. We document the ephemeral, celebrate the
+                        underground, and give voice to those who refuse to be silenced.
+                        </p>
+                        <p className="text-lg text-gray-300 leading-relaxed">
+                            We've published work from over 200 artists across 40 countries. From
+                            Tokyo to São Paulo, from Lagos to Berlin, from Lagos to New York—the
+                            streets speak a universal language, and we're here to translate it.
+                        </p>
                     </div>
 
                     <div className="h-px w-full bg-gradient-to-r from-green-500/50 via-transparent to-transparent" />
