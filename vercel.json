@@ -5,10 +5,9 @@
     { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "server/server.js" },
-
-    { "src": "/(.*\\.(js|css|png|jpg|jpeg|svg|ico|json|woff|woff2|ttf))", "dest": "/dist/$1" },
-
-    { "src": "/(.*)", "dest": "/dist/index.html", "headers": { "cache-control": "no-cache" } }
+    { "src": "/api/(.*)", "dest": "server/server.js" }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
