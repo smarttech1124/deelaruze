@@ -2,17 +2,33 @@ import api from './api';
 
 export const orderService = {
   // Create Stripe checkout session
-  createCheckoutSession: async (items) => {
+  createCheckoutSession: async ({ items, shippingfee, total }) => {
     try {
       const response = await api.post('/orders/create-checkout-session', {
         items,
+        shippingfee,
+        total,
       });
+      
       return response.data;
     } catch (error) {
       console.error('Error creating checkout session:', error);
       throw error;
     }
   },
+
+  verifyStripeSession: async (sessionId) => {
+    try {
+      const response = await api.get(
+        `/orders/verify-session?session_id=${sessionId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error verifying Stripe session:', error);
+      throw error;
+    }
+  },
+
 
   // Get user's orders
   getMyOrders: async () => {

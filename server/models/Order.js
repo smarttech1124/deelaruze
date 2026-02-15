@@ -6,10 +6,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
+    // user: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'User',
+    // },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -31,6 +31,7 @@ const orderSchema = new mongoose.Schema(
           min: 1,
         },
         image: String,
+        shippingFee: Number
       },
     ],
     shippingAddress: {

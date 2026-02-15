@@ -1,7 +1,7 @@
 import api from './api';
 
 export const publicationService = {
-  // Get all shop
+  // Get all publication
   getAll: async () => {
     try {
       const response = await api.get('/publications');

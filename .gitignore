@@ -47,3 +47,6 @@ uploads/
 # Misc
 .vercel
 .netlify
+
+# other
+prompt.txt

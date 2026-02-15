@@ -1,19 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import CartItem from '../components/shop/CartItem';
-import Button from '../components/common/Button';
 import { orderService } from '../services/orderService';
-import { ShoppingCart, ShoppingBag, Lock, Truck, Heart, ArrowRight, Trash2, Package } from 'lucide-react';
+import {
+  ShoppingCart,
+  ShoppingBag,
+  Lock,
+  Truck,
+  Heart,
+  ArrowRight,
+  Trash2,
+  Package
+} from 'lucide-react';
+
+const shippingOptions = [
+  { label: 'UK', value: 8 },
+  { label: 'Europe', value: 8 },
+  { label: 'North America', value: 11 },
+  { label: 'South America', value: 11 },
+  { label: 'Rest of the World', value: 13 },
+];
 
 const Cart = () => {
   const { cart, cartTotal, clearCart } = useCart();
+
   const [loading, setLoading] = useState(false);
+  const [shippingfee, setShippingFee] = useState(8);
+
+  const grandTotal = useMemo(() => {
+    return cartTotal + shippingfee;
+  }, [cartTotal, shippingfee]);
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const response = await orderService.createCheckoutSession(cart);
+      const response = await orderService.createCheckoutSession({
+        items: cart,
+        shippingfee,
+        total: grandTotal,
+      });
+
       window.location.href = response.url;
     } catch (error) {
       console.error('Checkout error:', error);
@@ -32,83 +59,7 @@ const Cart = () => {
   if (cart.length === 0) {
     return (
       <div className="relative min-h-screen bg-black overflow-hidden">
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap');
-
-          .cart-container {
-            font-family: 'Space Mono', monospace;
-          }
-
-          .cart-title {
-            font-family: 'Archivo Black', sans-serif;
-            letter-spacing: -0.02em;
-          }
-
-          .grid-bg {
-            background-image: 
-              linear-gradient(rgba(255, 51, 102, 0.02) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255, 51, 102, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.5;
-          }
-
-          .empty-state {
-            background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), rgba(0, 255, 148, 0.05));
-            border: 2px solid;
-            border-image: linear-gradient(135deg, #FF3366, #00FF94) 1;
-            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
-          }
-
-          .icon-float {
-            animation: iconFloat 3s ease-in-out infinite;
-          }
-
-          @keyframes iconFloat {
-            0%, 100% {
-              transform: translateY(0);
-            }
-            50% {
-              transform: translateY(-10px);
-            }
-          }
-
-          .cta-button {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-
-          .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-          }
-
-          .cta-button:hover::before {
-            left: 100%;
-          }
-
-          .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-          }
-        `}</style>
-
         <div className="fixed inset-0 grid-bg" />
-        <div 
-          className="fixed inset-0 opacity-3"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulance type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            mixBlendMode: 'overlay',
-            pointerEvents: 'none'
-          }}
-        />
-
         <div className="cart-container relative z-10 min-h-screen pt-32 pb-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="cart-title text-6xl md:text-8xl text-white mb-12 tracking-tight">
@@ -137,195 +88,11 @@ const Cart = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap');
-
-        .cart-container {
-          font-family: 'Space Mono', monospace;
-        }
-
-        .cart-title {
-          font-family: 'Archivo Black', sans-serif;
-          letter-spacing: -0.02em;
-        }
-
-        .hero-fade {
-          animation: heroFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          opacity: 0;
-        }
-
-        @keyframes heroFadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .content-reveal {
-          animation: contentSlideIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          opacity: 0;
-        }
-
-        @keyframes contentSlideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        .summary-card {
-          background: rgba(20, 20, 20, 0.8);
-          border: 2px solid rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-          position: sticky;
-          top: 100px;
-        }
-
-        .summary-row {
-          transition: all 0.3s;
-        }
-
-        .summary-row:hover {
-          transform: translateX(4px);
-        }
-
-        .checkout-button {
-          position: relative;
-          overflow: hidden;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: linear-gradient(135deg, #FF3366, #FFB800);
-        }
-
-        .checkout-button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-          transition: left 0.5s;
-        }
-
-        .checkout-button:hover::before {
-          left: 100%;
-        }
-
-        .checkout-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 40px rgba(255, 51, 102, 0.4);
-        }
-
-        .checkout-button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .benefit-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px;
-          background: rgba(255, 255, 255, 0.03);
-          border-left: 3px solid;
-          transition: all 0.3s;
-        }
-
-        .benefit-item:hover {
-          background: rgba(255, 255, 255, 0.05);
-          transform: translateX(4px);
-        }
-
-        .grid-bg {
-          background-image: 
-            linear-gradient(rgba(255, 51, 102, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 51, 102, 0.02) 1px, transparent 1px);
-          background-size: 50px 50px;
-          opacity: 0.5;
-        }
-
-        .section-badge {
-          display: inline-block;
-          padding: 8px 20px;
-          background: rgba(255, 51, 102, 0.1);
-          border: 2px solid #FF3366;
-          color: #FF3366;
-          font-size: 12px;
-          font-weight: bold;
-          letter-spacing: 0.2em;
-          margin-bottom: 24px;
-          clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-        }
-
-        .clear-cart-btn {
-          transition: all 0.3s;
-        }
-
-        .clear-cart-btn:hover {
-          color: #FF3366;
-          transform: translateX(4px);
-        }
-
-        .continue-shopping-btn {
-          border: 2px solid rgba(255, 255, 255, 0.1);
-          transition: all 0.3s;
-        }
-
-        .continue-shopping-btn:hover {
-          border-color: #00FF94;
-          background: rgba(0, 255, 148, 0.05);
-          transform: translateY(-2px);
-        }
-
-        .total-amount {
-          font-family: 'Archivo Black', sans-serif;
-          background: linear-gradient(135deg, #FF3366 0%, #FFB800 50%, #00FF94 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .icon-float {
-          animation: iconFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes iconFloat {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-      `}</style>
-
-      {/* Background Elements */}
       <div className="fixed inset-0 grid-bg" />
-      <div 
-        className="fixed inset-0 opacity-3"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          mixBlendMode: 'overlay',
-          pointerEvents: 'none'
-        }}
-      />
-
-      {/* Gradient Accents */}
-      <div 
-        className="fixed top-0 right-1/4 w-[500px] h-[500px] rounded-full blur-3xl opacity-10"
-        style={{ background: 'radial-gradient(circle, #FF3366 0%, transparent 70%)' }}
-      />
 
       <div className="cart-container relative z-10 pt-32 pb-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
+
           {/* Hero Section */}
           <div className="mb-16">
             <div className="section-badge hero-fade">
@@ -349,6 +116,7 @@ const Cart = () => {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
+
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cart.map((item, index) => (
@@ -364,7 +132,7 @@ const Cart = () => {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div 
+              <div
                 className="summary-card content-reveal p-8"
                 style={{ animationDelay: '0.3s' }}
               >
@@ -376,21 +144,36 @@ const Cart = () => {
                 </div>
 
                 <div className="space-y-4 mb-6">
+
+                  {/* Subtotal */}
                   <div className="summary-row flex justify-between text-gray-400">
                     <span>Subtotal ({cart.length} items)</span>
                     <span className="font-bold">${cartTotal.toFixed(2)}</span>
                   </div>
-                  <div className="summary-row flex justify-between text-gray-400">
+
+                  {/* Shipping Selector (UI preserved style) */}
+                  <div className="summary-row flex justify-between items-center text-gray-400">
                     <span>Shipping</span>
-                    <span className="text-sm">Calculated at checkout</span>
+                    <select
+                      value={shippingfee}
+                      onChange={(e) => setShippingFee(Number(e.target.value))}
+                      className="bg-black border border-white/20 text-white px-3 py-1 text-sm"
+                    >
+                      {shippingOptions.map(option => (
+                        <option key={option.label} value={option.value}>
+                          {option.label} (${option.value})
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  
+
                   <div className="my-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                  
+
+                  {/* Grand Total */}
                   <div className="flex justify-between items-center">
                     <span className="text-white text-lg font-bold">Total</span>
                     <span className="total-amount text-3xl">
-                      ${cartTotal.toFixed(2)}
+                      ${grandTotal.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -437,9 +220,27 @@ const Cart = () => {
                       <div
                         key={index}
                         className="benefit-item"
-                        style={{ borderLeftColor: index === 0 ? '#FF3366' : index === 1 ? '#FFB800' : '#00FF94' }}
+                        style={{
+                          borderLeftColor:
+                            index === 0
+                              ? '#FF3366'
+                              : index === 1
+                              ? '#FFB800'
+                              : '#00FF94',
+                        }}
                       >
-                        <benefit.icon size={16} className="flex-shrink-0" style={{ color: index === 0 ? '#FF3366' : index === 1 ? '#FFB800' : '#00FF94' }} />
+                        <benefit.icon
+                          size={16}
+                          className="flex-shrink-0"
+                          style={{
+                            color:
+                              index === 0
+                                ? '#FF3366'
+                                : index === 1
+                                ? '#FFB800'
+                                : '#00FF94',
+                          }}
+                        />
                         <span className="text-xs text-gray-400 leading-relaxed">
                           {benefit.text}
                         </span>
@@ -447,8 +248,10 @@ const Cart = () => {
                     ))}
                   </div>
                 </div>
+
               </div>
             </div>
+
           </div>
         </div>
       </div>

@@ -19,12 +19,18 @@ exports.validatePublication = [
     .trim()
     .notEmpty()
     .withMessage('Title is required')
-    .isLength({ max: 100 })
-    .withMessage('Title must not exceed 100 characters'),
+    .isLength({ max: 200 })
+    .withMessage('Title must not exceed 200 characters'),
   
-  body('subtitle')
-    .optional()
+  body('tagline')
     .trim()
+    .notEmpty()
+    .isLength({ max: 200 })
+    .withMessage('Subtitle must not exceed 200 characters'),
+
+  body('pages')
+    .trim()
+    .notEmpty()
     .isLength({ max: 100 })
     .withMessage('Subtitle must not exceed 100 characters'),
   
@@ -42,13 +48,14 @@ exports.validatePublication = [
     .withMessage('Price must be a positive number'),
   
   // body('category')
-  //   .notEmpty()
+  //   .exists({ checkFalsy: true })
   //   .withMessage('Category is required')
+  //   .bail()
   //   .isIn(['sticker pack', 'volume', 'special edition'])
   //   .withMessage('Invalid category'),
   
   body('stock')
-    .optional()
+    .notEmpty()
     .isInt({ min: 0 })
     .withMessage('Stock must be a non-negative integer'),
   

@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../services/api';
 
+const Editor = lazy(() =>
+  import('@tinymce/tinymce-react').then(m => ({ default: m.Editor }))
+);
+
 const NewPublication = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // detect edit mode
+  const { id } = useParams();
   const isEdit = Boolean(id);
 
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     title: '',
+    tagline: '',
+    pages: '',
     slug: '',
     price: '',
     stock: '',
@@ -18,91 +24,170 @@ const NewPublication = () => {
     contributors: '',
     featured: false,
     status: 'draft',
-    images: []
+    newImages: []
   });
+  const [existingImages, setExistingImages] = useState([]);
 
   // ===============================
-  // Fetch publication if editing
+  // Fetch publication (edit mode)
   // ===============================
   useEffect(() => {
     if (!isEdit) return;
 
+    let mounted = true;
+
     const fetchPublication = async () => {
       try {
-        const res = await api.get(`/publications/${id}`);
-        const pub = res.data.data;
+        const { data } = await api.get(`/publications/${id}`);
+        const pub = data.data;
+
+        if (!mounted) return;
 
         setForm({
-          title: pub.title || '',
-          slug: pub.slug || '',
-          price: pub.price || '',
-          stock: pub.stock || '',
-          description: pub.description || '',
-          contributors: pub.contributors || '',
-          featured: pub.featured || false,
-          status: pub.status || 'draft',
-          images: [] // do not preload files
+          title: pub.title ?? '',
+          tagline: pub.tagline ?? '',
+          pages: pub.pages ?? '',
+          slug: pub.slug ?? '',
+          price: pub.price ?? '',
+          stock: pub.stock ?? '',
+          description: pub.description ?? '',
+          contributors: pub.contributors ?? '',
+          featured: pub.featured ?? false,
+          status: pub.status ?? 'draft',
+          newImages: []
         });
+
+        setExistingImages(pub.images ?? []);
+
       } catch (err) {
+        console.error(err);
         alert('Failed to load publication');
         navigate('/admin/publications');
       }
     };
 
     fetchPublication();
+
+    return () => {
+      mounted = false;
+    };
   }, [id, isEdit, navigate]);
 
-  const handleChange = e => {
+  // ===============================
+  // Handlers
+  // ===============================
+
+  const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
+
+    setForm(prev => {
+      const updated = {
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      };
+
+      if (name === 'title') {
+        updated.slug = value
+          .toLowerCase()
+          .replace(/[^\w ]+/g, '')
+          .replace(/ +/g, '-');
+      }
+
+      return updated;
+    });
+  }, []);
+
+
+  const handleImages = useCallback((e) => {
     setForm(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      newImages: Array.from(e.target.files)
     }));
-  };
+  }, []);
 
-  const handleImages = e => {
+
+  const handleEditorChange = useCallback((value) => {
     setForm(prev => ({
       ...prev,
-      images: [...e.target.files]
+      description: value
     }));
-  };
+  }, []);
 
-  const submit = async e => {
+  const handleEditorContributors = useCallback((value) => {
+    setForm(prev => ({
+      ...prev,
+      contributors: value
+    }));
+  }, []);
+
+  // ===============================
+  // Submit
+  // ===============================
+
+  const submit = async (e) => {
     e.preventDefault();
+    if (loading) return;
+
     setLoading(true);
 
-    const data = new FormData();
-
-    Object.entries(form).forEach(([k, v]) => {
-      if (k === 'images') {
-        v.forEach(img => data.append('images', img));
-      } else {
-        data.append(k, v);
-      }
-    });
-
     try {
-      if (isEdit) {
-        await api.put(`/publications/${id}`, data, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-      } else {
-        await api.post('/publications', data, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+      const data = new FormData();
+
+      // ===============================
+      // REQUIRED FIELDS WITH DEFAULTS
+      // ===============================
+      data.append('title', form.title.trim() || '');
+      data.append('description', form.description.trim() || '');
+      data.append('price', Number(form.price) || 0);
+      data.append('stock', Number(form.stock) || 0);
+      data.append('category', form.category || ''); // Must match backend allowed values
+
+      // ===============================
+      // OPTIONAL FIELDS
+      // ===============================
+      data.append('slug', form.slug.trim() || '');
+      data.append('tagline', form.tagline.trim() || '');
+      data.append('pages', form.pages || '');
+      data.append('status', form.status || 'draft');
+      data.append('featured', form.featured);
+      data.append('contributors', form.contributors || '');
+      
+      // ===============================
+      // IMAGES
+      // ===============================
+      if (form.newImages && form.newImages.length > 0) {
+        form.newImages.forEach(file => data.append('images', file));
       }
 
+      // ===============================
+      // SEND REQUEST
+      // ===============================
+      if (isEdit) {
+        await api.put(`/publications/${id}`, data);
+      } else {
+        await api.post('/publications', data);
+      }
+
+      // Navigate back to publications list
       navigate('/admin/publications');
-    } catch (error) {
-      alert(isEdit ? 'Failed to update' : 'Failed to publish');
+
+    } catch (err) {
+      console.error(err);
+
+      // Backend validation errors
+      if (err.response?.data?.errors) {
+        err.response.data.errors.forEach(error =>
+          alert(`${error.field}: ${error.message}`)
+        );
+      } else {
+        alert(isEdit ? 'Failed to update publication' : 'Failed to publish');
+      }
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
@@ -121,8 +206,9 @@ const NewPublication = () => {
 
         <form onSubmit={submit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* MAIN CONTENT */}
+          {/* MAIN */}
           <div className="lg:col-span-2 admin-panel space-y-6">
+
             <div>
               <label className="admin-label">Title</label>
               <input
@@ -130,28 +216,67 @@ const NewPublication = () => {
                 value={form.title}
                 onChange={handleChange}
                 className="admin-input"
+                required
               />
             </div>
-
+            
             <div>
               <label className="admin-label">Description</label>
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                rows="6"
-                className="admin-input"
-              />
+              <Suspense fallback={<div>Loading editor...</div>}>
+                <Editor
+                  apiKey={import.meta.env.VITE_TINYMCE_KEY}
+                  value={form.description}
+                  onEditorChange={handleEditorChange}
+                  init={{
+                    height: 350,
+                    menubar: false,
+                    skin: "oxide-dark",         
+                    content_css: "dark",         
+                    plugins: "lists link image",
+                    toolbar:
+                      "bold italic",
+                    content_style: `
+                      body {
+                        background-color: black !important;
+                        color: #ffffff !important;
+                        font-family: inherit;
+                      }
+
+                      a { color: #60a5fa; }
+                    `
+                  }}
+                />
+              </Suspense>
             </div>
 
             <div>
               <label className="admin-label">Contributors</label>
-              <input
-                name="contributors"
-                value={form.contributors}
-                onChange={handleChange}
-                className="admin-input"
-              />
+              
+              <Suspense fallback={<div>Loading editor...</div>}>
+                <Editor
+                  apiKey={import.meta.env.VITE_TINYMCE_KEY}
+                  value={form.contributors}
+                  onEditorChange={handleEditorContributors}
+                  init={{
+                    height: 200,
+                    menubar: false,
+                    skin: "oxide-dark",         
+                    content_css: "dark",         
+                    plugins: "lists link image",
+                    toolbar:
+                      "bold italic",
+                    content_style: `
+                      body {
+                        background-color: black !important;
+                        color: #ffffff !important;
+                        font-family: inherit;
+                      }
+
+                      a { color: #60a5fa; }
+                    `
+                  }}
+                />
+              </Suspense>
             </div>
 
             <div>
@@ -160,10 +285,54 @@ const NewPublication = () => {
               </label>
               <input type="file" multiple onChange={handleImages} />
             </div>
+            {isEdit && existingImages.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+                {existingImages.map((img, idx) => (
+                  <img
+                    key={img._id || idx}
+                    src={img.url}
+                    alt={`${img._id}-${idx}`}
+                    className="
+                      h-36
+                      w-full
+                      aspect-[3/4]
+                      object-cover
+                      rounded
+                      border border-gray-800
+                      hover:opacity-90
+                      transition
+                    "
+                  />
+                ))}
+              </div>
+            )}
+
+
           </div>
 
           {/* META */}
           <div className="admin-panel space-y-6">
+
+            <div>
+              <label className="admin-label">Title Tagline</label>
+              <input
+                name="tagline"
+                value={form.tagline}
+                onChange={handleChange}
+                className="admin-input"
+              />
+            </div>
+
+            <div>
+              <label className="admin-label">Volume Pages</label>
+              <input
+                name="pages"
+                value={form.pages}
+                onChange={handleChange}
+                className="admin-input"
+              />
+            </div>
+
             <div>
               <label className="admin-label">Slug</label>
               <input
@@ -177,7 +346,7 @@ const NewPublication = () => {
             <div>
               <label className="admin-label">Price</label>
               <input
-                type="text"
+                type="number"
                 name="price"
                 value={form.price}
                 onChange={handleChange}
@@ -215,17 +384,27 @@ const NewPublication = () => {
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
-            
-            <div className='flex items-center justify-around'>
-              <button type='button' className="admin-button-outline" onClick={() => navigate('/admin/publications')}>
+
+            <div className="flex items-center justify-around">
+              <button
+                type="button"
+                className="admin-button-outline"
+                onClick={() => navigate('/admin/publications')}
+              >
                 Back
               </button>
-              <button className="admin-button-primary">
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="admin-button-primary"
+              >
                 {loading
                   ? isEdit ? 'UPDATING…' : 'PUBLISHING…'
                   : isEdit ? 'UPDATE' : 'PUBLISH'}
               </button>
             </div>
+
           </div>
         </form>
       </div>

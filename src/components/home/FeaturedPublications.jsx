@@ -12,7 +12,8 @@ const FeaturedPublication = () => {
     useEffect(() => {
         const fetchFeatured = async () => {
           try {
-            const data = await publicationService.getFeatured();
+            const data = await publicationService.getAll();
+            console.log(data)
             setFeaturedPublications(data.data);
           } catch (error) {
             console.error('Error loading featured publications:', error);
@@ -121,7 +122,7 @@ const FeaturedPublication = () => {
                                 {/* Image */}
                                 <div className="product-image">
                                     <img 
-                                        src={pub.coverImage || 'https://images.unsplash.com/photo-1577083552431-6e5fd01988ec?w=600&h=800&fit=crop'} 
+                                        src={pub.images[0]?.url || 'https://images.unsplash.com/photo-1577083552431-6e5fd01988ec?w=600&h=800&fit=crop'} 
                                         alt={pub.title}
                                         className="w-full h-full object-cover"
                                     />
@@ -144,7 +145,7 @@ const FeaturedPublication = () => {
                                             {pub.title}
                                         </h3>
                                         <p className="text-gray-400 text-sm line-clamp-1">
-                                            {pub.artist || 'Independent Artist'}
+                                            {pub.tagline || 'Independent Artist'}
                                         </p>
                                     </div>
 

@@ -1,28 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Eye, CalendarRange } from 'lucide-react';
 import { publicationService } from '../../services/publicationService';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
-import {truncate, formatDate} from  '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';
 
 const Publications = () => {
   const navigate = useNavigate();
+
   const [publications, setPublications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
+  const [deletingId, setDeletingId] = useState(null);
+
+
   useEffect(() => {
     loadPublications();
-  }, [filter]);
+  }, []);
 
   const loadPublications = async () => {
     setLoading(true);
     try {
-      // const params = filter !== 'all' ? { status: filter } : {};
       const data = await publicationService.getAll();
-      console.log(data)
-      setPublications(data.data);
+      setPublications(data.data || []);
     } catch (error) {
       console.error('Error loading publications:', error);
     } finally {
@@ -30,62 +32,76 @@ const Publications = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  // ✅ Proper Filter Logic (Client-Side)
+  const filteredPublications = useMemo(() => {
+    if (filter === 'all') return publications;
+    return publications.filter(pub => pub.status === filter);
+  }, [publications, filter]);
+
+  const handleDelete = useCallback(async (id) => {
     if (!window.confirm('Are you sure you want to delete this publication?')) {
       return;
     }
 
     try {
       await publicationService.delete(id);
-      setPublications(publications.filter(p => p._id !== id));
+      setPublications(prev => prev.filter(p => p._id !== id));
+
     } catch (error) {
       console.error('Error deleting publication:', error);
       alert('Failed to delete publication');
     }
-  };
+  }, []);
 
   const StatusBadge = ({ status }) => {
     const colors = {
-      available: 'bg-green-600',
-      'sold out': 'bg-red-600',
-      'coming soon': 'bg-yellow-600',
+      draft: 'bg-yellow-600',
+      published: 'bg-green-600',
     };
 
     return (
-      <span className={`px-3 py-1 text-xs font-bold ${colors[status]} rounded`}>
-        {status.toUpperCase()}
+      <span
+        className={`px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-bold ${colors[status] || 'bg-gray-600'} rounded`}
+      >
+        {status?.toUpperCase()}
       </span>
     );
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
+
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-4xl font-black mb-2">PUBLICATIONS</h1>
-            <p className="text-gray-400">Manage your publications and inventory</p>
+            <h1 className="text-3xl sm:text-4xl font-black mb-1">
+              PUBLICATIONS
+            </h1>
+            <p className="text-gray-400 text-sm sm:text-base">
+              Manage your publications and inventory
+            </p>
           </div>
+
           <Button
             onClick={() => navigate('/admin/publications/new')}
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto"
           >
-            <Plus size={20} />
+            <Plus size={18} />
             NEW PUBLICATION
           </Button>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex flex-wrap gap-2 sm:gap-4 mb-8">
           {['all', 'draft', 'published'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-6 py-3 font-bold transition-colors ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-bold transition-colors ${
                 filter === f
                   ? 'bg-white text-black'
-                  : 'border-2 border-gray-700 hover:border-white'
+                  : 'border border-gray-700 hover:border-white'
               }`}
             >
               {f.toUpperCase()}
@@ -93,25 +109,35 @@ const Publications = () => {
           ))}
         </div>
 
-        {/* Publications List */}
+        {/* Publications */}
         {loading ? (
           <Loader size="lg" />
-        ) : publications.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-2xl text-gray-400 mb-4">No publications found</p>
-            <Button onClick={() => navigate('/admin/publications/new')}> 
+        ) : filteredPublications.length === 0 ? (
+          <div className="text-center py-16 sm:py-20">
+            <p className="text-xl sm:text-2xl text-gray-400 mb-4">
+              No publications found
+            </p>
+            <Button onClick={() => navigate('/admin/publications/new')}>
               Create Your First Publication
             </Button>
           </div>
         ) : (
           <div className="grid gap-4">
-            {publications.map((pub) => (
+            {filteredPublications.map((pub) => (
               <div
                 key={pub._id}
-                className="bg-gray-900 p-6 flex items-center gap-6 hover:bg-gray-800 transition-colors"
+                className="
+                  bg-gray-900
+                  p-4 sm:p-6
+                  flex
+                  flex-col sm:flex-row
+                  gap-4 sm:gap-6
+                  hover:bg-gray-800
+                  transition-colors
+                "
               >
                 {/* Image */}
-                <div className="w-24 h-32 bg-gray-800 flex-shrink-0">
+                <div className="w-full sm:w-24 h-48 sm:h-32 bg-gray-800 flex-shrink-0">
                   {pub.images?.[0]?.url ? (
                     <img
                       src={pub.images[0].url}
@@ -119,7 +145,7 @@ const Publications = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600">
+                    <div className="w-full h-full flex items-center justify-center text-gray-600 text-sm">
                       No Image
                     </div>
                   )}
@@ -127,46 +153,87 @@ const Publications = () => {
 
                 {/* Info */}
                 <div className="flex-1">
-                  <div className="flex items-start justify-between mb-2">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
                     <div>
-                      <h3 className="text-xl font-black">{pub.title}</h3>
+                      <h3 className="text-lg sm:text-xl font-black">
+                        {pub.title}
+                      </h3>
                       {pub.slug && (
-                        <p className="text-gray-400">{pub.slug}</p>
+                        <p className="text-gray-400 text-sm">
+                          {pub.slug}
+                        </p>
                       )}
                     </div>
+
                     <StatusBadge status={pub.status} />
                   </div>
-                  <p className="text-gray-500 text-sm mb-2">
-                    {truncate(pub.contributors?.[0], 90)}
-                  </p>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <div className='flex items-center'><CalendarRange size={15} /> &nbsp; {formatDate(pub.createdAt)}</div>
+
+                  <div
+                    className="
+                      text-gray-400
+                      text-xs sm:text-sm
+                      mb-2
+                      prose prose-sm sm:prose
+                      max-w-none
+                      line-clamp-2
+                      break-words
+                    "
+                    dangerouslySetInnerHTML={{
+                      __html: pub.contributors ?? '',
+                    }}
+                  />
+
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
+                    <CalendarRange size={14} />
+                    {formatDate(pub.createdAt)}
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="flex sm:flex-col gap-2 sm:gap-3 justify-end">
                   <button
-                    onClick={() => navigate(`/admin/publications/${pub.slug}`)}
-                    className="p-3 border border-gray-700 hover:border-white transition-colors"
+                    onClick={() =>
+                      navigate(`/admin/publications/${pub.slug}`)
+                    }
+                    className="p-2 sm:p-3 border border-gray-700 hover:border-white transition-colors"
                     title="View"
                   >
-                    <Eye size={20} />
+                    <Eye size={18} />
                   </button>
+
                   <button
-                    onClick={() => navigate(`/admin/publications/edit/${pub._id}`)}
-                    className="p-3 border border-gray-700 hover:border-white transition-colors"
+                    onClick={() =>
+                      navigate(`/admin/publications/edit/${pub._id}`)
+                    }
+                    className="p-2 sm:p-3 border border-gray-700 hover:border-white transition-colors"
                     title="Edit"
                   >
-                    <Edit size={20} />
+                    <Edit size={18} />
                   </button>
+
                   <button
                     onClick={() => handleDelete(pub._id)}
-                    className="p-3 border border-red-600 hover:bg-red-600 transition-colors"
+                    disabled={deletingId === pub._id}
+                    className={`
+                      p-2 sm:p-3
+                      border border-red-600
+                      transition-all duration-200
+                      flex items-center justify-center
+                      ${deletingId === pub._id
+                        ? 'bg-red-800 cursor-not-allowed opacity-70'
+                        : 'hover:bg-red-600'}
+                    `}
                     title="Delete"
                   >
-                    <Trash2 size={20} />
+                    {deletingId === pub._id ? (
+                      <span className="animate-spin">
+                        <Trash2 size={16} />
+                      </span>
+                    ) : (
+                      <Trash2 size={18} />
+                    )}
                   </button>
+
                 </div>
               </div>
             ))}

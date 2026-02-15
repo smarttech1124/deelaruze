@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { shopService } from '../services/shopService';
+// import { shopService } from '../services/shopService';
+import { publicationService } from '../services/publicationService';
 import ProductGrid from '../components/shop/ProductGrid';
 import Loader from '../components/common/Loader';
 import { ShoppingBag, TrendingUp, DollarSign, Calendar, SortAsc, Package, Instagram } from 'lucide-react';
@@ -14,10 +15,12 @@ const Shop = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const data = await shopService.getAll({ 
-          status: 'available',
-          sort: sortBy 
-        });
+        // const data = await publicationService.getAll({ 
+        //   status: 'available',
+        //   sort: sortBy 
+        // });
+        const data = await publicationService.getAll();
+        console.log(data)
         setProducts(data.data);
       } catch (error) {
         console.error('Error loading products:', error);
@@ -114,7 +117,7 @@ const Shop = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-4 mb-12">
+          {/* <div className="grid grid-cols-3 gap-4 mb-12">
             {stats.map((stat, index) => (
               <div
                 key={index}
@@ -130,7 +133,7 @@ const Shop = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* Filters Section */}
           <div 

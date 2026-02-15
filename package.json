@@ -18,6 +18,7 @@
     "@shopify/shopify-api": "^12.3.0",
     "@stripe/react-stripe-js": "^2.4.0",
     "@stripe/stripe-js": "^2.4.0",
+    "@tinymce/tinymce-react": "^6.3.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.1",

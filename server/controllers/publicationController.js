@@ -114,7 +114,34 @@ exports.getFeaturedPublications = async (req, res) => {
 // @access  Private/Admin
 exports.createPublication = async (req, res) => {
   try {
-    const publication = await Publication.create(req.body);
+    let publication = new Publication({
+      ...req.body,
+      images: [],
+    });
+
+    // Upload images in parallel
+    const uploadPromises = req.files.map((file) =>
+      cloudinary.uploader.upload(file.path, {
+        folder: 'deelaruze/publications',
+        transformation: [
+          { width: 1200, height: 1500, crop: 'limit' },
+          { quality: 'auto' },
+          { fetch_format: 'auto' },
+        ],
+      })
+    );
+
+    const results = await Promise.all(uploadPromises);
+
+    const uploadedImages = results.map((result) => ({
+      url: result.secure_url,
+      publicId: result.public_id,
+    }));
+
+    // Add images
+    publication.images.push(...uploadedImages);
+
+    await publication.save();
 
     res.status(201).json({
       success: true,
@@ -132,16 +159,12 @@ exports.createPublication = async (req, res) => {
 // @desc    Update publication
 // @route   PUT /api/publications/:id
 // @access  Private/Admin
+
 exports.updatePublication = async (req, res) => {
   try {
-    const publication = await Publication.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const { id } = req.params;
+
+    const publication = await Publication.findById(id);
 
     if (!publication) {
       return res.status(404).json({
@@ -150,18 +173,85 @@ exports.updatePublication = async (req, res) => {
       });
     }
 
+    const updateData = { ...req.body };
+
+    // =========================
+    // Parse FormData values
+    // =========================
+
+    if (updateData.price !== undefined) {
+      updateData.price = Number(updateData.price);
+    }
+
+    if (updateData.stock !== undefined) {
+      updateData.stock = Number(updateData.stock);
+    }
+
+    if (updateData.featured !== undefined) {
+      updateData.featured =
+        updateData.featured === 'true' || updateData.featured === true;
+    }
+
+    // =========================
+    // Handle uploaded images
+    // =========================
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map((file) =>
+        cloudinary.uploader.upload(file.path, {
+          folder: 'deelaruze/publications',
+          transformation: [
+            { width: 1200, height: 1500, crop: 'limit' },
+            { quality: 'auto' },
+            { fetch_format: 'auto' },
+          ],
+        })
+      );
+
+      const results = await Promise.all(uploadPromises);
+
+      const uploadedImages = results.map((result) => ({
+        url: result.secure_url,
+        publicId: result.public_id,
+      }));
+
+      // Merge with existing images
+      updateData.images = [
+        ...publication.images,
+        ...uploadedImages,
+      ];
+    }
+
+    // =========================
+    // Perform single update
+    // =========================
+    const updatedPublication = await Publication.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
     res.json({
       success: true,
-      data: publication,
+      data: updatedPublication,
     });
+
   } catch (error) {
-    res.status(400).json({
+    console.error(error);
+
+    const statusCode = error.name === 'ValidationError' ? 400 : 500;
+
+    res.status(statusCode).json({
       success: false,
       message: 'Error updating publication',
       error: error.message,
     });
   }
 };
+
+
 
 // @desc    Delete publication
 // @route   DELETE /api/publications/:id
@@ -207,18 +297,19 @@ exports.deletePublication = async (req, res) => {
 exports.uploadImages = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('creating...............########')
 
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'No images provided',
-      });
-    }
+    // if (!req.files || req.files.length === 0) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'No images provided',
+    //   });
+    // }
 
     let publication;
 
     // ==========================
-    // PUT → Update existing
+    // EDIT → Update existing
     // ==========================
     if (id) {
       publication = await Publication.findById(id);

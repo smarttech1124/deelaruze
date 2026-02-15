@@ -6,17 +6,22 @@ const publicationSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Title is required'],
       trim: true,
-      maxlength: [100, 'Title cannot exceed 100 characters'],
+      maxlength: [200, 'Title cannot exceed 100 characters'],
     },
-    subtitle: {
+    tagline: {
       type: String,
       trim: true,
-      maxlength: [100, 'Subtitle cannot exceed 100 characters'],
+      maxlength: [200, 'Tagline cannot exceed 100 characters'],
     },
     description: {
       type: String,
       required: [true, 'Description is required'],
       trim: true,
+    },
+    pages: {
+      type: Number,
+      required: [true, 'Pages is required'],
+      min: [0, 'Price cannot be negative'],
     },
     price: {
       type: Number,
@@ -35,12 +40,11 @@ const publicationSchema = new mongoose.Schema(
         },
       },
     ],
-    contributors: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
+    contributors: {
+      type: String,
+      trim: true,
+      required: [true, 'Contributors is required'],
+    },
     status: {
       type: String,
       enum: ['draft', 'published'], 
@@ -51,11 +55,11 @@ const publicationSchema = new mongoose.Schema(
       default: 0,
       min: [0, 'Stock cannot be negative'],
     },
-    // category: {
-    //   type: String,
-    //   enum: ['zine', 'sticker pack', 'volume', 'special edition'],
-    //   required: [true, 'Category is required'],
-    // },
+    category: {
+      type: String,
+      // enum: ['zine', 'sticker pack', 'volume', 'special edition'],
+      // required: [true, 'Category is required'],
+    },
     featured: {
       type: Boolean,
       default: false,

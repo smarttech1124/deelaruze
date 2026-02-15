@@ -2,13 +2,15 @@ const Order = require('../models/Order');
 const Publication = require('../models/Publication');
 const stripe = require('../config/stripe');
 const { sendEmail } = require('../utils/email');
+const { processOrderFromSession } = require('../services/orderProcessor');
+
 
 // @desc    Create Stripe checkout session
 // @route   POST /api/orders/create-checkout-session
 // @access  Public
 exports.createCheckoutSession = async (req, res) => {
   try {
-    const { items } = req.body;
+    const { items, total, shippingfee = 0 } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({
@@ -17,11 +19,10 @@ exports.createCheckoutSession = async (req, res) => {
       });
     }
 
-    // Create line items for Stripe
     const lineItems = await Promise.all(
       items.map(async (item) => {
         const publication = await Publication.findById(item._id);
-        
+
         if (!publication) {
           throw new Error(`Publication ${item._id} not found`);
         }
@@ -35,28 +36,33 @@ exports.createCheckoutSession = async (req, res) => {
             currency: 'usd',
             product_data: {
               name: publication.title,
-              description: publication.subtitle || publication.description,
+              description: publication.description.replace(/<[^>]*>?/gm, ''),
               images: [publication.images[0]?.url],
             },
-            unit_amount: Math.round(publication.price * 100),
+            unit_amount: Math.round(total * 100),
           },
           quantity: item.quantity,
         };
       })
     );
 
-    // Create Stripe session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: lineItems,
       mode: 'payment',
+      line_items: lineItems,
       success_url: `${process.env.CLIENT_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/cart`,
       shipping_address_collection: {
-        allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'NG'],
+        allowed_countries: ['US','CA','GB','AU','DE','FR','ES','IT','NL','NG'],
       },
       metadata: {
-        items: JSON.stringify(items.map(i => ({ id: i._id, quantity: i.quantity }))),
+        items: JSON.stringify(
+          items.map(i => ({
+            publicationId: i._id,
+            quantity: i.quantity,
+          }))
+        ),
+        shippingFee: shippingfee.toString(),
       },
     });
 
@@ -65,13 +71,55 @@ exports.createCheckoutSession = async (req, res) => {
       sessionId: session.id,
       url: session.url,
     });
+
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message || 'Error creating checkout session',
+      message: error.message,
     });
   }
 };
+
+
+// @desc    Verify Stripe checkout session
+// @route   GET /api/orders/verify-session
+// @access  Public
+exports.verifyCheckoutSession = async (req, res) => {
+  try {
+    const { session_id } = req.query;
+
+    if (!session_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Session ID required',
+      });
+    }
+
+    const order = await Order.findOne({
+      stripeSessionId: session_id,
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not ready yet. Please refresh.',
+      });
+    }
+
+    res.json({
+      success: true,
+      orderNumber: order.orderNumber,
+      email: order.email,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Verification failed',
+    });
+  }
+};
+;
 
 // @desc    Stripe webhook handler
 // @route   POST /api/orders/webhook
@@ -94,61 +142,28 @@ exports.handleWebhook = async (req, res) => {
     const session = event.data.object;
 
     try {
-      // Parse items from metadata
-      const items = JSON.parse(session.metadata.items);
+      const order = await processOrderFromSession(session);
 
-      // Get full item details
-      const orderItems = await Promise.all(
-        items.map(async (item) => {
-          const publication = await Publication.findById(item.id);
-          
-          // Update stock and sales
-          publication.stock -= item.quantity;
-          publication.sales += item.quantity;
-          await publication.save();
+      // await sendEmail({
+      //   to: order.email,
+      //   subject: `Order Confirmation #${order.orderNumber}`,
+      //   text: `Thank you for your purchase!
 
-          return {
-            publication: publication._id,
-            title: publication.title,
-            price: publication.price,
-            quantity: item.quantity,
-            image: publication.images[0]?.url,
-          };
-        })
-      );
+      //       Order: ${order.orderNumber}
+      //       Total: $${order.total.toFixed(2)}
 
-      // Calculate totals
-      const subtotal = orderItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
+      //       We'll notify you when it ships.`,
+      // });
+      console.log('sending email', order);
 
-      // Create order
-      const order = await Order.create({
-        email: session.customer_details.email,
-        items: orderItems,
-        shippingAddress: session.shipping_details?.address,
-        subtotal,
-        shippingCost: session.shipping_cost?.amount_total / 100 || 0,
-        total: session.amount_total / 100,
-        paymentStatus: 'completed',
-        stripeSessionId: session.id,
-        stripePaymentIntentId: session.payment_intent,
-      });
-
-      // Send confirmation email
-      await sendEmail({
-        to: order.email,
-        subject: `Order Confirmation #${order.orderNumber} - Deelaruze`,
-        text: `Thank you for your order!\n\nOrder Number: ${order.orderNumber}\nTotal: $${order.total.toFixed(2)}\n\nWe'll send you tracking information once your order ships.\n\nDeelaruze Team`,
-      });
     } catch (error) {
-      console.error('Error processing webhook:', error);
+      console.error('Webhook processing error:', error);
     }
   }
 
   res.json({ received: true });
 };
+
 
 // @desc    Get user's orders
 // @route   GET /api/orders/my-orders

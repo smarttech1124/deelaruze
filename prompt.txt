@@ -239,3 +239,20 @@ secret: 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
 catalogs API
 ID: b6f1aeaaddd7df94a963be17331ef12e
 secret: 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
+
+===========================================
+Postage to add to every product
+UK £ 
+Europe £8
+North America £11
+South America £11
+Rest of the world £13
+** it would be great if customer can pick the book and then choose the postage according to their country
+===========================================
+
+===========================================
+Stripe account
+Dana Carson
+deelaruze@hotmail.com
+GreatwaveUP13!!
+===========================================
