@@ -159,6 +159,9 @@ const NewPublication = () => {
         form.newImages.forEach(file => data.append('images', file));
       }
 
+      const d = Object.fromEntries(data.entries());
+      console.log(d);
+
       // ===============================
       // SEND REQUEST
       // ===============================
