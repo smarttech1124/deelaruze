@@ -8,10 +8,8 @@
       "config": { "distDir": "dist" }
     }
   ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "server/server.js" }
-  ],
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/server/server.js" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
