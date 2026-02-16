@@ -46,17 +46,31 @@ router.get('/slug/:slug', getPublicationBySlug);
 router.get('/:id', getPublication);
 
 // Protected routes (admin only)
-router.post('/', protect, authorize('admin'), upload.array('images', 10), validatePublication, createPublication);
+router.post(
+  '/', 
+  protect, 
+  authorize('admin'), 
+  // upload.array('images', 10), 
+  validatePublication, 
+  createPublication
+);
+
 router.put(
   '/:id',
   protect,
   authorize('admin'),
-  upload.array('images', 10),  
+  // upload.array('images', 10),  
   validatePublication, 
   updatePublication
 );
 
-router.delete('/:id', protect, authorize('admin'), deletePublication);
+router.delete(
+  '/:id', 
+  protect, 
+  authorize('admin'), 
+  deletePublication
+);
+
 // router.post('/:id/images', protect, authorize('admin'), upload.array('images', 10), uploadImages);
 
 module.exports = router;

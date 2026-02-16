@@ -11,7 +11,7 @@ require('dotenv').config();
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const { sanitizeInput } = require('./middleware/validate');
 
-const {createAdminIfNotExists} = require('./utils/createAdmin.js');
+// const {createAdminIfNotExists} = require('./utils/createAdmin.js');
 
 const app = express();
 
@@ -63,7 +63,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 })
   .then(async() => {
     console.log('✅ MongoDB connected successfully'); 
-    await createAdminIfNotExists();
+    // await createAdminIfNotExists();
   })
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err);
