@@ -56,8 +56,8 @@ exports.validatePublication = [
   
   body('stock')
     .notEmpty()
-    .isInt({ min: 0 })
-    .withMessage('Stock must be a non-negative integer'),
+    // .isInt({ min: 0 })
+    .withMessage('Stock must be a non-negative integer'), 
   
   body('status')
     .optional()
