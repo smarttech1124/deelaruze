@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const Publication = require('../models/Publication');
 const stripe = require('../config/stripe');
+const dbConnect = require('../config/database');
 const { sendEmail } = require('../utils/email');
 const { processOrderFromSession } = require('../services/orderProcessor');
 
@@ -153,6 +154,8 @@ exports.verifyCheckoutSession = async (req, res) => {
 // @route   POST /api/orders/webhook
 // @access  Public
 exports.handleWebhook = async (req, res) => {
+  await dbConnect();
+
   const sig = req.headers['stripe-signature'];
   let event;
 

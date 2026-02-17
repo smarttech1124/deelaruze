@@ -4,7 +4,7 @@ const Publication = require('../models/Publication');
 
 const processOrderFromSession = async (stripeSession) => {
   const dbSession = await mongoose.startSession();
-  dbSession.startTransaction();
+  dbSession.startTransaction(); 
 
   try {
     // Idempotency check
