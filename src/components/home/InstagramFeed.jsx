@@ -47,9 +47,9 @@ const InstagramFeed = () => {
             <div className="instagram-container relative z-10 max-w-7xl mx-auto">
                 {/* Section Header */}
                 <div className="mb-16">
-                    <div className="section-badge mb-6">
+                    {/* <div className="section-badge mb-6">
                         SECTION 03
-                    </div>
+                    </div> */}
 
                     <div className="flex flex-col md:flex-row md:items-end gap-6 mb-6">
                         <div className="flex items-center gap-6">

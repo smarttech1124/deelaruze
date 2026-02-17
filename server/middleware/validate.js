@@ -13,6 +13,18 @@ const validate = (req, res, next) => {
   next();
 };
 
+// About validation rules
+exports.validateAbout = [
+  body('about')
+    .trim()
+    .notEmpty()
+    .withMessage('About is required')
+    .isLength({ min: 10 })
+    .withMessage('About must be at least 10 characters'),
+  
+  validate,
+];
+
 // Publication validation rules
 exports.validatePublication = [
   body('title')

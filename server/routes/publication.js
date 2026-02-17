@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+
 const {
   getAllPublications,
   getPublication,
@@ -9,21 +10,13 @@ const {
   createPublication,
   updatePublication,
   deletePublication,
-  uploadImages,
 } = require('../controllers/publicationController');
+
 const { protect, authorize } = require('../middleware/auth');
 const { validatePublication } = require('../middleware/validate');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
-  },
-});
+// ✅ Configure multer to use memory storage (NO disk saving)
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -47,11 +40,11 @@ router.get('/:id', getPublication);
 
 // Protected routes (admin only)
 router.post(
-  '/', 
-  protect, 
-  authorize('admin'), 
-  // upload.array('images', 10), 
-  validatePublication, 
+  '/',
+  protect,
+  authorize('admin'),
+  upload.array('images', 10), // still required for multipart parsing
+  validatePublication,
   createPublication
 );
 
@@ -59,18 +52,16 @@ router.put(
   '/:id',
   protect,
   authorize('admin'),
-  // upload.array('images', 10),  
-  validatePublication, 
+  upload.array('images', 10),
+  validatePublication,
   updatePublication
 );
 
 router.delete(
-  '/:id', 
-  protect, 
-  authorize('admin'), 
+  '/:id',
+  protect,
+  authorize('admin'),
   deletePublication
 );
-
-// router.post('/:id/images', protect, authorize('admin'), upload.array('images', 10), uploadImages);
 
 module.exports = router;

@@ -6,7 +6,7 @@ const Editor = lazy(() =>
 );
 
 const AboutDeelaruze = () => {
-  const [description, setDescription] = useState('');
+  const [about, setAbout] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -16,9 +16,9 @@ const AboutDeelaruze = () => {
   useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const { data } = await api.get('/about'); // Adjust if needed
-        if (data?.data?.description) {
-          setDescription(data.data.description);
+        const { data } = await api.get('/about'); 
+        if (data?.data?.about) {
+          setAbout(data.data.about);
         }
       } catch (error) {
         console.error('Failed to load About content:', error);
@@ -40,12 +40,12 @@ const AboutDeelaruze = () => {
     try {
       setSaving(true);
 
-      await api.put('/about', { description });
+      await api.post('/about', { about });
 
       alert('About page updated successfully');
     } catch (error) {
       console.error(error);
-      alert('Failed to update About page');
+      alert('Failed to update About page'); 
     } finally {
       setSaving(false);
     }
@@ -73,13 +73,13 @@ const AboutDeelaruze = () => {
         <form onSubmit={handleSubmit} className="mt-10 space-y-6">
 
           <div>
-            <label className="admin-label">Page Description</label>
+            <label className="admin-label">About Deelaruze</label>
 
             <Suspense fallback={<div>Loading editor...</div>}>
               <Editor
                 apiKey={import.meta.env.VITE_TINYMCE_KEY}
-                value={description}
-                onEditorChange={(value) => setDescription(value)}
+                value={about}
+                onEditorChange={(value) => setAbout(value)}
                 init={{
                   height: 400,
                   menubar: false,

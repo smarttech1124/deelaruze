@@ -1,5 +1,7 @@
 const Publication = require('../models/Publication');
 const cloudinary = require('../config/cloudinary');
+const uploadToCloudinary = require('../utils/uploadToCloudinary');
+
 
 // @desc    Get all publications
 // @route   GET /api/publications
@@ -114,32 +116,29 @@ exports.getFeaturedPublications = async (req, res) => {
 // @access  Private/Admin
 exports.createPublication = async (req, res) => {
   try {
-    let publication = new Publication({
+
+    const publication = new Publication({
       ...req.body,
       images: [],
     });
 
-    // Upload images in parallel
-    const uploadPromises = req.files.map((file) =>
-      cloudinary.uploader.upload(file.path, {
-        folder: 'deelaruze/publications',
-        transformation: [
-          { width: 1200, height: 1500, crop: 'limit' },
-          { quality: 'auto' },
-          { fetch_format: 'auto' },
-        ],
-      })
-    );
+    // ===============================
+    // Upload Images to Cloudinary
+    // ===============================
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map((file) =>
+        uploadToCloudinary(file.buffer)
+      );
 
-    const results = await Promise.all(uploadPromises);
+      const results = await Promise.all(uploadPromises);
 
-    const uploadedImages = results.map((result) => ({
-      url: result.secure_url,
-      publicId: result.public_id,
-    }));
+      const uploadedImages = results.map((result) => ({
+        url: result.secure_url,
+        publicId: result.public_id,
+      }));
 
-    // Add images
-    publication.images.push(...uploadedImages);
+      publication.images.push(...uploadedImages);
+    }
 
     await publication.save();
 
@@ -148,13 +147,16 @@ exports.createPublication = async (req, res) => {
       data: publication,
     });
   } catch (error) {
+    console.error("CREATE PUBLICATION ERROR:", error);
+
     res.status(400).json({
       success: false,
-      message: 'Error creating publication',
+      message: "Error creating publication",
       error: error.message,
     });
   }
 };
+
 
 // @desc    Update publication
 // @route   PUT /api/publications/:id

@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Globe, Users, Heart, Zap } from 'lucide-react';
+import api from '../services/api';
 
 const About = () => {
+  const [about, setAbout] = useState('');
+
+  // ===============================
+  // Fetch existing About content
+  // ===============================
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const { data } = await api.get('/about'); 
+        if (data?.data?.about) {
+          setAbout(data.data.about);
+        }
+      } catch (error) {
+        console.error('Failed to load About content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAbout();
+  }, []);
+
   const stats = [
     { value: '200+', label: 'Artists', icon: Users },
     { value: '40+', label: 'Countries', icon: Globe },
@@ -110,22 +133,17 @@ const About = () => {
 
           {/* Main Content */}
           <div className="space-y-8 text-lg text-gray-300 leading-relaxed mb-20">
-            <p className="content-reveal" style={{ animationDelay: '0.8s' }}>
-              Deelaruze, Slovakian street artist living in London for last 21 years.
-              I grew up in communism, raised by old skool hip hop and always interested in the Culture.
-              I moved to London in 2004 and street art blowed my mind. First, I was doing my own pieces on
-              canvas, I had few exhibits, showcases with different artists, very much enjoyable live paintings, while
-              my homies, DJs and MCs were playing. Later I found magic in stickers, which gave me time to prepare
-              it with the detail, play with letters and metallic gold and silver markers, and then stick it in seconds in
-              the streets. To this day I am old skool, freestyle/freehand.
-            </p>
-
-            <p className="content-reveal" style={{ animationDelay: '0.9s' }}>
-              Street art is the way how you can reach the biggest audience of people, naturally and for free. Street art is for everyone. 
-              For me, it’s the most beautiful way of activism. It’s my message. It’s my freedom.
-              My stickers are now in many countries and streets, way before I am there or maybe never will be. My message, 
-              the impact it can have on someone, to think, to smile. My sticker is in that city. I was there.
-            </p>
+            <div
+              className="
+                prose prose-sm sm:prose lg:prose-lg
+                max-w-none
+                text-gray-300
+                break-words
+              "
+              dangerouslySetInnerHTML={{
+                __html: about ?? '',
+              }}
+            />
           </div>
 
           {/* Values Section */}

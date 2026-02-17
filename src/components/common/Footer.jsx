@@ -27,7 +27,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-12 gap-12 mb-16">
           {/* Brand Section - Spans 4 columns */}
           <div className="md:col-span-4 fade-in" style={{ animationDelay: '0s' }}>
-            <div className="accent-badge mb-4">EST. 2024</div>
+            {/* <div className="accent-badge mb-4">EST. 2024</div> */}
             <h3 
               className="glitch-text footer-brand text-4xl md:text-5xl mb-4 text-white"
               data-text="DEELARUZE"
@@ -87,35 +87,40 @@ const Footer = () => {
           </div>
 
           {/* Navigate Section */}
-          <div className="md:col-span-2 fade-in" style={{ animationDelay: '0.1s' }}>
+          <div
+            className="md:col-span-2 fade-in"
+            style={{ animationDelay: '0.1s' }}
+          >
             <h4 className="section-title font-bold text-sm tracking-widest text-white">
               NAVIGATE
             </h4>
-            <div className="space-y-3 text-sm text-gray-400">
-              <Link to="/about" className="footer-link block">
+
+            <div className="flex flex-col space-y-3 text-sm text-gray-400">
+              <Link to="/about" className="footer-link">
                 About
               </Link>
-              <Link to="/projects" className="footer-link block">
+              <Link to="/projects" className="footer-link">
                 Projects
               </Link>
-              <Link to="/shop" className="footer-link block">
+              <Link to="/shop" className="footer-link">
                 Shop
               </Link>
-              <Link to="/submit" className="footer-link block">
+              <Link to="/submit" className="footer-link">
                 Submit
               </Link>
-              <Link to="/contact" className="footer-link block">
+              <Link to="/contact" className="footer-link">
                 Contact
               </Link>
             </div>
           </div>
+
 
           {/* Connect Section */}
           <div className="md:col-span-3 fade-in" style={{ animationDelay: '0.2s' }}>
             <h4 className="section-title font-bold text-sm tracking-widest text-white">
               CONNECT
             </h4>
-            <div className="space-y-3 text-sm text-gray-400">
+            <div className="flex flex-col space-y-3 text-sm text-gray-400">
               <a
                 href="https://instagram.com/deelaruze"
                 target="_blank"
@@ -147,7 +152,7 @@ const Footer = () => {
             <h4 className="section-title font-bold text-sm tracking-widest text-white">
               LEGAL
             </h4>
-            <div className="space-y-3 text-sm text-gray-400">
+            <div className="flex flex-col space-y-3 text-sm text-gray-400">
               <Link to="/privacy" className="footer-link block">
                 Privacy Policy
               </Link>
