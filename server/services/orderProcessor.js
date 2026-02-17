@@ -60,7 +60,7 @@ const processOrderFromSession = async (stripeSession) => {
       email: stripeSession.customer_details.email,
       items: orderItems,
       subtotal,
-      shippingCost: shippingFee / 100,
+      shippingCost: shippingFee,
       shippingLocation: shippingLocation,
       tax: 0,
       total,

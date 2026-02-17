@@ -51,6 +51,10 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    shippingLocation: {
+      type: String,
+      required: true
+    },
     tax: {
       type: Number,
       default: 0,
