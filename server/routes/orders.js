@@ -17,6 +17,6 @@ router.get('/verify-session', verifyCheckoutSession);
 router.get('/my-orders', getMyOrders);
 router.get('/', getAllOrders);
 router.get('/:id', getOrder);
-router.put('/:id/status', updateOrderStatus); 
+router.put('/:id/status', updateOrderStatus);  
 
 module.exports = router;

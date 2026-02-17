@@ -53,7 +53,6 @@ const orderSchema = new mongoose.Schema(
     },
     shippingLocation: {
       type: String,
-      required: true
     },
     tax: {
       type: Number,

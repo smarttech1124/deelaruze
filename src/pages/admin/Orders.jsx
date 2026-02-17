@@ -28,7 +28,8 @@ const Orders = () => {
     }
   };
 
-  const handleUpdateStatus = async (id, status, trackingNumber = '') => {
+  const handleUpdateStatus = async (id, status, trackingNumber) => {
+    console.log(trackingNumber)
     try {
       await orderService.updateStatus(id, { status, trackingNumber });
       await loadOrders();

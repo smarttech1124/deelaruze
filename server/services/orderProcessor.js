@@ -22,6 +22,7 @@ const processOrderFromSession = async (stripeSession) => {
     // const shippingFee = Number(stripeSession.metadata.shippingFee || 0);
     const shippingFee = stripeSession.metadata?.shippingFee;
     const shippingLocation = stripeSession.metadata?.shippingLocation;
+    console.log(stripeSession.metadata)
 
     let subtotal = 0;
     const orderItems = [];
@@ -60,7 +61,7 @@ const processOrderFromSession = async (stripeSession) => {
       email: stripeSession.customer_details.email,
       items: orderItems,
       subtotal,
-      shippingCost: shippingFee,
+      shippingCost: shippingFee * 100,
       shippingLocation: shippingLocation,
       tax: 0,
       total,
