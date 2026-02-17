@@ -4,13 +4,27 @@ const stripe = require('../config/stripe');
 const { sendEmail } = require('../utils/email');
 const { processOrderFromSession } = require('../services/orderProcessor');
 
+const shippingOptions = [
+  { label: 'UK', value: 8 },
+  { label: 'Europe', value: 8 },
+  { label: 'North America', value: 11 },
+  { label: 'South America', value: 11 },
+  { label: 'Rest of the World', value: 13 },
+];
+
 
 // @desc    Create Stripe checkout session
 // @route   POST /api/orders/create-checkout-session
 // @access  Public
 exports.createCheckoutSession = async (req, res) => {
   try {
-    const { items, total, shippingfee = 0 } = req.body;
+    const { items, shippinglocation = 'UK' } = req.body;
+
+    const shippingOption = shippingOptions.find(
+      (option) => option.label.toLowerCase() === shippinglocation.toLowerCase()
+    );
+
+    const shippingfee = shippingOption ? shippingOption.value : 0; 
 
     if (!items || items.length === 0) {
       return res.status(400).json({
@@ -33,18 +47,32 @@ exports.createCheckoutSession = async (req, res) => {
 
         return {
           price_data: {
-            currency: 'usd',
+            currency: 'gbp',
             product_data: {
               name: publication.title,
               description: publication.description.replace(/<[^>]*>?/gm, ''),
               images: [publication.images[0]?.url],
             },
-            unit_amount: Math.round(total * 100),
+            unit_amount: Math.round(publication.price * 100),
           },
           quantity: item.quantity,
         };
       })
     );
+
+    // shipping fee
+    if (shippingfee > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: `Shipping Fee (${shippinglocation})`,
+          },
+          unit_amount: Math.round(shippingfee * 100),
+        },
+        quantity: 1,
+      });
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

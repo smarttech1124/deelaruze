@@ -18,6 +18,7 @@ import Submit from './pages/Submit';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import Order from './pages/Order';
+import OrderView from './pages/OrderView';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 
@@ -55,6 +56,7 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="cart" element={<Cart />} />
             <Route path="order-success" element={<Order />} />
+            <Route path="order-view/:orderId" element={<OrderView />} />
           </Route>
 
           {/* ===== Login ===== */}

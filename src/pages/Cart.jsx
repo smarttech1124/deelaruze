@@ -26,18 +26,25 @@ const Cart = () => {
   const { cart, cartTotal, clearCart } = useCart();
 
   const [loading, setLoading] = useState(false);
-  const [shippingfee, setShippingFee] = useState(8);
+  const [shippinglocation, setShippingLocation] = useState('UK');
 
   const grandTotal = useMemo(() => {
-    return cartTotal + shippingfee;
-  }, [cartTotal, shippingfee]);
+    const selectedShipping = shippingOptions.find(
+      option => option.label === shippinglocation
+    );
+
+    const shippingFee = selectedShipping ? selectedShipping.value : 0;
+
+    return cartTotal + shippingFee;
+  }, [cartTotal, shippinglocation]);
+
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
       const response = await orderService.createCheckoutSession({
         items: cart,
-        shippingfee,
+        shippinglocation,
         total: grandTotal,
       });
 
@@ -148,20 +155,20 @@ const Cart = () => {
                   {/* Subtotal */}
                   <div className="summary-row flex justify-between text-gray-400">
                     <span>Subtotal ({cart.length} items)</span>
-                    <span className="font-bold">${cartTotal.toFixed(2)}</span>
+                    <span className="font-bold">£{cartTotal.toFixed(2)}</span>
                   </div>
 
                   {/* Shipping Selector (UI preserved style) */}
                   <div className="summary-row flex justify-between items-center text-gray-400">
-                    <span>Shipping</span>
+                    <span>Shipping Location</span>
                     <select
-                      value={shippingfee}
-                      onChange={(e) => setShippingFee(Number(e.target.value))}
+                      value={shippinglocation}
+                      onChange={(e) => setShippingLocation(e.target.value)}
                       className="bg-black border border-white/20 text-white px-3 py-1 text-sm"
                     >
                       {shippingOptions.map(option => (
-                        <option key={option.label} value={option.value}>
-                          {option.label} (${option.value})
+                        <option key={option.label} value={option.label}>
+                          {option.label} (£{option.value})
                         </option>
                       ))}
                     </select>
@@ -173,7 +180,7 @@ const Cart = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-white text-lg font-bold">Total</span>
                     <span className="total-amount text-3xl">
-                      ${grandTotal.toFixed(2)}
+                      £{grandTotal.toFixed(2)}
                     </span>
                   </div>
                 </div>

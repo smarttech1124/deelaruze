@@ -105,7 +105,7 @@ const Order = () => {
                 </button>
               </Link>
 
-              <Link to="/orders">
+             <Link to={`/order-view/${order.orderNumber}`}>
                 <button className="px-8 py-4 border border-white text-white font-bold">
                   VIEW ORDERS
                 </button>

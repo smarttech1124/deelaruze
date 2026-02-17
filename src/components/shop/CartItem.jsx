@@ -38,7 +38,7 @@ const CartItem = ({ item }) => {
               <X size={20} />
             </button>
           </div>
-          <p className="text-lg font-bold">${item.price}</p>
+          <p className="text-lg font-bold">£{item.price}</p>
         </div>
 
         <div className="flex items-center justify-between">
@@ -60,7 +60,7 @@ const CartItem = ({ item }) => {
             </button>
           </div>
           <p className="text-xl font-black">
-            ${(item.price * item.quantity).toFixed(2)}
+            £{(item.price * item.quantity).toFixed(2)}
           </p>
         </div>
       </div>

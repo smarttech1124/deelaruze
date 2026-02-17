@@ -19,7 +19,9 @@ const processOrderFromSession = async (stripeSession) => {
     }
 
     const metadataItems = JSON.parse(stripeSession.metadata.items || '[]');
-    const shippingFee = Number(stripeSession.metadata.shippingFee || 0);
+    // const shippingFee = Number(stripeSession.metadata.shippingFee || 0);
+    const shippingFee = session.metadata?.shippingFee;
+    const shippingLocation = session.metadata?.shippingLocation;
 
     let subtotal = 0;
     const orderItems = [];
@@ -58,7 +60,8 @@ const processOrderFromSession = async (stripeSession) => {
       email: stripeSession.customer_details.email,
       items: orderItems,
       subtotal,
-      shippingCost: shippingFee,
+      shippingCost: shippingFee / 100,
+      shippingLocation: shippingLocation,
       tax: 0,
       total,
       paymentStatus: 'completed',

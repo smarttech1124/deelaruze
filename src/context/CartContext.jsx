@@ -13,10 +13,7 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('deelaruze_cart', JSON.stringify(cart));
   }, [cart]);
 
-  const cartCount = useMemo(
-    () => cart.reduce((sum, item) => sum + item.quantity, 0),
-    [cart]
-  );
+  const cartCount = useMemo(() => cart.length, [cart]);
 
   const cartTotal = useMemo(
     () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
