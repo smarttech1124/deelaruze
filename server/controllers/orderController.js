@@ -137,6 +137,7 @@ exports.verifyCheckoutSession = async (req, res) => {
 
     res.json({
       success: true,
+      orderId: order._id,
       orderNumber: order.orderNumber,
       email: order.email,
     });
