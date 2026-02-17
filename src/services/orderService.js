@@ -65,8 +65,8 @@ export const orderService = {
 
   // Update order status (admin only)
   updateStatus: async (id, status) => {
-    try {
-      const response = await api.put(`/orders/${id}/status`, { status });
+    try {      
+      const response = await api.put(`/orders/${id}/status`, status);
       return response.data;
     } catch (error) {
       console.error(`Error updating order ${id}:`, error);

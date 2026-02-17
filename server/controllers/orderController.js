@@ -3,6 +3,7 @@ const Publication = require('../models/Publication');
 const stripe = require('../config/stripe');
 const dbConnect = require('../config/database');
 const { sendEmail } = require('../utils/email');
+const generateTrackingNumber = require('../utils/trackingNumber');
 const { processOrderFromSession } = require('../services/orderProcessor');
 
 const shippingOptions = [
@@ -282,9 +283,10 @@ exports.getOrder = async (req, res) => {
 // @access  Private/Admin
 exports.updateOrderStatus = async (req, res) => {
   try {
-    const { status, trackingNumber } = req.body;
+    const { status } = req.body;
+    console.log(req.body)
 
-    const order = await Order.findById(req.params.id); 
+    const order = await Order.findById(req.params.id);  
 
     if (!order) {
       return res.status(404).json({
@@ -294,10 +296,10 @@ exports.updateOrderStatus = async (req, res) => {
     }
 
     order.status = status;
-    
-    if (trackingNumber) {
-      order.trackingNumber = trackingNumber;
-    }
+
+    if (status === 'processing') {      
+      order.trackingNumber = generateTrackingNumber();
+    }    
 
     if (status === 'shipped') {
       order.shippedAt = Date.now();
@@ -306,7 +308,7 @@ exports.updateOrderStatus = async (req, res) => {
       await sendEmail({
         to: order.email,
         subject: `Your Order Has Shipped #${order.orderNumber} - Deelaruze`,
-        text: `Your order has been shipped!\n\nOrder Number: ${order.orderNumber}\nTracking Number: ${trackingNumber || 'N/A'}\n\nDeelaruze Team`,
+        text: `Your order has been shipped!\n\nOrder Number: ${order.orderNumber}\nTracking Number: ${order.trackingNumber || 'N/A'}\n\nDeelaruze Team`,
       });
     } else if (status === 'delivered') {
       order.deliveredAt = Date.now();
@@ -319,6 +321,7 @@ exports.updateOrderStatus = async (req, res) => {
       data: order,
     });
   } catch (error) {
+    console.log(error)
     res.status(400).json({
       success: false,
       message: 'Error updating order',

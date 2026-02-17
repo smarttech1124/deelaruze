@@ -28,10 +28,9 @@ const Orders = () => {
     }
   };
 
-  const handleUpdateStatus = async (id, status, trackingNumber) => {
-    console.log(trackingNumber)
-    try {
-      await orderService.updateStatus(id, { status, trackingNumber });
+  const handleUpdateStatus = async (id, status,) => {
+    try {      
+      await orderService.updateStatus(id, { status });
       await loadOrders();
       setSelectedOrder(null);
       alert('Order status updated!');
@@ -151,7 +150,8 @@ const Orders = () => {
                   label="Tracking Number"
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
-                  placeholder="Enter tracking number..."
+                  // placeholder="Enter tracking number..."
+                  disabled={true}
                 />
               </div>
             )}

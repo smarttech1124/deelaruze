@@ -9,11 +9,10 @@ const Navigation = () => {
   const location = useLocation();
   const { cartCount } = useCart();
 
+  /* ----------------------------- Effects ----------------------------- */
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -22,15 +21,32 @@ const Navigation = () => {
     setMobileMenuOpen(false);
   }, [location]);
 
+  /* ----------------------------- Helpers ----------------------------- */
+
   const navLinks = [
     { path: '/about', label: 'ABOUT' },
-    // { path: '/projects', label: 'PROJECTS' },
     { path: '/shop', label: 'SHOP' },
     { path: '/submit', label: 'SUBMIT' },
     { path: '/contact', label: 'CONTACT' },
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  const CartIcon = ({ size = 20 }) => (
+    <Link
+      to="/cart"
+      className="relative hover:opacity-70 transition-opacity"
+    >
+      <ShoppingCart size={size} />
+      {cartCount > 0 && (
+        <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+          {cartCount}
+        </span>
+      )}
+    </Link>
+  );
+
+  /* ----------------------------- Render ----------------------------- */
 
   return (
     <nav
@@ -40,6 +56,7 @@ const Navigation = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
+          
           {/* Logo */}
           <Link
             to="/"
@@ -63,27 +80,21 @@ const Navigation = () => {
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/cart"
-              className="relative hover:opacity-70 transition-opacity"
-            >
-              <ShoppingCart size={20} />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            <CartIcon size={20} />
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden hover:opacity-70 transition-opacity"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Right Controls */}
+          <div className="md:hidden flex items-center space-x-4">
+            <CartIcon size={22} />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+              className="hover:opacity-70 transition-opacity"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+
         </div>
       </div>
 
@@ -95,20 +106,13 @@ const Navigation = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`block w-full text-left text-lg font-bold tracking-wide hover:text-gray-400 transition-colors ${
+                className={`block text-lg font-bold tracking-wide hover:text-gray-400 transition-colors ${
                   isActive(link.path) ? 'text-white' : 'text-gray-400'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/cart"
-              className="flex items-center gap-2 text-lg font-bold text-gray-400 hover:text-white transition-colors"
-            >
-              <ShoppingCart size={20} />
-              CART {cartCount > 0 && `(${cartCount})`}
-            </Link>
           </div>
         </div>
       )}

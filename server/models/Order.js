@@ -72,11 +72,11 @@ const orderSchema = new mongoose.Schema(
       enum: ['pending', 'completed', 'failed', 'refunded'],
       default: 'pending',
     },
-    stripeSessionId: {
+    stripeSessionId: { 
       type: String,
     },
     stripePaymentIntentId: {
-      type: String,
+      type: String, 
     },
     trackingNumber: {
       type: String,

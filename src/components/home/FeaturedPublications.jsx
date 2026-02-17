@@ -13,7 +13,6 @@ const FeaturedPublication = () => {
         const fetchFeatured = async () => {
           try {
             const data = await publicationService.getAll();
-            console.log(data)
             setFeaturedPublications(data.data);
           } catch (error) {
             console.error('Error loading featured publications:', error);

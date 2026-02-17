@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Publication = require('../models/Publication');
+const generateTrackingNumber = require('../utils/trackingNumber');
 
 const processOrderFromSession = async (stripeSession) => {
   const dbSession = await mongoose.startSession();
@@ -20,9 +21,8 @@ const processOrderFromSession = async (stripeSession) => {
 
     const metadataItems = JSON.parse(stripeSession.metadata.items || '[]');
     // const shippingFee = Number(stripeSession.metadata.shippingFee || 0);
-    const shippingFee = stripeSession.metadata?.shippingFee;
-    const shippingLocation = stripeSession.metadata?.shippingLocation;
-    console.log(stripeSession.metadata)
+    const shippingFee = Number(stripeSession.metadata?.shippingFee || 0);
+    const shippingLocation = stripeSession.metadata?.shippingLocation || stripeSession.customer_details.address?.country || '';
 
     let subtotal = 0;
     const orderItems = [];
@@ -61,7 +61,7 @@ const processOrderFromSession = async (stripeSession) => {
       email: stripeSession.customer_details.email,
       items: orderItems,
       subtotal,
-      shippingCost: shippingFee * 100,
+      shippingCost: shippingFee,
       shippingLocation: shippingLocation,
       tax: 0,
       total,
@@ -75,8 +75,9 @@ const processOrderFromSession = async (stripeSession) => {
         city: stripeSession.customer_details.address?.city,
         state: stripeSession.customer_details.address?.state,
         postalCode: stripeSession.customer_details.address?.postal_code,
-        country: stripeSession.customer_details.address?.country,
+        country: stripeSession.customer_details.address?.country, 
       },
+      
     }], { session: dbSession });
 
     await dbSession.commitTransaction();

@@ -96,3 +96,5 @@ export const truncate = (text, maxLength) => {
     ? text.slice(0, maxLength) + "..."
     : text;
 } 
+
+
