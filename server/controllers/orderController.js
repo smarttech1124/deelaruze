@@ -144,17 +144,16 @@ exports.handleWebhook = async (req, res) => {
     try {
       const order = await processOrderFromSession(session);
 
-      // await sendEmail({
-      //   to: order.email,
-      //   subject: `Order Confirmation #${order.orderNumber}`,
-      //   text: `Thank you for your purchase!
+      await sendEmail({
+        to: order.email,
+        subject: `Order Confirmation #${order.orderNumber}`,
+        text: `Thank you for your purchase!
 
-      //       Order: ${order.orderNumber}
-      //       Total: $${order.total.toFixed(2)}
+            Order: ${order.orderNumber}
+            Total: $${order.total.toFixed(2)}
 
-      //       We'll notify you when it ships.`,
-      // });
-      console.log('sending email', order);
+            We'll notify you when it ships.`,
+      });
 
     } catch (error) {
       console.error('Webhook processing error:', error);
