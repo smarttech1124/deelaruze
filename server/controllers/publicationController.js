@@ -162,7 +162,7 @@ exports.createPublication = async (req, res) => {
 // @route   PUT /api/publications/:id
 // @access  Private/Admin
 
-exports.updatePublication = async (req, res) => {
+exports.updatePublication = async (req, res) => { 
   try {
     const { id } = req.params;
 
@@ -199,14 +199,7 @@ exports.updatePublication = async (req, res) => {
     // =========================
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map((file) =>
-        cloudinary.uploader.upload(file.path, {
-          folder: 'deelaruze/publications',
-          transformation: [
-            { width: 1200, height: 1500, crop: 'limit' },
-            { quality: 'auto' },
-            { fetch_format: 'auto' },
-          ],
-        })
+        uploadToCloudinary(file.buffer)
       );
 
       const results = await Promise.all(uploadPromises);

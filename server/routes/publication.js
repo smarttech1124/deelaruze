@@ -43,7 +43,7 @@ router.post(
   '/',
   protect,
   authorize('admin'),
-  upload.array('images', 10), // still required for multipart parsing
+  upload.array('images', 10),
   validatePublication,
   createPublication
 );
