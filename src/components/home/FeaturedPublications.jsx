@@ -160,10 +160,10 @@ const FeaturedPublication = () => {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-xs text-gray-500 mb-1 tracking-wider">STOCK</div>
+                                            {/* <div className="text-xs text-gray-500 mb-1 tracking-wider">STOCK</div>
                                             <div className={`text-sm font-bold ${pub.stock > 0 ? 'text-green-500' : 'text-red-500'}`}>
                                                 {pub.stock > 0 ? `${pub.stock} LEFT` : 'SOLD OUT'}
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
 
