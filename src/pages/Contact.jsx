@@ -30,15 +30,15 @@ const Contact = () => {
       description: 'For general questions, collaborations, or press inquiries, reach out via email or the contact form.',
       color: '#FF3366'
     },
-    {
-      title: 'ARTIST SUBMISSIONS',
-      description: 'Want to submit your work? Use our dedicated submission page for faster review.',
-      color: '#00FF94',
-      cta: {
-        text: 'SUBMIT YOUR ART',
-        link: '/submit'
-      }
-    },
+    // {
+    //   title: 'ARTIST SUBMISSIONS',
+    //   description: 'Want to submit your work? Use our dedicated submission page for faster review.',
+    //   color: '#00FF94',
+    //   cta: {
+    //     text: 'SUBMIT YOUR ART',
+    //     link: '/submit'
+    //   }
+    // },
     {
       title: 'WHOLESALE INQUIRIES',
       description: 'Interested in stocking our publications? We offer wholesale pricing for retailers and galleries.',
@@ -103,7 +103,7 @@ const Contact = () => {
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
                 <MessageCircle className="icon-float w-12 h-12 md:w-16 md:h-16 text-red-500" />
-                <h1 className="contact-title text-6xl md:text-8xl text-white tracking-tight leading-none">
+                <h1 className="contact-title text-4xl md:text-6xl lg:text-7xl mb-8 text-white tracking-tight leading-none">
                   GET IN
                   <br />
                   <span 
@@ -161,7 +161,7 @@ const Contact = () => {
           </div>
 
           {/* Info Boxes */}
-          <div className="grid md:grid-cols-3 gap-6 mb-20">
+          <div className="grid md:grid-cols-2 gap-6 mb-20">
             {infoBoxes.map((box, index) => (
               <div
                 key={index}
@@ -190,8 +190,8 @@ const Contact = () => {
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid lg:grid-cols-2 gap-12 mb-20">
-            {/* Newsletter */}
+          {/* <div className="grid lg:grid-cols-2 gap-12 mb-20">
+            
             <div 
               className="content-reveal"
               style={{ animationDelay: '0.8s' }}
@@ -205,7 +205,6 @@ const Contact = () => {
               <NewsletterForm />
             </div>
 
-            {/* Quick Stats or Additional Info */}
             <div 
               className="content-reveal"
               style={{ animationDelay: '0.9s' }}
@@ -231,10 +230,10 @@ const Contact = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Contact Form */}
-          <div 
+          {/* <div 
             className="content-reveal mb-20"
             style={{ animationDelay: '1.0s' }}
           >
@@ -245,10 +244,10 @@ const Contact = () => {
               </h2>
             </div>
             <ContactForm />
-          </div>
+          </div> */}
 
           {/* FAQ Section */}
-          <div 
+          {/* <div 
             className="content-reveal"
             style={{ animationDelay: '1.1s' }}
           >
@@ -284,7 +283,7 @@ const Contact = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

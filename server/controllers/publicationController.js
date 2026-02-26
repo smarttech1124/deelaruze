@@ -132,9 +132,10 @@ exports.createPublication = async (req, res) => {
 
       const results = await Promise.all(uploadPromises);
 
-      const uploadedImages = results.map((result) => ({
+      const uploadedImages = results.map((result, index) => ({
         url: result.secure_url,
         publicId: result.public_id,
+        order: index, // Set initial order based on upload sequence
       }));
 
       publication.images.push(...uploadedImages);
@@ -195,7 +196,92 @@ exports.updatePublication = async (req, res) => {
     }
 
     // =========================
-    // Handle uploaded images
+    // Handle image deletion
+    // =========================
+    let existingImages = [...publication.images];
+
+    if (updateData.deleteImages) {
+      try {
+        const imagesToDelete = JSON.parse(updateData.deleteImages);
+        
+        console.log('Images to delete:', imagesToDelete);
+        console.log('Existing images before deletion:', existingImages.map(img => img._id.toString()));
+        
+        if (Array.isArray(imagesToDelete) && imagesToDelete.length > 0) {
+          // Delete from Cloudinary
+          const deletePromises = imagesToDelete.map(imageId => {
+            const imageToDelete = existingImages.find(img => img._id.toString() === imageId);
+            console.log(`Looking for image ${imageId}:`, imageToDelete);
+            
+            if (imageToDelete && imageToDelete.publicId) {
+              console.log(`Deleting from Cloudinary: ${imageToDelete.publicId}`);
+              // return deleteFromCloudinary(imageToDelete.publicId);
+              cloudinary.uploader.destroy(imageToDelete.publicId);
+            }
+            return Promise.resolve();
+          });
+
+          await Promise.all(deletePromises);
+
+          // Remove from images array
+          const beforeLength = existingImages.length;
+          existingImages = existingImages.filter(
+            img => !imagesToDelete.includes(img._id.toString())
+          );
+          
+          console.log(`Filtered images: ${beforeLength} -> ${existingImages.length}`);
+          console.log('Remaining images:', existingImages.map(img => img._id.toString()));
+        }
+      } catch (error) {
+        console.error('Error deleting images:', error);
+      }
+
+      delete updateData.deleteImages;
+    }
+
+    // =========================
+    // Handle image reordering
+    // =========================
+    if (updateData.imageOrder) {
+      try {
+        const imageOrder = JSON.parse(updateData.imageOrder);
+        
+        if (Array.isArray(imageOrder) && imageOrder.length > 0) {
+          // Update order field for each existing image
+          existingImages = existingImages.map(img => {
+            // Convert to plain object if it's a Mongoose document
+            const imgObj = img.toObject ? img.toObject() : { ...img };
+            
+            const orderInfo = imageOrder.find(
+              item => item.id === imgObj._id.toString()
+            );
+            
+            if (orderInfo !== undefined) {
+              return {
+                ...imgObj,
+                order: orderInfo.order
+              };
+            }
+            
+            return imgObj;
+          });
+
+          // Sort images by their new order
+          existingImages.sort((a, b) => {
+            const orderA = a.order !== undefined ? a.order : 999;
+            const orderB = b.order !== undefined ? b.order : 999;
+            return orderA - orderB;
+          });
+        }
+      } catch (error) {
+        console.error('Error reordering images:', error);
+      }
+
+      delete updateData.imageOrder;
+    }
+
+    // =========================
+    // Handle new uploaded images
     // =========================
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map((file) =>
@@ -204,17 +290,22 @@ exports.updatePublication = async (req, res) => {
 
       const results = await Promise.all(uploadPromises);
 
-      const uploadedImages = results.map((result) => ({
+      // Get the highest existing order value
+      const maxOrder = existingImages.length > 0
+        ? Math.max(...existingImages.map(img => img.order !== undefined ? img.order : 0))
+        : -1;
+
+      const uploadedImages = results.map((result, index) => ({
         url: result.secure_url,
         publicId: result.public_id,
+        order: maxOrder + 1 + index, // Add new images after existing ones
       }));
 
-      // Merge with existing images
-      updateData.images = [
-        ...publication.images,
-        ...uploadedImages,
-      ];
+      existingImages.push(...uploadedImages);
     }
+
+    // Set the final images array
+    updateData.images = existingImages;
 
     // =========================
     // Perform single update
@@ -245,6 +336,7 @@ exports.updatePublication = async (req, res) => {
     });
   }
 };
+
 
 
 

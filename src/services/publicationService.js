@@ -12,6 +12,17 @@ export const publicationService = {
     }
   }, 
 
+  // Get featured publication for homepage
+  getFeatured: async () => {
+    try {
+      const response = await api.get('/publications/featured');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching featured publication:', error);
+      throw error;
+    }
+  },
+
   // Get single publication by ID
   getById: async (id) => {
     try {

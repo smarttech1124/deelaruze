@@ -5,10 +5,10 @@ const HeroSlider = () => {
   const slides = [
     {
       id: 1,
-      image: 'https://images.unsplash.com/photo-1473225071450-1f1462d5aa92?w=1600&h=1200&fit=crop',
+      image: '/images/main.jpeg',
       title: 'DEELARUZE',
       subtitle: '',
-      description: 'THEEZ ARE OUR STREETZ',
+      description: '',
       accent: '#FF3366'
     },
     {
@@ -16,7 +16,7 @@ const HeroSlider = () => {
       image: 'https://images.unsplash.com/photo-1594523960192-62b92c04089d?w=1600&h=1200&fit=crop',
       title: 'RAW CULTURE',
       subtitle: '',
-      description: 'Where authenticity meets artistic rebellion',
+      description: '',
       accent: '#00FF94'
     },
     {
@@ -24,7 +24,7 @@ const HeroSlider = () => {
       image: 'https://images.unsplash.com/photo-1551225183-94acb7d595b6?w=1600&h=1200&fit=crop',
       title: 'UNDERGROUND',
       subtitle: '',
-      description: 'Amplifying stories from the margins',
+      description: '',
       accent: '#FFB800'
     }
   ];

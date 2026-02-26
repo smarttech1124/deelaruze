@@ -12,7 +12,7 @@ const FeaturedPublication = () => {
     useEffect(() => {
         const fetchFeatured = async () => {
           try {
-            const data = await publicationService.getAll();
+            const data = await publicationService.getFeatured();
             setFeaturedPublications(data.data);
           } catch (error) {
             console.error('Error loading featured publications:', error);
@@ -60,9 +60,9 @@ const FeaturedPublication = () => {
                     <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-4">
                         <div>
                             <div className="flex items-center gap-4 mb-4">
-                                <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" />
+                                {/* <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" /> */}
                                 <h2 className="featured-title text-5xl md:text-7xl text-white tracking-tight">
-                                    LATEST <span className="text-green-500">DROPS</span>
+                                    LATEST <span className="text-green-500">RELEASE</span>
                                 </h2>
                             </div>
                             <p className="text-gray-400 text-sm md:text-base tracking-wide">
@@ -83,18 +83,18 @@ const FeaturedPublication = () => {
                     </div>
                     <div className="content-reveal mb-20" style={{ animationDelay: '1.4s' }}>
                         <p className="text-lg text-gray-300 leading-relaxed">
-                        Every publication we create is a collaboration with the artists who make
-                        the streets come alive. We document the ephemeral, celebrate the
+                        Every publication I create is a collaboration with the artists who make
+                        the streets come alive. I document the ephemeral, celebrate the
                         underground, and give voice to those who refuse to be silenced.
                         </p>
                         <p className="text-lg text-gray-300 leading-relaxed">
-                            We've published work from over 200 artists across 40 countries. From
-                            Tokyo to São Paulo, from Lagos to Berlin, from Lagos to New York—the
-                            streets speak a universal language, and we're here to translate it.
+                            I've published work from 190 artists across 31 countries so far. From New York to Tokyo, 
+                            from Lagos to Sao Paulo, from Zagreb to Bangkok streets speak universal language.
+
                         </p>
                     </div>
 
-                    <div className="h-px w-full bg-gradient-to-r from-green-500/50 via-transparent to-transparent" />
+                    {/* <div className="h-px w-full bg-gradient-to-r from-green-500/50 via-transparent to-transparent" /> */}
                 </div>
 
                 {/* Content */}

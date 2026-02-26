@@ -9,7 +9,7 @@ const SubmissionForm = () => {
     artistName: '',
     email: '',
     instagram: '',
-    description: '',
+    // description: '',
   });
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -36,13 +36,12 @@ const SubmissionForm = () => {
     try {
       const data = new FormData();
       data.append('artistName', formData.artistName);
-      data.append('email', formData.email);
       data.append('instagram', formData.instagram);
-      data.append('description', formData.description);
+      data.append('email', formData.email);
 
-      files.forEach((file) => {
-        data.append('images', file);
-      });
+      // files.forEach((file) => {
+      //   data.append('images', file);
+      // });
 
       await submissionService.create(data);
       
@@ -51,7 +50,7 @@ const SubmissionForm = () => {
         artistName: '',
         email: '',
         instagram: '',
-        description: '',
+        // description: '',
       });
       setFiles([]);
     } catch (err) {
@@ -84,7 +83,7 @@ const SubmissionForm = () => {
       )}
 
       <Input
-        label="YOUR NAME / ARTIST NAME"
+        label="YOUR NAME / TAGNAME"
         name="artistName"
         value={formData.artistName}
         onChange={handleChange}
@@ -105,15 +104,16 @@ const SubmissionForm = () => {
       />
 
       <Input
-        label="INSTAGRAM (OPTIONAL)"
+        label="INSTAGRAM"
         name="instagram"
         value={formData.instagram}
         onChange={handleChange}
         placeholder="@yourhandle"
+        required
         disabled
       />
 
-      <Input
+      {/* <Input
         label="TELL US ABOUT YOUR WORK"
         name="description"
         type="textarea"
@@ -123,9 +123,9 @@ const SubmissionForm = () => {
         rows={6}
         required
         disabled
-      />
+      /> */}
 
-      <div>
+      {/* <div>
         <label className="block text-sm font-bold mb-2">
           PORTFOLIO / WORK SAMPLES
         </label>
@@ -146,7 +146,7 @@ const SubmissionForm = () => {
           </p>
           <p className="text-sm text-gray-600 mt-2">PNG, JPG up to 10MB each</p>
         </label>
-      </div>
+      </div> */}
 
       <Button
         onClick={handleSubmit}
@@ -158,9 +158,9 @@ const SubmissionForm = () => {
         SUBMIT YOUR WORK
       </Button>
 
-      <p className="text-sm text-gray-500 text-center">
+      {/* <p className="text-sm text-gray-500 text-center">
         We review every submission. If your work fits our vision, we'll be in touch.
-      </p>
+      </p> */}
     </div>
   );
 };

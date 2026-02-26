@@ -7,7 +7,7 @@ const generateTrackingNumber = require('../utils/trackingNumber');
 const { processOrderFromSession } = require('../services/orderProcessor');
 
 const shippingOptions = [
-  { label: 'UK', value: 8 },
+  { label: 'UK', value: 5 },
   { label: 'Europe', value: 8 },
   { label: 'North America', value: 11 },
   { label: 'South America', value: 11 },

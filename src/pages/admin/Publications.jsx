@@ -164,8 +164,15 @@ const Publications = () => {
                         </p>
                       )}
                     </div>
-
-                    <StatusBadge status={pub.status} />
+                    <div>
+                      <StatusBadge status={pub.status} />
+                      {pub.featured && (
+                        <span className="px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-bold bg-blue-600 rounded ml-2">
+                          FEATURED
+                        </span>
+                      )}
+                    </div>
+                    
                   </div>
 
                   <div

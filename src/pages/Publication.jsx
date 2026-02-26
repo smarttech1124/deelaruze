@@ -149,17 +149,17 @@ const Publication = () => {
             )}
 
             <p className="text-2xl font-bold mt-6">
-              ${publication.price}
+              £{publication.price}
             </p>
 
-            <p className={`text-sm mt-2 ${publication.stock > 0 ? 'text-green-500' : 'text-red-500'}`}>
+            {/* <p className={`text-sm mt-2 ${publication.stock > 0 ? 'text-green-500' : 'text-red-500'}`}>
               {publication.stock > 0 ? 'In Stock' : 'Out of Stock'}
-            </p>
+            </p> */}
 
             <div
               className="prose prose-invert max-w-none mt-8 text-gray-300"
               dangerouslySetInnerHTML={{
-                __html: publication.description || '',
+                __html: publication.contributors || '',
               }}
             />
           </div>

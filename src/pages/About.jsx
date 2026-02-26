@@ -27,9 +27,9 @@ const About = () => {
   }, []);
 
   const stats = [
-    { value: '200+', label: 'Artists', icon: Users },
-    { value: '40+', label: 'Countries', icon: Globe },
-    { value: '15K+', label: 'Community', icon: Heart },
+    { value: '190+', label: 'Artists', icon: Users },
+    { value: '31+', label: 'Countries', icon: Globe },
+    { value: 'Worldwide', label: 'Community', icon: Heart },
     { value: '100%', label: 'Independent', icon: Zap },
   ];
 
@@ -87,7 +87,7 @@ const About = () => {
               OUR STORY
             </div> */}
             <h1 
-              className="about-title hero-fade text-6xl md:text-8xl lg:text-9xl mb-8 text-white"
+              className="about-title hero-fade text-4xl md:text-6xl lg:text-7xl mb-8 text-white tracking-tight leading-none"
               style={{ animationDelay: '0.1s' }}
             >
               ABOUT

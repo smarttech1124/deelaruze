@@ -75,14 +75,14 @@ const Submit = () => {
         <div className="max-w-5xl mx-auto">
           {/* Hero Section */}
           <div className="mb-20">
-            <div className="section-badge hero-fade">
+            {/* <div className="section-badge hero-fade">
               OPEN CALL
-            </div>
+            </div> */}
 
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
                 <Upload className="upload-icon-pulse w-12 h-12 md:w-16 md:h-16 text-red-500" />
-                <h1 className="submit-title text-6xl md:text-8xl lg:text-9xl text-white tracking-tight leading-none">
+                <h1 className="submit-title text-4xl md:text-6xl lg:text-7xl mb-8 text-white tracking-tight leading-none">
                   SUBMIT
                   <br />
                   <span 
@@ -105,7 +105,7 @@ const Submit = () => {
           {/* Opening Statement */}
           <div className="content-reveal mb-16" style={{ animationDelay: '0.2s' }}>
             <div className="quote-highlight text-white">
-              Submissions for Theez are our streetz open January 2027'
+              Call for artists for next THEEZ ARE OUR STREETZ Volume 6 opens January 2027
             </div>
           </div>
 
@@ -184,9 +184,9 @@ const Submit = () => {
             style={{ animationDelay: '1.4s' }}
           >
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" />
+              {/* <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" /> */}
               <h2 className="submit-title text-4xl md:text-5xl text-white">
-                SUBMIT CLOSED
+                SUBMISSION CLOSED
               </h2>
             </div>
             <SubmissionForm />

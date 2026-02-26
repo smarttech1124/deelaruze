@@ -20,7 +20,7 @@ const Footer = () => {
       />
 
       {/* Top Gradient Line */}
-      <div className="h-px bg-gradient-to-r from-transparent via-red-500 to-transparent" />
+      {/* <div className="h-px bg-gradient-to-r from-transparent via-red-500 to-transparent" /> */}
 
       <div className="footer-container relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-16">
         {/* Main Footer Content */}
