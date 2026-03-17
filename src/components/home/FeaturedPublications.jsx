@@ -62,7 +62,7 @@ const FeaturedPublication = () => {
                             <div className="flex items-center gap-4 mb-4">
                                 {/* <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" /> */}
                                 <h2 className="featured-title text-5xl md:text-7xl text-white tracking-tight">
-                                    LATEST <span className="text-green-500">RELEASE</span>
+                                    LATEST RELEASE
                                 </h2>
                             </div>
                             <p className="text-gray-400 text-sm md:text-base tracking-wide">

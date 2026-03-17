@@ -47,7 +47,7 @@ const ProductCard = ({ product }) => {
         {product.tagline && (
           <p className="text-gray-400">{product.tagline}</p>
         )}
-        {product.description && (
+        {/* {product.description && (
           <div
             className="
               prose prose-sm sm:prose lg:prose-lg
@@ -59,7 +59,7 @@ const ProductCard = ({ product }) => {
               __html: truncateText(product.description, 120) ?? '',
             }}
           />
-        )}
+        )} */}
         
         <div className="flex items-center justify-between pt-2">
           <p className="text-xl font-bold">£{product.price}</p>

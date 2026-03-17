@@ -105,7 +105,7 @@ const Shop = () => {
                   SHOP
                 </h1>
               </div>
-              <div className="h-px bg-gradient-to-r from-red-500/50 via-transparent to-transparent" />
+              {/* <div className="h-px bg-gradient-to-r from-red-500/50 via-transparent to-transparent" /> */}
             </div>
 
             <p 
