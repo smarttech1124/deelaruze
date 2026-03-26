@@ -127,7 +127,7 @@ const PublicationSkeleton = () => (
   <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 animate-pulse">
     <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
       <div className="space-y-6">
-        <div className="w-full aspect-[3/4] bg-gray-800 rounded-lg" />
+        <div className="w-full aspect-[16/9] bg-gray-800 rounded-lg" />
         <div className="flex gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex-shrink-0 w-14 h-20 bg-gray-800 rounded-md" />
@@ -235,7 +235,7 @@ const Publication = () => {
           <div className="space-y-4">
 
             {/* Main image with prev/next navigation */}
-            <div className="relative w-full aspect-[3/4] bg-gray-900 rounded-lg overflow-hidden border border-gray-800 group">
+            <div className="relative w-full aspect-[16/9] bg-gray-900 rounded-lg overflow-hidden border border-gray-800 group">
               {activeImage ? (
                 <img
                   src={activeImage}

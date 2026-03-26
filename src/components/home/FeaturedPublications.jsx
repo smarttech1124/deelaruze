@@ -112,7 +112,7 @@ const FeaturedPublication = () => {
                                 style={{ animationDelay: `${index * 0.15}s` }}
                                 onMouseEnter={() => setHoveredIndex(index)}
                                 onMouseLeave={() => setHoveredIndex(null)}
-                            >
+                            > 
                                 {/* Featured Badge */}
                                 <div className="featured-badge">
                                     FEATURED
@@ -156,7 +156,7 @@ const FeaturedPublication = () => {
                                         <div>
                                             <div className="text-xs text-gray-500 mb-1 tracking-wider">PRICE</div>
                                             <div className="price-tag text-2xl font-black">
-                                                ${pub.price || '0.00'}
+                                                £{pub.price || '0.00'}
                                             </div>
                                         </div>
                                         <div className="text-right">

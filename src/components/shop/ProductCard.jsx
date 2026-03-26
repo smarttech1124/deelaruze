@@ -19,11 +19,17 @@ const ProductCard = ({ product }) => {
   return (
     <div className="group cursor-pointer">
       <div className="relative overflow-hidden mb-4 aspect-[4/4] bg-gray-800">
-        <img
-          src={product.images[0]?.url || '/placeholder.jpg'}
-          alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+      <Link
+          key={product._id}
+          to={`/publication/${product._id}`}
+          className=""
+        >
+          <img
+            src={product.images[0]?.url || '/placeholder.jpg'}
+            alt={product.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        </Link>
         {!isAvailable && (
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
             <span className="text-2xl font-black tracking-wider">

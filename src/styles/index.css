@@ -2,22 +2,39 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+* {
+  font-family: 'ITC Franklin Gothic Std', sans-serif !important;
+}
+
+@font-face {
+  font-family: 'ITCFranklinGothicStd-BkCdIt';
+  src: url('https://static.wfonts.com/data/2016/07/06/itc-franklin-gothic-std/ITCFranklinGothicStd-BkCdIt.otf') format('otf');
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ITCFranklinGothicStd-BkCdIt';
+  src: url('https://static.wfonts.com/data/2016/07/06/itc-franklin-gothic-std/ITCFranklinGothicStd-BkCdIt.otf') format('otf');
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
+}
 
 body {
-  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans",
-               "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   text-transform: uppercase;
+  font-weight: 400;
 }
 
 
 @layer base {
   body {
     @apply bg-black text-white antialiased;
-    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans",
-               "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+    font-family: 'ITC Franklin Gothic Std', sans-serif;
     text-transform: uppercase;
+    font-weight: 400;
   }
 }
 
@@ -84,11 +101,12 @@ body {
 /* Hero Slider */
 
 .hero-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .hero-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
+  font-weight: 700;
   letter-spacing: -0.02em;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
@@ -247,11 +265,11 @@ body {
 
 /* featured publication */
 .featured-container {
-    font-family: 'Space Mono', monospace;
+    font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .featured-title {
-    font-family: 'Archivo Black', sans-serif;
+    font-family: 'ITC Franklin Gothic Std', sans-serif;
     letter-spacing: -0.02em;
 }
 
@@ -371,7 +389,7 @@ body {
 }
 
 .price-tag {
-    font-family: 'Archivo Black', sans-serif;
+    font-family: 'ITC Franklin Gothic Std', sans-serif;
     background: linear-gradient(135deg, #FF3366 0%, #FFB800 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -426,11 +444,11 @@ body {
 
 /* Instagram Feed */
 .instagram-container {
-    font-family: 'Space Mono', monospace;
+    font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .instagram-title {
-    font-family: 'Archivo Black', sans-serif;
+    font-family: 'ITC Franklin Gothic Std', sans-serif;
     letter-spacing: -0.02em;
 }
 
@@ -616,7 +634,7 @@ body {
 }
 
 .stat-counter {
-    font-family: 'Archivo Black', sans-serif;
+    font-family: 'ITC Franklin Gothic Std', sans-serif;
     background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -625,11 +643,11 @@ body {
 
 /* Footer */
 .footer-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .footer-brand {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -705,7 +723,7 @@ body {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s;
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .newsletter-input:focus {
@@ -784,7 +802,7 @@ body {
 
 .glitch-text {
   position: relative;
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .glitch-text::before,
@@ -846,11 +864,11 @@ body {
 
 /* About */
 .about-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .about-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -1056,7 +1074,7 @@ body {
   top: -20px;
   left: 20px;
   font-size: 120px;
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   color: #FF3366;
   opacity: 0.1;
 }
@@ -1076,11 +1094,11 @@ body {
 
 /* Project */
 .projects-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .projects-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -1140,7 +1158,7 @@ body {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s;
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .search-input:focus {
@@ -1222,7 +1240,7 @@ body {
 }
 
 .results-counter {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   background: linear-gradient(135deg, #FF3366 0%, #FFB800 50%, #00FF94 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1247,11 +1265,11 @@ body {
 
 /* Shop */
 .shop-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .shop-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -1302,7 +1320,7 @@ body {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s;
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -1360,7 +1378,7 @@ body {
 }
 
 .stat-value {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   background: linear-gradient(135deg, #FF3366 0%, #FFB800 50%, #00FF94 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1433,11 +1451,11 @@ body {
 
 /* Submit */
 .submit-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .submit-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -1528,7 +1546,7 @@ body {
 }
 
 .guideline-number {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   font-size: 64px;
   opacity: 0.1;
   position: absolute;
@@ -1596,7 +1614,7 @@ body {
   top: -20px;
   left: 20px;
   font-size: 120px;
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   color: #FF3366;
   opacity: 0.1;
 }
@@ -1659,11 +1677,11 @@ body {
 
 /* Contact */
 .contact-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .contact-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -1870,11 +1888,11 @@ body {
 
 /* CART  */
 .cart-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .cart-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -1933,11 +1951,11 @@ body {
 }
 
 .cart-container {
-  font-family: 'Space Mono', monospace;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
 }
 
 .cart-title {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -2078,7 +2096,7 @@ body {
 }
 
 .total-amount {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
   background: linear-gradient(135deg, #FF3366 0%, #FFB800 50%, #00FF94 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

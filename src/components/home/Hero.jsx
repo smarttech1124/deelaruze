@@ -5,8 +5,8 @@ const HeroSlider = () => {
   const slides = [
     {
       id: 1,
-      image: '/images/main.jpeg',
-      title: 'DEELARUZE',
+      image: '/images/PIC 1.jpg',
+      title: '',
       subtitle: '',
       description: '',
       accent: '#FF3366',
@@ -26,7 +26,7 @@ const HeroSlider = () => {
     {
       id: 3,
       image: '/images/PIC 3.JPG',
-      title: 'WE DONT RIDE THE WAVE WE CREATE IT',
+      title: 'WE DONT RIDE THE WAVE <br/>WE CREATE IT',
       subtitle: '',
       description: '',
       accent: '#FF3366',
@@ -46,7 +46,7 @@ const HeroSlider = () => {
     {
       id: 5,
       image: '/images/PIC 5.jpg',
-      title: 'THE EYES ARE USELESS WHEN MIND IS BLIND',
+      title: 'THE EYES ARE USELESS <br/> WHEN MIND IS BLIND',
       subtitle: '',
       description: '',
       accent: '#FF3366',
@@ -234,9 +234,10 @@ const HeroSlider = () => {
               }}
             /> */}
 
-            <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl text-white leading-none">
-              {current.title}
-            </h1>
+            <h2
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-none"
+              dangerouslySetInnerHTML={{ __html: current.title }}
+            />
 
             <p className="text-lg md:text-2xl text-gray-300 mt-4">
               {current.description}
