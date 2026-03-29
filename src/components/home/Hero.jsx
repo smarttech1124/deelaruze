@@ -11,7 +11,8 @@ const HeroSlider = () => {
       description: '',
       accent: '#FF3366',
       prev_position: 'absolute inset-0 bg-cover bg-[center_top]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_top] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+      next_position: 'absolute inset-0 bg-cover bg-[center_top] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      placement: null
     },
     {
       id: 2,
@@ -21,7 +22,8 @@ const HeroSlider = () => {
       description: '',
       accent: '#FF3366',
       prev_position: 'absolute inset-0 bg-cover bg-[center_top]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_top] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+      next_position: 'absolute inset-0 bg-cover bg-[center_top] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      placement: null
     },
     {
       id: 3,
@@ -31,7 +33,8 @@ const HeroSlider = () => {
       description: '',
       accent: '#FF3366',
       prev_position: 'absolute inset-0 bg-cover bg-[center_bottom]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_bottom] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+      next_position: 'absolute inset-0 bg-cover bg-[center_bottom] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      placement: "right"
     },
     {
       id: 4,
@@ -41,7 +44,8 @@ const HeroSlider = () => {
       description: '',
       accent: '#FF3366',
       prev_position: 'absolute inset-0 bg-cover bg-[center_top]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_top] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+      next_position: 'absolute inset-0 bg-cover bg-[center_top] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      placement: null
     },
     {
       id: 5,
@@ -51,7 +55,8 @@ const HeroSlider = () => {
       description: '',
       accent: '#FF3366',
       prev_position: 'absolute inset-0 bg-cover bg-[center_center]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_center] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+      next_position: 'absolute inset-0 bg-cover bg-[center_center] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      placement: null
     },
     {
       id: 6,
@@ -61,7 +66,8 @@ const HeroSlider = () => {
       description: '',
       accent: '#FF3366',
       prev_position: 'absolute inset-0 bg-cover bg-[center_center]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_center] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+      next_position: 'absolute inset-0 bg-cover bg-[center_center] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      placement: "top"
     },
     {
       id: 7,
@@ -81,7 +87,8 @@ const HeroSlider = () => {
       description: '',
       accent: '#FF3366',
       prev_position: 'absolute inset-0 bg-cover bg-[center_center]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_center] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+      next_position: 'absolute inset-0 bg-cover bg-[center_center] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      placement: "bottom"
     },
     {
       id: 9,
@@ -213,7 +220,8 @@ const HeroSlider = () => {
         </div> */}
 
         {/* Center Content */}
-        <div className="flex-1 flex items-center justify-center">
+        <div className={`flex-1 flex items-${current.placement == 'top' ? 'start' : current.placement == 'bottom' ? 'end' : 'center'} 
+        justify-${current.placement == 'left' ? 'start' : current.placement == 'right' ? 'end' : 'center'}`}>
           <div 
             key={currentSlide}
             className="text-center max-w-5xl transition-all duration-1000"
@@ -221,19 +229,10 @@ const HeroSlider = () => {
               opacity: isTransitioning ? 0 : 1,
               transform: isTransitioning
                 ? 'translateY(40px) scale(0.98)'
-                : 'translateY(0) scale(1)'
+                : 'translateY(0) scale(1)',
+              
             }}
           >
-            {/* Accent */}
-            {/* <div 
-              className="h-1 w-24 mx-auto mb-8 transition-all duration-700"
-              style={{ 
-                background: current.accent,
-                boxShadow: `0 0 20px ${current.accent}`,
-                transform: isTransitioning ? 'scaleX(0.6)' : 'scaleX(1)'
-              }}
-            /> */}
-
             <h2
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-none"
               dangerouslySetInnerHTML={{ __html: current.title }}

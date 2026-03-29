@@ -55,13 +55,13 @@ const FeaturedPublication = () => {
                 <div className="mb-16">
                     {/* <div className="section-badge mb-6">
                         SECTION 02
-                    </div> */}
+                    </div> */} 
 
                     <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-4">
                         <div>
                             <div className="flex items-center gap-4 mb-4">
                                 {/* <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" /> */}
-                                <h2 className="featured-title text-5xl md:text-7xl text-white tracking-tight">
+                                <h2 className="featured-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
                                     LATEST RELEASE
                                 </h2>
                             </div>

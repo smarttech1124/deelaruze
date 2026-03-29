@@ -32,6 +32,8 @@ import AboutDeelaruze from './pages/admin/AboutDeelaruze';
 import Orders from './pages/admin/Orders';
 import Messages from './pages/admin/Messages';
 import Newsletter from './pages/admin/Newsletter';
+import FromTheStreet from './pages/admin/fromthestreet';
+import SetFromTheStreet from './pages/admin/SetFromTheStreet';
 import Profile from './pages/admin/Profile';
 
 import './styles/index.css';
@@ -81,6 +83,9 @@ function App() {
             <Route path="orders" element={<Orders />} />
             <Route path="messages" element={<Messages />} />
             <Route path="newsletter" element={<Newsletter />} />
+            <Route path="fromthestreet" element={<FromTheStreet />} />
+            <Route path="fromthestreet/new" element={<SetFromTheStreet />} />
+            <Route path="fromthestreet/edit/:id" element={<SetFromTheStreet />} />
             <Route path="profile" element={<Profile />} />
           </Route>
 

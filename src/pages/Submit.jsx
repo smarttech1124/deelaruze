@@ -82,7 +82,7 @@ const Submit = () => {
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
                 <Upload className="upload-icon-pulse w-12 h-12 md:w-16 md:h-16 text-red-500" />
-                <h1 className="submit-title text-4xl md:text-6xl lg:text-7xl mb-8 text-white tracking-tight leading-none">
+                <h1 className="submit-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
                   SUBMIT
                   <br />
                   <span 
@@ -98,7 +98,7 @@ const Submit = () => {
                   </span>
                 </h1>
               </div>
-              <div className="h-1 w-32 bg-gradient-to-r from-red-500 to-green-500" />
+              {/* <div className="h-1 w-32 bg-gradient-to-r from-red-500 to-green-500" /> */}
             </div>
           </div>
 
@@ -185,7 +185,7 @@ const Submit = () => {
           >
             <div className="flex items-center gap-4 mb-8">
               {/* <div className="h-1 w-12 bg-gradient-to-r from-transparent via-green-500 to-transparent" /> */}
-              <h2 className="submit-title text-4xl md:text-5xl text-white">
+              <h2 className="submit-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
                 SUBMISSION CLOSED
               </h2>
             </div>

@@ -1,7 +1,7 @@
 import HeroSection from '../components/home/Hero';
 import Manifesto from '../components/home/Manifesto';
 import FeaturedPublication from '../components/home/FeaturedPublications';
-import InstagramFeed from '../components/home/InstagramFeed';
+import FromTheStreetSection from '../components/home/FromTheStreet';
 
 
 const Home = () => {
@@ -16,8 +16,8 @@ const Home = () => {
       {/* Manifesto Section */}
       <Manifesto />     
 
-      {/* Instagram Feed Mockup */}
-      <InstagramFeed />
+      {/* From the Street Feed */}
+      <FromTheStreetSection />
     </div>
   );
 };

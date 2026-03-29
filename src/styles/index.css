@@ -442,6 +442,160 @@ body {
     pointer-events: none;
 }
 
+/* Manifesto */
+.manifesto-container {
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
+}
+
+.manifesto-title {
+  font-family: 'ITC Franklin Gothic Std', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.manifesto-fade-in {
+  animation: manifestoFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes manifestoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.manifesto-text {
+  animation: textReveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes textReveal {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.accent-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.accent-border::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(180deg, #FF3366 0%, #FFB800 50%, #00FF94 100%);
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px #FF3366;
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 40px #00FF94;
+  }
+}
+
+.quote-mark {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 120px;
+  line-height: 0;
+  opacity: 0.1;
+  position: absolute;
+  color: #FF3366;
+}
+
+.noise-bg {
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.grid-pattern {
+  background-image: 
+    linear-gradient(rgba(255, 51, 102, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 51, 102, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.5;
+}
+
+.text-highlight {
+  position: relative;
+  display: inline-block;
+}
+
+.text-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: #FF3366;
+  opacity: 0.3;
+  z-index: -1;
+  transform: skewX(-12deg);
+}
+
+.mission-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: rgba(255, 51, 102, 0.1);
+  border: 2px solid #FF3366;
+  color: #FF3366;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+  margin-bottom: 24px;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 51, 102, 0.5);
+  }
+}
+
+.diagonal-line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #FF3366, transparent);
+  transform: rotate(-12deg);
+  animation: diagonalMove 4s linear infinite;
+}
+
+@keyframes diagonalMove {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    left: 200%;
+    opacity: 0;
+  }
+}
+
 /* Instagram Feed */
 .instagram-container {
     font-family: 'ITC Franklin Gothic Std', sans-serif;
@@ -1062,7 +1216,7 @@ body {
   position: relative;
   padding: 32px;
   background: rgba(255, 51, 102, 0.05);
-  border-left: 4px solid #FF3366;
+  /* border-left: 4px solid #FF3366; */
   font-size: 1.5rem;
   font-weight: bold;
   line-height: 1.6;
@@ -1075,7 +1229,7 @@ body {
   left: 20px;
   font-size: 120px;
   font-family: 'ITC Franklin Gothic Std', sans-serif;
-  color: #FF3366;
+  /* color: #FF3366; */
   opacity: 0.1;
 }
 
@@ -1602,7 +1756,7 @@ body {
   position: relative;
   padding: 32px;
   background: rgba(255, 51, 102, 0.05);
-  border-left: 4px solid #FF3366;
+  /* border-left: 4px solid #FF3366; */
   font-size: 1.5rem;
   font-weight: bold;
   line-height: 1.6;
@@ -1615,7 +1769,7 @@ body {
   left: 20px;
   font-size: 120px;
   font-family: 'ITC Franklin Gothic Std', sans-serif;
-  color: #FF3366;
+  /* color: #FF3366; */
   opacity: 0.1;
 }
 

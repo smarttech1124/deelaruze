@@ -11,7 +11,8 @@ import {
   SquareUserRound,
   LogOut,
   Menu,
-  X
+  X,
+  Image
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -33,6 +34,7 @@ const AdminLayout = () => {
     { path: '/admin/about', icon: BookA, label: 'About Deelaruze' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { path: '/admin/messages', icon: Mail, label: 'Messages' },
+    { path: '/admin/fromthestreet', icon: Image, label: 'From The Street' },
     { path: '/admin/newsletter', icon: Users, label: 'Newsletter' },
     { path: '/admin/profile', icon: SquareUserRound, label: 'Profile' },
   ];

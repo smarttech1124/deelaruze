@@ -10,8 +10,8 @@ const Contact = () => {
     {
       icon: Mail,
       label: 'Email',
-      value: 'contact@deelaruze.com',
-      link: 'mailto:contact@deelaruze.com',
+      value: 'deelaruze@hotmail.com',
+      link: 'mailto:deelaruze@hotmail.com',
       color: '#FF3366'
     },
     {
@@ -103,7 +103,7 @@ const Contact = () => {
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
                 <MessageCircle className="icon-float w-12 h-12 md:w-16 md:h-16 text-red-500" />
-                <h1 className="contact-title text-4xl md:text-6xl lg:text-7xl mb-8 text-white tracking-tight leading-none">
+                <h1 className="contact-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
                   GET IN
                   <br />
                   <span 
@@ -165,11 +165,7 @@ const Contact = () => {
             {infoBoxes.map((box, index) => (
               <div
                 key={index}
-                className="info-box content-reveal p-6"
-                style={{ 
-                  borderLeftColor: box.color,
-                  animationDelay: `${0.5 + index * 0.1}s` 
-                }}
+                className="contact-card p-8 flex items-center gap-6 group"                
               >
                 <h3 className="font-bold text-white mb-3 tracking-wider text-sm">
                   {box.title}

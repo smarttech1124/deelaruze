@@ -84,10 +84,10 @@ const About = () => {
           {/* Hero Section */}
           <div className="mb-20">
             {/* <div className="section-badge hero-fade">
-              OUR STORY
+              OUR STORY 
             </div> */}
             <h1 
-              className="about-title hero-fade text-4xl md:text-6xl lg:text-7xl mb-8 text-white tracking-tight leading-none"
+              className="about-title hero-fade text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight"
               style={{ animationDelay: '0.1s' }}
             >
               ABOUT
