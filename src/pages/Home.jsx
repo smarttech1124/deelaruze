@@ -1,7 +1,7 @@
 import HeroSection from '../components/home/Hero';
 import Manifesto from '../components/home/Manifesto';
 import FeaturedPublication from '../components/home/FeaturedPublications';
-import FromTheStreetSection from '../components/home/FromTheStreet';
+// import FromTheStreetSection from '../components/home/FromTheStreet';
 
 
 const Home = () => {
@@ -17,7 +17,7 @@ const Home = () => {
       <Manifesto />     
 
       {/* From the Street Feed */}
-      <FromTheStreetSection />
+      {/* <FromTheStreetSection /> */}
     </div>
   );
 };

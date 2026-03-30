@@ -39,7 +39,7 @@ const Footer = () => {
             </p>
             
             {/* Social Links */}
-            <div className="flex gap-3 mb-8">
+            {/* <div className="flex gap-3 mb-8">
               <a
                 href="https://instagram.com/deelaruze"
                 target="_blank"
@@ -63,10 +63,10 @@ const Footer = () => {
               >
                 <ArrowUpRight size={20} />
               </a>
-            </div>
+            </div> */}
 
             {/* Newsletter */}
-            <div>
+            {/* <div>
               <h4 className="text-xs font-bold tracking-widest text-gray-500 mb-3">
                 STAY UPDATED
               </h4>
@@ -83,7 +83,7 @@ const Footer = () => {
                   <Send size={18} />
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Navigate Section */}

@@ -69,7 +69,7 @@ const Cart = () => {
         <div className="fixed inset-0 grid-bg" />
         <div className="cart-container relative z-10 min-h-screen pt-32 pb-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="cart-title text-6xl md:text-8xl text-white mb-12 tracking-tight">
+            <h1 className="cart-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
               YOUR CART
             </h1>
             <div className="empty-state p-12">

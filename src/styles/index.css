@@ -1539,13 +1539,6 @@ body {
   background-clip: text;
 }
 
-.empty-state {
-  background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), rgba(0, 255, 148, 0.05));
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #FF3366, #00FF94) 1;
-  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
-}
-
 .instagram-btn {
   position: relative;
   overflow: hidden;
@@ -2060,9 +2053,9 @@ body {
 
 .empty-state {
   background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), rgba(0, 255, 148, 0.05));
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #FF3366, #00FF94) 1;
-  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+  /* border: 2px solid; */
+  /* border-image: linear-gradient(135deg, #FF3366, #00FF94) 1; */
+  /* clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px)); */
 }
 
 .icon-float {
