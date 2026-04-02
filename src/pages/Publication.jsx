@@ -325,9 +325,9 @@ const Publication = () => {
               </p>
 
               <div
-                className="prose prose-invert max-w-none mt-8 text-gray-300"
+                className="prose prose-invert text-justify max-w-none mt-8 text-gray-300"
                 dangerouslySetInnerHTML={{
-                  __html: publication.contributors || '',
+                  __html: publication.contributors || '', 
                 }}
               />
             </div>
