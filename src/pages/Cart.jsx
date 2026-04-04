@@ -28,16 +28,32 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
   const [shippinglocation, setShippingLocation] = useState('UK');
 
+  // Calculate total quantity of all items in cart
+  const totalQuantity = useMemo(() => {
+    return cart.reduce((total, item) => total + (item.quantity || 1), 0);
+  }, [cart]);
+
   const grandTotal = useMemo(() => {
     const selectedShipping = shippingOptions.find(
       option => option.label === shippinglocation
     );
 
-    const shippingFee = selectedShipping ? selectedShipping.value : 0;
+    const baseShippingFee = selectedShipping ? selectedShipping.value : 0;
+    
+    // Multiply base shipping fee by total quantity
+    const totalShippingFee = baseShippingFee * totalQuantity;
 
-    return cartTotal + shippingFee;
-  }, [cartTotal, shippinglocation]);
+    return cartTotal + totalShippingFee;
+  }, [cartTotal, shippinglocation, totalQuantity]);
 
+  // Calculate shipping fee for display
+  const shippingFee = useMemo(() => {
+    const selectedShipping = shippingOptions.find(
+      option => option.label === shippinglocation
+    );
+    const baseShippingFee = selectedShipping ? selectedShipping.value : 0;
+    return baseShippingFee * totalQuantity;
+  }, [shippinglocation, totalQuantity]);
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -116,7 +132,7 @@ const Cart = () => {
               <div className="flex items-center gap-4">
                 <div className="h-1 w-24 bg-gradient-to-r from-red-500 to-green-500" />
                 <span className="text-gray-500 text-sm tracking-widest">
-                  {cart.length} {cart.length === 1 ? 'ITEM' : 'ITEMS'}
+                  {cart.length} {cart.length === 1 ? 'ITEM' : 'ITEMS'} • {totalQuantity} {totalQuantity === 1 ? 'BOOK' : 'BOOKS'}
                 </span>
               </div>
             </div>
@@ -158,7 +174,7 @@ const Cart = () => {
                     <span className="font-bold">£{cartTotal.toFixed(2)}</span>
                   </div>
 
-                  {/* Shipping Selector (UI preserved style) */}
+                  {/* Shipping Selector */}
                   <div className="summary-row flex justify-between items-center text-gray-400">
                     <span>Shipping Location</span>
                     <select
@@ -172,6 +188,12 @@ const Cart = () => {
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  {/* Shipping Fee Breakdown */}
+                  <div className="summary-row flex justify-between text-gray-400">
+                    <span>Shipping ({totalQuantity} {totalQuantity === 1 ? 'book' : 'books'})</span>
+                    <span className="font-bold">£{shippingFee.toFixed(2)}</span>
                   </div>
 
                   <div className="my-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -248,7 +270,7 @@ const Cart = () => {
                                 : '#00FF94',
                           }}
                         />
-                        <span className="text-xs text-gray-400 leading-relaxed">
+                        <span className="text-xs text-gray-400 leading-relaxing">
                           {benefit.text}
                         </span>
                       </div>
