@@ -5,7 +5,7 @@ const HeroSlider = () => {
   const slides = [
     {
       id: 1,
-      image: '/images/PIC 1.jpg',
+      image: '/images/PIC 2.jpeg',
       title: '',
       subtitle: '',
       description: '',
@@ -15,8 +15,8 @@ const HeroSlider = () => {
       placement: null
     },
     {
-      id: 2,
-      image: '/images/PIC 2.jpeg',
+      id: 2,      
+      image: '/images/PIC 1.jpg',
       title: '',
       subtitle: '',
       description: '',

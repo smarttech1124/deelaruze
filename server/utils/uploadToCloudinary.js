@@ -1,10 +1,10 @@
 const cloudinary = require('../config/cloudinary');
 
-const uploadToCloudinary = (buffer) => {
+const uploadToCloudinary = (buffer, folder = 'deelaruze/publications') => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder: 'deelaruze/publications',
+        folder: folder,
         transformation: [
           { width: 1200, height: 1500, crop: 'limit' },
           { quality: 'auto' },
@@ -17,7 +17,7 @@ const uploadToCloudinary = (buffer) => {
       }
     );
 
-    stream.end(buffer); // 🔥 REQUIRED
+    stream.end(buffer);
   });
 };
 

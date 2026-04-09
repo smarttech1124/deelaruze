@@ -203,10 +203,7 @@ exports.updatePublication = async (req, res) => {
     if (updateData.deleteImages) {
       try {
         const imagesToDelete = JSON.parse(updateData.deleteImages);
-        
-        console.log('Images to delete:', imagesToDelete);
-        console.log('Existing images before deletion:', existingImages.map(img => img._id.toString()));
-        
+                
         if (Array.isArray(imagesToDelete) && imagesToDelete.length > 0) {
           // Delete from Cloudinary
           const deletePromises = imagesToDelete.map(imageId => {

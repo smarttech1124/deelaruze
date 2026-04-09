@@ -1,49 +1,66 @@
-const nodemailer = require('nodemailer');
+const axios = require('axios');
 
-// Create transporter with fallback configuration
-let transporter;
+let accessToken = null;
+let tokenExpires = 0;
 
-try {
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-} catch (error) {
-  console.warn('⚠️  Email transporter not configured. Email features will be disabled.');
-  console.warn('   Add SMTP credentials to .env to enable email notifications.');
-}
-
-exports.sendEmail = async ({ to, subject, text, html }) => {
-  // If transporter is not configured, log instead of sending
-  if (!transporter) {
-    console.log('📧 Email would be sent (transporter not configured):');
-    console.log(`   To: ${to}`);
-    console.log(`   Subject: ${subject}`);
-    console.log(`   Message: ${text}`);
-    return { messageId: 'mock-email-' + Date.now() };
+// Get SendPulse Access Token
+async function getSendPulseToken() {
+  if (accessToken && Date.now() < tokenExpires) {
+    return accessToken;
   }
 
   try {
-    const mailOptions = {
-      from: `${process.env.FROM_NAME || 'Deelaruze'} <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
-      to,
-      subject,
-      text,
-      html: html || text.replace(/\n/g, '<br>'),
-    };
+    const response = await axios.post(
+      'https://api.sendpulse.com/oauth/access_token',
+      {
+        grant_type: 'client_credentials',
+        client_id: process.env.SENDPULSE_CLIENT_ID,
+        client_secret: process.env.SENDPULSE_CLIENT_SECRET,
+      }
+    );
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent:', info.messageId);
-    return info;
+    accessToken = response.data.access_token;
+    tokenExpires = Date.now() + (response.data.expires_in - 60) * 1000;
+
+    return accessToken;
   } catch (error) {
-    console.error('❌ Email error:', error.message);
-    // Don't throw error - log it and continue
-    // This prevents email failures from breaking the app
+    console.error('SendPulse Auth Error:', error.response?.data || error.message);
+    return null;
+  }
+}
+
+// Send Transactional Email Using Template
+exports.sendEmail = async ({ to, templateId, variables }) => {
+  try {
+    const token = await getSendPulseToken();
+    if (!token) return null;
+
+    const response = await axios.post(
+      'https://api.sendpulse.com/smtp/emails', 
+      {
+        email: {
+          to: [{ email: to }],
+          template: {
+            id: templateId,
+            variables: variables || {},
+          },
+          from: {
+            name: process.env.FROM_NAME || 'Deelaruze',
+            email: process.env.FROM_EMAIL,
+          },
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log('✅ Email sent via SendPulse');
+    return response.data;
+  } catch (error) {
+    console.error('❌ SendPulse Email Error:', error.response?.data || error.message);
     return null;
   }
 };

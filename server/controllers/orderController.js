@@ -26,7 +26,7 @@ exports.createCheckoutSession = async (req, res) => {
       (option) => option.label.toLowerCase() === shippinglocation.toLowerCase()
     );
 
-    const shippingfee = shippingOption ? shippingOption.value : 0; 
+    const baseShippingFee = shippingOption ? shippingOption.value : 0;
 
     if (!items || items.length === 0) {
       return res.status(400).json({
@@ -34,6 +34,12 @@ exports.createCheckoutSession = async (req, res) => {
         message: 'Cart is empty',
       });
     }
+
+    // Calculate total quantity of all items
+    const totalQuantity = items.reduce((total, item) => total + (item.quantity || 1), 0);
+
+    // Calculate total shipping fee based on quantity
+    const totalShippingFee = baseShippingFee * totalQuantity;
 
     const lineItems = await Promise.all(
       items.map(async (item) => {
@@ -62,15 +68,16 @@ exports.createCheckoutSession = async (req, res) => {
       })
     );
 
-    // shipping fee
-    if (shippingfee > 0) {
+    // Add shipping fee as a single line item
+    if (totalShippingFee > 0) {
       lineItems.push({
         price_data: {
           currency: 'gbp',
           product_data: {
-            name: `Shipping Fee (${shippinglocation})`,
+            name: `Shipping Fee (${shippinglocation} - ${totalQuantity} ${totalQuantity === 1 ? 'book' : 'books'})`,
+            description: `£${baseShippingFee} per book × ${totalQuantity} ${totalQuantity === 1 ? 'book' : 'books'}`,
           },
-          unit_amount: Math.round(shippingfee * 100),
+          unit_amount: Math.round(totalShippingFee * 100),
         },
         quantity: 1,
       });
@@ -92,7 +99,10 @@ exports.createCheckoutSession = async (req, res) => {
             quantity: i.quantity,
           }))
         ),
-        shippingFee: shippingfee.toString(),
+        shippingLocation: shippinglocation,
+        baseShippingFee: baseShippingFee.toString(),
+        totalQuantity: totalQuantity.toString(),
+        totalShippingFee: totalShippingFee.toString(),
       },
     });
 
@@ -150,7 +160,7 @@ exports.verifyCheckoutSession = async (req, res) => {
     });
   }
 };
-;
+
 
 // @desc    Stripe webhook handler
 // @route   POST /api/orders/webhook
@@ -177,22 +187,48 @@ exports.handleWebhook = async (req, res) => {
     try {
       const order = await processOrderFromSession(session);
 
-      await sendEmail({
-        to: order.email,
-        subject: `Order Confirmation #${order.orderNumber}`,
-        text: `Thank you for your purchase!
+      // Extract useful info
+      const customerEmail = session.customer_details?.email;
+      const customerName = session.customer_details?.name || 'Customer';
 
-            Order: ${order.orderNumber}
-            Total: $${order.total.toFixed(2)}
+      // ✅ Send customer email (non-blocking)
+      if (customerEmail) {
+        sendEmail({
+          to: customerEmail,
+          templateId: process.env.ORDER_CONFIRMATION_TEMPLATE_ID,
+          variables: {
+            name: customerName,
+            orderId: order._id,
+            amount: order.totalPrice,
+            date: new Date().toLocaleDateString(),
+          },
+        }).catch(error => {
+          console.error('Customer email error:', error);
+        });
+      }
 
-            We'll notify you when it ships.`,
-      });
+      // ✅ Send admin notification email (non-blocking)
+      if (process.env.ADMIN_EMAIL) {
+        sendEmail({
+          to: process.env.ADMIN_EMAIL,
+          templateId: process.env.ADMIN_ORDER_TEMPLATE_ID,
+          variables: {
+            orderId: order._id,
+            customerEmail,
+            amount: order.totalPrice,
+          },
+        }).catch(error => {
+          console.error('Admin email error:', error);
+        });
+      }
 
     } catch (error) {
       console.error('Webhook processing error:', error);
+      // Still return success to Stripe to prevent retries
     }
   }
 
+  // Respond immediately to Stripe
   res.json({ received: true });
 };
 
