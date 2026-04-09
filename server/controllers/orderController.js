@@ -109,20 +109,27 @@ exports.createCheckoutSession = async (req, res) => {
       });
     }
 
-    // ── Sticker line item (optional) ────────────────────────────────────────
-    if (stickerQty > 0) {
-      lineItems.push({
-        price_data: {
-          currency: 'gbp',
-          product_data: {
-            name: 'Sticker Pack',
-            description: 'Exclusive art stickers — add-on to book order',
+  // ── Sticker line item (optional) ────────────────────────────────────────
+  if (stickerQty > 0) {
+    lineItems.push({
+      price_data: {
+        currency: 'gbp',
+        product_data: {
+          name: 'Exclusive Art Sticker Pack',
+          description: `Limited edition art stickers — curated add-on for book orders. £${STICKER_PRICE} per pack.`,
+          images: [`${process.env.CLIENT_URL}/images/stickers.jpeg`],
+          metadata: {
+            type:       'sticker_addon',
+            unitPrice:  STICKER_PRICE.toString(),
+            quantity:   stickerQty.toString(),
+            total:      stickerTotal.toString(),
           },
-          unit_amount: Math.round(STICKER_PRICE * 100),
         },
-        quantity: stickerQty,
-      });
-    }
+        unit_amount: Math.round(STICKER_PRICE * 100),
+      },
+      quantity: stickerQty,
+    });
+  }
 
     // ── Create session ──────────────────────────────────────────────────────
     const session = await stripe.checkout.sessions.create({
@@ -234,48 +241,83 @@ exports.handleWebhook = async (req, res) => {
     try {
       const order = await processOrderFromSession(session);
 
-      // Extract useful info
-      const customerEmail = session.customer_details?.email;
-      const customerName = session.customer_details?.name || 'Customer';
+      const customerEmail    = session.customer_details?.email;
+      const customerName     = session.customer_details?.name || 'Customer';
+      const shippingAddress  = session.shipping_details?.address || {};
 
-      // ✅ Send customer email (non-blocking)
+      // ── Pull sticker info from session metadata ─────────────────────────
+      const stickerQty       = parseInt(session.metadata?.stickerQuantity  || '0', 10);
+      const stickerUnitPrice = parseFloat(session.metadata?.stickerUnitPrice || '0');
+      const stickerTotal     = parseFloat(session.metadata?.stickerTotal    || '0');
+      const hasStickers      = stickerQty > 0;
+
+      // ── Pull shipping info from session metadata ─────────────────────────
+      const shippingLocation = session.metadata?.shippingLocation  || 'UK';
+      const totalShippingFee = parseFloat(session.metadata?.totalShippingFee || '0');
+      const totalQuantity    = parseInt(session.metadata?.totalQuantity      || '0', 10);
+
+      // ── Shared order variables ───────────────────────────────────────────
+      const commonVariables = {
+        orderId:         order._id.toString(),
+        orderDate:       new Date().toLocaleDateString('en-GB', {
+                           day: '2-digit', month: 'long', year: 'numeric',
+                         }),
+        trackingNumber:  order.trackingNumber || 'Pending',
+        subtotal:        (order.totalPrice - totalShippingFee - stickerTotal).toFixed(2),
+        shippingFee:     totalShippingFee.toFixed(2),
+        shippingLocation,
+        totalBooks:      totalQuantity.toString(),
+        totalAmount:     order.totalPrice.toFixed(2),
+
+        // Sticker fields — template can conditionally render these
+        hasStickers:        hasStickers.toString(),   // 'true' | 'false'
+        stickerQuantity:    stickerQty.toString(),
+        stickerUnitPrice:   stickerUnitPrice.toFixed(2),
+        stickerTotal:       stickerTotal.toFixed(2),
+
+        // Shipping address (useful for admin + customer confirmation)
+        shippingLine1:   shippingAddress.line1    || '',
+        shippingLine2:   shippingAddress.line2    || '',
+        shippingCity:    shippingAddress.city     || '',
+        shippingCountry: shippingAddress.country  || '',
+        shippingPostcode: shippingAddress.postal_code || '',
+      };
+
+      // ── Customer confirmation email ──────────────────────────────────────
       if (customerEmail) {
         sendEmail({
-          to: customerEmail,
+          to:         customerEmail,
           templateId: process.env.ORDER_CONFIRMATION_TEMPLATE_ID,
           variables: {
+            ...commonVariables,
             name: customerName,
-            orderId: order._id,
-            amount: order.totalPrice,
-            date: new Date().toLocaleDateString(),
           },
-        }).catch(error => {
-          console.error('Customer email error:', error);
+        }).catch((error) => {
+          console.error('❌ Customer email error:', error);
         });
       }
 
-      // ✅ Send admin notification email (non-blocking)
+      // ── Admin notification email ─────────────────────────────────────────
       if (process.env.ADMIN_EMAIL) {
         sendEmail({
-          to: process.env.ADMIN_EMAIL,
+          to:         process.env.ADMIN_EMAIL,
           templateId: process.env.ADMIN_ORDER_TEMPLATE_ID,
           variables: {
-            orderId: order._id,
-            customerEmail,
-            amount: order.totalPrice,
+            ...commonVariables,
+            customerName,
+            customerEmail: customerEmail || 'N/A',
           },
-        }).catch(error => {
-          console.error('Admin email error:', error);
+        }).catch((error) => {
+          console.error('❌ Admin email error:', error);
         });
       }
 
     } catch (error) {
-      console.error('Webhook processing error:', error);
-      // Still return success to Stripe to prevent retries
+      console.error('❌ Webhook processing error:', error);
+      // Return 200 regardless — prevents Stripe from endlessly retrying
     }
   }
 
-  // Respond immediately to Stripe
   res.json({ received: true });
 };
 

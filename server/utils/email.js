@@ -33,20 +33,28 @@ async function getSendPulseToken() {
 exports.sendEmail = async ({ to, templateId, variables }) => {
   try {
     const token = await getSendPulseToken();
-    if (!token) return null;
+    if (!token) {
+      console.error('❌ SendPulse: failed to obtain auth token');
+      return null;
+    }
+
+    // Ensure every variable value is a string — SendPulse rejects non-strings
+    const safeVariables = Object.fromEntries(
+      Object.entries(variables || {}).map(([k, v]) => [k, String(v ?? '')])
+    );
 
     const response = await axios.post(
-      'https://api.sendpulse.com/smtp/emails', 
+      'https://api.sendpulse.com/smtp/emails',
       {
         email: {
-          to: [{ email: to }],
-          template: {
-            id: templateId,
-            variables: variables || {},
-          },
+          to:   [{ email: to }],
           from: {
-            name: process.env.FROM_NAME || 'Deelaruze',
+            name:  process.env.FROM_NAME  || 'Deelaruze',
             email: process.env.FROM_EMAIL,
+          },
+          template: {
+            id:        templateId,
+            variables: safeVariables,
           },
         },
       },
@@ -57,10 +65,14 @@ exports.sendEmail = async ({ to, templateId, variables }) => {
       }
     );
 
-    console.log('✅ Email sent via SendPulse');
+    console.log(`✅ Email sent to ${to} via SendPulse`);
     return response.data;
+
   } catch (error) {
-    console.error('❌ SendPulse Email Error:', error.response?.data || error.message);
+    console.error(
+      `❌ SendPulse Email Error (to: ${to}):`,
+      error.response?.data || error.message
+    );
     return null;
   }
 };
