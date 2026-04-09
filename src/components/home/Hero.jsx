@@ -5,18 +5,18 @@ const HeroSlider = () => {
   const slides = [
     {
       id: 1,
-      image: '/images/PIC 2.jpeg',
+      image: '/images/tt.jpeg',
       title: '',
       subtitle: '',
       description: '',
       accent: '#FF3366',
-      prev_position: 'absolute inset-0 bg-cover bg-[center_top]',
-      next_position: 'absolute inset-0 bg-cover bg-[center_top] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
+      prev_position: 'absolute inset-0 bg-cover bg-[center_center]',
+      next_position: 'absolute inset-0 bg-cover bg-[center_center] transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
       placement: null
     },
     {
       id: 2,      
-      image: '/images/PIC 1.jpg',
+      image: '/images/yy.jpeg',
       title: '',
       subtitle: '',
       description: '',
