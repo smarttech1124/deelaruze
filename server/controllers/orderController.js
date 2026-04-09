@@ -7,26 +7,35 @@ const generateTrackingNumber = require('../utils/trackingNumber');
 const { processOrderFromSession } = require('../services/orderProcessor');
 
 const shippingOptions = [
-  { label: 'UK', value: 5 },
-  { label: 'Europe', value: 8 },
-  { label: 'North America', value: 11 },
-  { label: 'South America', value: 11 },
+  { label: 'UK',                value: 5  },
+  { label: 'Europe',            value: 8  },
+  { label: 'North America',     value: 11 },
+  { label: 'South America',     value: 11 },
   { label: 'Rest of the World', value: 13 },
 ];
 
+const EXTRA_BOOK_SHIPPING = 3; // £3 per book beyond the first
+const STICKER_PRICE       = 5; // £5 per sticker pack
+
+/**
+ * Mirrors the frontend shipping formula exactly:
+ * base fee for the first book + £3 for every additional book
+ */
+const calculateShippingFee = (baseRate, totalQuantity) => {
+  if (totalQuantity <= 0) return 0;
+  return baseRate + (totalQuantity - 1) * EXTRA_BOOK_SHIPPING;
+};
 
 // @desc    Create Stripe checkout session
 // @route   POST /api/orders/create-checkout-session
 // @access  Public
 exports.createCheckoutSession = async (req, res) => {
   try {
-    const { items, shippinglocation = 'UK' } = req.body;
-
-    const shippingOption = shippingOptions.find(
-      (option) => option.label.toLowerCase() === shippinglocation.toLowerCase()
-    );
-
-    const baseShippingFee = shippingOption ? shippingOption.value : 0;
+    const {
+      items,
+      shippingLocation = 'UK',
+      stickers = null,   // { quantity, unitPrice, total } | null
+    } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({
@@ -35,12 +44,26 @@ exports.createCheckoutSession = async (req, res) => {
       });
     }
 
-    // Calculate total quantity of all items
-    const totalQuantity = items.reduce((total, item) => total + (item.quantity || 1), 0);
+    // ── Shipping ────────────────────────────────────────────────────────────
+    const shippingOption = shippingOptions.find(
+      (o) => o.label.toLowerCase() === shippingLocation.toLowerCase()
+    );
+    const baseShippingRate = shippingOption ? shippingOption.value : 0;
+    const totalQuantity    = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const totalShippingFee = calculateShippingFee(baseShippingRate, totalQuantity);
 
-    // Calculate total shipping fee based on quantity
-    const totalShippingFee = baseShippingFee * totalQuantity;
+    // ── Sticker validation ──────────────────────────────────────────────────
+    const stickerQty = stickers?.quantity ?? 0;
+    if (stickerQty < 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid sticker quantity',
+      });
+    }
+    // Re-derive the sticker total server-side — never trust the client's total
+    const stickerTotal = stickerQty * STICKER_PRICE;
 
+    // ── Book line items ─────────────────────────────────────────────────────
     const lineItems = await Promise.all(
       items.map(async (item) => {
         const publication = await Publication.findById(item._id);
@@ -48,7 +71,6 @@ exports.createCheckoutSession = async (req, res) => {
         if (!publication) {
           throw new Error(`Publication ${item._id} not found`);
         }
-
         if (publication.stock < item.quantity) {
           throw new Error(`Insufficient stock for ${publication.title}`);
         }
@@ -68,14 +90,18 @@ exports.createCheckoutSession = async (req, res) => {
       })
     );
 
-    // Add shipping fee as a single line item
+    // ── Shipping line item ──────────────────────────────────────────────────
     if (totalShippingFee > 0) {
+      const extraBooksLabel = totalQuantity > 1
+        ? ` + £${EXTRA_BOOK_SHIPPING} × ${totalQuantity - 1} extra ${totalQuantity - 1 === 1 ? 'book' : 'books'}`
+        : '';
+
       lineItems.push({
         price_data: {
           currency: 'gbp',
           product_data: {
-            name: `Shipping Fee (${shippinglocation} - ${totalQuantity} ${totalQuantity === 1 ? 'book' : 'books'})`,
-            description: `£${baseShippingFee} per book × ${totalQuantity} ${totalQuantity === 1 ? 'book' : 'books'}`,
+            name: `Shipping — ${shippingLocation} (${totalQuantity} ${totalQuantity === 1 ? 'book' : 'books'})`,
+            description: `Base rate £${baseShippingRate}${extraBooksLabel}`,
           },
           unit_amount: Math.round(totalShippingFee * 100),
         },
@@ -83,39 +109,60 @@ exports.createCheckoutSession = async (req, res) => {
       });
     }
 
+    // ── Sticker line item (optional) ────────────────────────────────────────
+    if (stickerQty > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: 'Sticker Pack',
+            description: 'Exclusive art stickers — add-on to book order',
+          },
+          unit_amount: Math.round(STICKER_PRICE * 100),
+        },
+        quantity: stickerQty,
+      });
+    }
+
+    // ── Create session ──────────────────────────────────────────────────────
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
       line_items: lineItems,
       success_url: `${process.env.CLIENT_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL}/cart`,
+      cancel_url:  `${process.env.CLIENT_URL}/cart`,
       shipping_address_collection: {
-        allowed_countries: ['US','CA','GB','AU','DE','FR','ES','IT','NL','NG'],
+        allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'NG'],
       },
       metadata: {
         items: JSON.stringify(
-          items.map(i => ({
+          items.map((i) => ({
             publicationId: i._id,
-            quantity: i.quantity,
+            quantity:      i.quantity,
           }))
         ),
-        shippingLocation: shippinglocation,
-        baseShippingFee: baseShippingFee.toString(),
-        totalQuantity: totalQuantity.toString(),
-        totalShippingFee: totalShippingFee.toString(),
+        shippingLocation,
+        baseShippingRate:  baseShippingRate.toString(),
+        totalQuantity:     totalQuantity.toString(),
+        totalShippingFee:  totalShippingFee.toString(),
+        // Sticker metadata — empty strings when not ordered so Stripe doesn't
+        // choke on undefined values
+        stickerQuantity:   stickerQty.toString(),
+        stickerUnitPrice:  STICKER_PRICE.toString(),
+        stickerTotal:      stickerTotal.toString(),
       },
     });
 
     res.json({
-      success: true,
+      success:   true,
       sessionId: session.id,
-      url: session.url,
+      url:       session.url,
     });
 
   } catch (error) {
     res.status(400).json({
-      success: false,
-      message: error.message,
+      success:  false,
+      message:  error.message,
     });
   }
 };

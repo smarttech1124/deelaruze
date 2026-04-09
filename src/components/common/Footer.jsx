@@ -26,7 +26,7 @@ const Footer = () => {
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-12 gap-12 mb-16">
           {/* Brand Section - Spans 4 columns */}
-          <div className="md:col-span-5 fade-in" style={{ animationDelay: '0s' }}>
+          <div className="md:col-span-6 fade-in" style={{ animationDelay: '0s' }}>
             {/* <div className="accent-badge mb-4">EST. 2024</div> */}
             <h3 
               className="glitch-text footer-brand text-4xl md:text-5xl mb-4 text-white"
@@ -88,7 +88,7 @@ const Footer = () => {
 
           {/* Navigate Section */}
           <div
-            className="md:col-span-3 fade-in"
+            className="md:col-span-2 fade-in"
             style={{ animationDelay: '0.1s' }}
           >
             <h4 className="section-title font-bold text-sm tracking-widest text-white">
@@ -116,7 +116,7 @@ const Footer = () => {
 
 
           {/* Connect Section */}
-          <div className="md:col-span-3 fade-in" style={{ animationDelay: '0.2s' }}>
+          {/* <div className="md:col-span-3 fade-in" style={{ animationDelay: '0.2s' }}>
             <h4 className="section-title font-bold text-sm tracking-widest text-white">
               CONNECT
             </h4>
@@ -145,7 +145,7 @@ const Footer = () => {
                 Newsletter →
               </a>
             </div>
-          </div>
+          </div> */}
 
           {/* Legal Section */}
           {/* <div className="md:col-span-3 fade-in" style={{ animationDelay: '0.3s' }}>
