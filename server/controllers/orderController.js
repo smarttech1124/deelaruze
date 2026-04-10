@@ -34,14 +34,13 @@ exports.createCheckoutSession = async (req, res) => {
     const {
       items,
       shippingLocation = 'UK',
-      stickers = null,   // { quantity, unitPrice, total } | null
+      shippingfee,
+      stickers = null,
+      total
     } = req.body;
 
     if (!items || items.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Cart is empty',
-      });
+      return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
     // ── Shipping ────────────────────────────────────────────────────────────
@@ -55,15 +54,14 @@ exports.createCheckoutSession = async (req, res) => {
     // ── Sticker validation ──────────────────────────────────────────────────
     const stickerQty = stickers?.quantity ?? 0;
     if (stickerQty < 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid sticker quantity',
-      });
+      return res.status(400).json({ success: false, message: 'Invalid sticker quantity' });
     }
-    // Re-derive the sticker total server-side — never trust the client's total
     const stickerTotal = stickerQty * STICKER_PRICE;
+    console.log(`Sticker add-on: ${stickerQty} × £${STICKER_PRICE} = £${stickerTotal}`);
 
     // ── Book line items ─────────────────────────────────────────────────────
+    let bookSubtotal = 0;
+
     const lineItems = await Promise.all(
       items.map(async (item) => {
         const publication = await Publication.findById(item._id);
@@ -71,9 +69,11 @@ exports.createCheckoutSession = async (req, res) => {
         if (!publication) {
           throw new Error(`Publication ${item._id} not found`);
         }
-        if (publication.stock < item.quantity) {
+        if (publication.stock < (item.quantity || 1)) {
           throw new Error(`Insufficient stock for ${publication.title}`);
         }
+
+        bookSubtotal += publication.price * (item.quantity || 1);
 
         return {
           price_data: {
@@ -85,7 +85,7 @@ exports.createCheckoutSession = async (req, res) => {
             },
             unit_amount: Math.round(publication.price * 100),
           },
-          quantity: item.quantity,
+          quantity: item.quantity || 1,
         };
       })
     );
@@ -109,27 +109,32 @@ exports.createCheckoutSession = async (req, res) => {
       });
     }
 
-  // ── Sticker line item (optional) ────────────────────────────────────────
-  if (stickerQty > 0) {
-    lineItems.push({
-      price_data: {
-        currency: 'gbp',
-        product_data: {
-          name: 'Exclusive Art Sticker Pack',
-          description: `Limited edition art stickers — curated add-on for book orders. £${STICKER_PRICE} per pack.`,
-          images: [`${process.env.CLIENT_URL}/images/stickers.jpeg`],
-          metadata: {
-            type:       'sticker_addon',
-            unitPrice:  STICKER_PRICE.toString(),
-            quantity:   stickerQty.toString(),
-            total:      stickerTotal.toString(),
+    // ── Sticker line item ───────────────────────────────────────────────────
+    if (stickerQty > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: 'Exclusive Deela stickers',
+            description: `Limited edition art stickers — curated add-on for book orders. £${STICKER_PRICE} per pack.`,
+            images: [`${process.env.CLIENT_URL}/images/stickers.jpeg`],
+            metadata: {
+              type:      'sticker_addon',
+              unitPrice: STICKER_PRICE.toString(),
+              quantity:  stickerQty.toString(),
+              total:     stickerTotal.toString(),
+            },
           },
+          unit_amount: Math.round(STICKER_PRICE * 100),
         },
-        unit_amount: Math.round(STICKER_PRICE * 100),
-      },
-      quantity: stickerQty,
-    });
-  }
+        quantity: stickerQty,
+      });
+    }
+
+    // ── Grand total (server-derived — used for webhook verification) ─────────
+    const grandTotal = parseFloat(
+      (bookSubtotal + totalShippingFee + stickerTotal).toFixed(2)
+    );
 
     // ── Create session ──────────────────────────────────────────────────────
     const session = await stripe.checkout.sessions.create({
@@ -142,35 +147,23 @@ exports.createCheckoutSession = async (req, res) => {
         allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'NG'],
       },
       metadata: {
-        items: JSON.stringify(
-          items.map((i) => ({
-            publicationId: i._id,
-            quantity:      i.quantity,
-          }))
-        ),
+        items:            JSON.stringify(items.map((i) => ({ publicationId: i._id, quantity: i.quantity || 1 }))),
         shippingLocation,
-        baseShippingRate:  baseShippingRate.toString(),
-        totalQuantity:     totalQuantity.toString(),
-        totalShippingFee:  totalShippingFee.toString(),
-        // Sticker metadata — empty strings when not ordered so Stripe doesn't
-        // choke on undefined values
-        stickerQuantity:   stickerQty.toString(),
-        stickerUnitPrice:  STICKER_PRICE.toString(),
-        stickerTotal:      stickerTotal.toString(),
+        baseShippingRate: baseShippingRate.toString(),
+        totalQuantity:    totalQuantity.toString(),
+        totalShippingFee: totalShippingFee.toString(),
+        bookSubtotal:     bookSubtotal.toFixed(2),
+        stickerQuantity:  stickerQty.toString(),
+        stickerUnitPrice: STICKER_PRICE.toString(),
+        stickerTotal:     stickerTotal.toFixed(2),
+        grandTotal:       grandTotal.toString(),   // ← full server-derived total
       },
     });
 
-    res.json({
-      success:   true,
-      sessionId: session.id,
-      url:       session.url,
-    });
+    res.json({ success: true, sessionId: session.id, url: session.url });
 
   } catch (error) {
-    res.status(400).json({
-      success:  false,
-      message:  error.message,
-    });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -281,6 +274,9 @@ exports.handleWebhook = async (req, res) => {
         shippingCity:    shippingAddress.city     || '',
         shippingCountry: shippingAddress.country  || '',
         shippingPostcode: shippingAddress.postal_code || '',
+
+        booksLabel:   totalQuantity === 1 ? 'copy' : 'copies',
+        hasStickers:  stickerQty > 0,
       };
 
       // ── Customer confirmation email ──────────────────────────────────────
@@ -305,7 +301,7 @@ exports.handleWebhook = async (req, res) => {
           variables: {
             ...commonVariables,
             customerName,
-            customerEmail: customerEmail || 'N/A',
+            customerEmail: customerEmail || 'N/A', 
           },
         }).catch((error) => {
           console.error('❌ Admin email error:', error);

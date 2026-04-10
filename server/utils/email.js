@@ -1,77 +1,41 @@
 const axios = require('axios');
 
-let accessToken = null;
-let tokenExpires = 0;
+const postmark = axios.create({
+  baseURL: 'https://api.postmarkapp.com',
+  headers: {
+    'Accept':                  'application/json',
+    'Content-Type':            'application/json',
+    'X-Postmark-Server-Token': process.env.POSTMARK_SERVER_TOKEN,
+  },
+});
 
-// Get SendPulse Access Token
-async function getSendPulseToken() {
-  if (accessToken && Date.now() < tokenExpires) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post(
-      'https://api.sendpulse.com/oauth/access_token',
-      {
-        grant_type: 'client_credentials',
-        client_id: process.env.SENDPULSE_CLIENT_ID,
-        client_secret: process.env.SENDPULSE_CLIENT_SECRET,
-      }
-    );
-
-    accessToken = response.data.access_token;
-    tokenExpires = Date.now() + (response.data.expires_in - 60) * 1000;
-
-    return accessToken;
-  } catch (error) {
-    console.error('SendPulse Auth Error:', error.response?.data || error.message);
-    return null;
-  }
-}
-
-// Send Transactional Email Using Template
+// Send Transactional Email Using Postmark Template
 exports.sendEmail = async ({ to, templateId, variables }) => {
   try {
-    const token = await getSendPulseToken();
-    if (!token) {
-      console.error('❌ SendPulse: failed to obtain auth token');
-      return null;
-    }
-
-    // Ensure every variable value is a string — SendPulse rejects non-strings
+    // Ensure every variable value is a string — guards against number/boolean
+    // values that can cause unexpected rendering in Postmark templates
     const safeVariables = Object.fromEntries(
-      Object.entries(variables || {}).map(([k, v]) => [k, String(v ?? '')])
+      Object.entries(variables || {}).map(([k, v]) => [ 
+        k,
+        typeof v === 'boolean' ? v : String(v ?? ''),
+      ])
     );
 
-    const response = await axios.post(
-      'https://api.sendpulse.com/smtp/emails',
-      {
-        email: {
-          to:   [{ email: to }],
-          from: {
-            name:  process.env.FROM_NAME  || 'Deelaruze',
-            email: process.env.FROM_EMAIL,
-          },
-          template: {
-            id:        templateId,
-            variables: safeVariables,
-          },
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await postmark.post('/email/withTemplate', {
+      From:       `${process.env.FROM_NAME || 'Deelaruze'} <${process.env.FROM_EMAIL}>`,
+      To:         to,
+      TemplateAlias: templateId,   // use TemplateId: <number> if you prefer numeric IDs
+      TemplateModel: safeVariables,
+      MessageStream: 'outbound',   // change to your broadcast stream name if needed
+    });
 
-    console.log(`✅ Email sent to ${to} via SendPulse`);
+    console.log(`✅ Email sent to ${to} via Postmark (MessageID: ${response.data.MessageID})`);
     return response.data;
 
   } catch (error) {
+    const postmarkError = error.response?.data;
     console.error(
-      `❌ SendPulse Email Error (to: ${to}):`,
-      error.response?.data || error.message
+      `❌ Postmark Email Error (to: ${to}) — Code ${postmarkError?.ErrorCode}: ${postmarkError?.Message || error.message}`
     );
     return null;
   }
