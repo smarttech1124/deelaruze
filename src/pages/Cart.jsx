@@ -186,11 +186,11 @@ const Cart = () => {
 
           {/* Hero */}
           <div className="mb-16">
-            <div className="section-badge hero-fade">CHECKOUT</div>
+            {/* <div className="section-badge hero-fade">CHECKOUT</div> */}
             <div className="hero-fade" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
                 <ShoppingBag className="icon-float w-12 h-12 md:w-16 md:h-16 text-red-500" />
-                <h1 className="cart-title text-6xl md:text-8xl text-white tracking-tight">
+                <h1 className="cart-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
                   YOUR CART
                 </h1>
               </div>
@@ -243,7 +243,7 @@ const Cart = () => {
 
                   {/* Subtotal */}
                   <div className="summary-row flex justify-between text-gray-400">
-                    <span>Subtotal ({cart.length} {cart.length === 1 ? 'item' : 'items'})</span>
+                    <span>Subtotal ({totalQuantity} {totalQuantity === 1 ? 'item' : 'items'})</span>
                     <span className="font-bold">£{cartTotal.toFixed(2)}</span>
                   </div>
 
@@ -278,6 +278,10 @@ const Cart = () => {
                       <span className="text-xs text-gray-600 mt-0.5">{shippingBreakdown}</span>
                     </div>
                     <span className="font-bold self-start">£{shippingFee.toFixed(2)}</span>
+                  </div>
+                  {/* Notice */}
+                  <div className="summary-row flex justify-between text-gray-400 text-sm">
+                    <span>BOOKS WILL BE SHIPPED WITHIN 2 WEEKS</span>
                   </div>
 
                   <div className="my-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />

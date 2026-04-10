@@ -101,7 +101,7 @@ const Shop = () => {
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
                 <ShoppingBag className="icon-float w-12 h-12 md:w-16 md:h-16 text-red-500" />
-                <h1 className="shop-title text-6xl md:text-8xl text-white tracking-tight">
+                <h1 className="shop-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
                   SHOP
                 </h1>
               </div>
