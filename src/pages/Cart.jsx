@@ -52,7 +52,7 @@ const StickerAddon = ({ quantity, onChange }) => {
             <p className="text-white font-bold text-sm tracking-wider">ADD STICKER PACK</p>
           </div>
           <p className="text-gray-400 text-xs leading-relaxed mb-3">
-            Exclusive art stickers — a perfect companion to your book order.
+            Exclusive Deela stickers.
             £{STICKER_PRICE.toFixed(2)} per pack.
           </p>
 
