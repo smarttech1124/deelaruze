@@ -280,8 +280,8 @@ const Cart = () => {
                     <span className="font-bold self-start">£{shippingFee.toFixed(2)}</span>
                   </div>
                   {/* Notice */}
-                  <div className="summary-row flex justify-between text-gray-400 text-sm">
-                    <span>BOOKS WILL BE SHIPPED WITHIN 2 WEEKS</span>
+                  <div className="summary-row flex justify-between text-gray-400 text-md">
+                    <b>PLEASE NOTE: BOOKS WILL BE SHIPPED WITHIN 2 WEEKS</b>
                   </div>
 
                   <div className="my-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
