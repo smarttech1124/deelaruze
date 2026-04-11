@@ -7,7 +7,7 @@ const generateTrackingNumber = require('../utils/trackingNumber');
 const processOrderFromSession = async (stripeSession) => {
 
   await dbConnect();
-  
+
   const dbSession = await mongoose.startSession();
   dbSession.startTransaction();
 
@@ -80,8 +80,6 @@ const processOrderFromSession = async (stripeSession) => {
         `Stripe £${total} vs metadata £${serverDerivedTotal}`
       );
     }
-
-    console.log("stripeSession", stripeSession);
 
     // ── Create order ───────────────────────────────────────────────────────
     const order = await Order.create(

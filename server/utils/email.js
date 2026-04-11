@@ -21,6 +21,8 @@ exports.sendEmail = async ({ to, templateId, variables }) => {
       ])
     );
 
+    console.log(`Sending email to ${to} using Postmark template ${templateId} with variables: ${JSON.stringify(safeVariables)}`);
+
     const response = await postmark.post('/email/withTemplate', {
       From:       `${process.env.FROM_NAME || 'Deelaruze'} <${process.env.FROM_EMAIL}>`,
       To:         to,

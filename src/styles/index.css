@@ -2158,7 +2158,7 @@ body {
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(135deg, #FF3366, #FFB800);
+  background: linear-gradient(135deg, #FF3366, #FF3366);
 }
 
 .checkout-button::before {

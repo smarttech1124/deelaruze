@@ -229,7 +229,7 @@ exports.handleWebhook = async (req, res) => {
 
     try {
       await dbConnect();
-      
+
       const order = await processOrderFromSession(session);
 
       const customerEmail    = session.customer_details?.email;
@@ -248,12 +248,7 @@ exports.handleWebhook = async (req, res) => {
         shippingFee:     order.shippingCost.toFixed(2),       // ✅ shippingCost not shippingFee
         shippingLocation: order.shippingLocation,
         totalBooks:      totalQuantity.toString(),
-        totalAmount:     order.total.toFixed(2),              // ✅ total not totalPrice
-
-        hasStickers:     order.stickers?.quantity > 0,
-        stickerQuantity: (order.stickers?.quantity  ?? 0).toString(),
-        stickerUnitPrice:(order.stickers?.unitPrice ?? 0).toFixed(2),
-        stickerTotal:    (order.stickers?.total     ?? 0).toFixed(2),
+        totalAmount:     order.total.toFixed(2),              // ✅ total not totalPrice        
 
         booksLabel:      totalQuantity === 1 ? 'copy' : 'copies',
 
@@ -263,6 +258,14 @@ exports.handleWebhook = async (req, res) => {
         shippingCountry:  order.shippingAddress?.country  || '',
         shippingPostcode: order.shippingAddress?.postalCode || '',
       };
+
+      if (order.stickers.quantity > 0) {
+        commonVariables.hasStickers.stickerQuantity = order.stickers.quantity.toString();
+        commonVariables.hasStickers.stickerUnitPrice = order.stickers.unitPrice.toFixed(2);
+        commonVariables.hasStickers.stickerTotal = order.stickers.total.toFixed(2);
+      }
+
+      console.log('Common email variables:', commonVariables);
 
       // ── Customer confirmation email ──────────────────────────────────────
       if (customerEmail) {
