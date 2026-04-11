@@ -30,8 +30,6 @@ exports.sendEmail = async ({ to, templateId, variables }) => {
       Object.entries(variables || {}).map(([k, v]) => [k, stringifyValue(v)])
     );
 
-    console.log(`Sending email to ${to} using Postmark template ${templateId} with variables: ${JSON.stringify(safeVariables)}`);
-
     const response = await postmark.post('/email/withTemplate', {
       From:       `${process.env.FROM_NAME || 'Deelaruze'} <${process.env.FROM_EMAIL}>`,
       To:         to,
@@ -40,7 +38,7 @@ exports.sendEmail = async ({ to, templateId, variables }) => {
       MessageStream: 'outbound',
     });
 
-    console.log(`✅ Email sent to ${to} via Postmark (MessageID: ${response.data.MessageID})`);
+    // console.log(`✅ Email sent to ${to} via Postmark (MessageID: ${response.data.MessageID})`);
     return response.data;
 
   } catch (error) {
