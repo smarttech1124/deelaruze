@@ -153,7 +153,11 @@ const StickerRow = ({ stickers }) => (
           fontSize: 28,
         }}
       >
-        🎨
+        <img
+          src="/images/stickers.jpeg"
+          alt="Sticker pack"
+          className="w-full h-full object-cover"
+        />
       </div>
       <span
         className="ov-mono"

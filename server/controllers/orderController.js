@@ -256,9 +256,9 @@ exports.handleWebhook = async (req, res) => {
 
         hasStickers: hasStickers
           ? {
-              stickerQuantity:  order.stickers.quantity.toString(),
-              stickerUnitPrice: order.stickers.unitPrice.toFixed(2),
-              stickerTotal:     order.stickers.total.toFixed(2),
+              stickerQuantity:  order.stickers.quantity,
+              stickerUnitPrice: order.stickers.unitPrice,
+              stickerTotal:     order.stickers.total,
             }
           : false,
 
