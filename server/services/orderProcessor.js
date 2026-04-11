@@ -104,14 +104,13 @@ const processOrderFromSession = async (stripeSession) => {
           stripePaymentIntentId: stripeSession.payment_intent,
 
           shippingAddress: {
-            name:       stripeSession.shipping_details?.name
-                          || stripeSession.customer_details?.name,
-            line1:      stripeSession.shipping_details?.address?.line1,
-            line2:      stripeSession.shipping_details?.address?.line2, 
-            city:       stripeSession.shipping_details?.address?.city,
-            state:      stripeSession.shipping_details?.address?.state,
-            postalCode: stripeSession.shipping_details?.address?.postal_code,
-            country:    stripeSession.shipping_details?.address?.country,
+            name:       stripeSession.customer_details?.name,
+            line1:      stripeSession.customer_details?.address?.line1,
+            line2:      stripeSession.customer_details?.address?.line2, 
+            city:       stripeSession.customer_details?.address?.city,
+            state:      stripeSession.customer_details?.address?.state,
+            postalCode: stripeSession.customer_details?.address?.postal_code,
+            country:    stripeSession.customer_details?.address?.country,
           },
         },
       ],

@@ -230,6 +230,7 @@ exports.handleWebhook = async (req, res) => {
 
     try {
       const order = await processOrderFromSession(session);
+      console.log(`Order information: ${JSON.stringify(order)}`);
 
       const customerEmail    = session.customer_details?.email;
       const customerName     = session.customer_details?.name || 'Customer';
@@ -272,6 +273,7 @@ exports.handleWebhook = async (req, res) => {
         shippingCountry:  order.shippingAddress?.country  || '',
         shippingPostcode: order.shippingAddress?.postalCode || '',
       };
+      console.log(`Common email variables: ${JSON.stringify(commonVariables)}`);
 
       // ── Customer confirmation email ──────────────────────────────────────
       if (customerEmail) {
