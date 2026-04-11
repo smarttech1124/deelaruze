@@ -77,6 +77,8 @@ const processOrderFromSession = async (stripeSession) => {
       );
     }
 
+    console.log("stripeSession.shipping_details", stripeSession.shipping_details);
+
     // ── Create order ───────────────────────────────────────────────────────
     const order = await Order.create(
       [

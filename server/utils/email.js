@@ -24,7 +24,7 @@ exports.sendEmail = async ({ to, templateId, variables }) => {
     const response = await postmark.post('/email/withTemplate', {
       From:       `${process.env.FROM_NAME || 'Deelaruze'} <${process.env.FROM_EMAIL}>`,
       To:         to,
-      TemplateAlias: templateId,   // use TemplateId: <number> if you prefer numeric IDs
+      TemplateId: templateId,   // use TemplateId: <number> if you prefer numeric IDs
       TemplateModel: safeVariables,
       MessageStream: 'outbound',   // change to your broadcast stream name if needed
     });
