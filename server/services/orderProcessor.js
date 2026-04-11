@@ -77,7 +77,7 @@ const processOrderFromSession = async (stripeSession) => {
       );
     }
 
-    console.log("stripeSession.shipping_details", stripeSession.shipping_details);
+    console.log("stripeSession", stripeSession);
 
     // ── Create order ───────────────────────────────────────────────────────
     const order = await Order.create(
@@ -107,7 +107,7 @@ const processOrderFromSession = async (stripeSession) => {
             name:       stripeSession.shipping_details?.name
                           || stripeSession.customer_details?.name,
             line1:      stripeSession.shipping_details?.address?.line1,
-            line2:      stripeSession.shipping_details?.address?.line2,
+            line2:      stripeSession.shipping_details?.address?.line2, 
             city:       stripeSession.shipping_details?.address?.city,
             state:      stripeSession.shipping_details?.address?.state,
             postalCode: stripeSession.shipping_details?.address?.postal_code,
