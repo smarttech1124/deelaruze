@@ -5,10 +5,10 @@ const generateTrackingNumber = require('../utils/trackingNumber');
 
 const processOrderFromSession = async (stripeSession) => {
   const dbSession = await mongoose.startSession();
-  dbSession.startTransaction(); 
+  dbSession.startTransaction();
 
   try {
-    // Idempotency check
+    // ── Idempotency guard ──────────────────────────────────────────────────
     const existingOrder = await Order.findOne({
       stripeSessionId: stripeSession.id,
     }).session(dbSession);
@@ -19,12 +19,22 @@ const processOrderFromSession = async (stripeSession) => {
       return existingOrder;
     }
 
-    const metadataItems = JSON.parse(stripeSession.metadata.items || '[]');
-    // const shippingFee = Number(stripeSession.metadata.shippingFee || 0);
-    const shippingFee = Number(stripeSession.metadata?.shippingFee || 0);
-    const shippingLocation = stripeSession.metadata?.shippingLocation || stripeSession.customer_details.address?.country || '';
+    // ── Parse metadata ─────────────────────────────────────────────────────
+    const metadataItems  = JSON.parse(stripeSession.metadata.items || '[]');
+    const shippingLocation = stripeSession.metadata?.shippingLocation
+      || stripeSession.customer_details?.address?.country
+      || '';
 
-    let subtotal = 0;
+    // Shipping — stored as totalShippingFee in createCheckoutSession
+    const shippingCost = parseFloat(stripeSession.metadata?.totalShippingFee || '0');
+
+    // Stickers — all three fields written by createCheckoutSession
+    const stickerQty       = parseInt(stripeSession.metadata?.stickerQuantity  || '0', 10);
+    const stickerUnitPrice = parseFloat(stripeSession.metadata?.stickerUnitPrice || '0');
+    const stickerTotal     = parseFloat(stripeSession.metadata?.stickerTotal    || '0');
+
+    // ── Book items + stock deduction ───────────────────────────────────────
+    let bookSubtotal = 0;
     const orderItems = [];
 
     for (const item of metadataItems) {
@@ -32,53 +42,79 @@ const processOrderFromSession = async (stripeSession) => {
         .session(dbSession);
 
       if (!publication) {
-        throw new Error('Publication not found');
+        throw new Error(`Publication ${item.publicationId} not found`);
       }
-
       if (publication.stock < item.quantity) {
         throw new Error(`Insufficient stock for ${publication.title}`);
       }
 
       // Atomic stock + sales update
-      publication.stock -= item.quantity;
-      publication.sales = (publication.sales || 0) + item.quantity;
+      publication.stock  -= item.quantity;
+      publication.sales   = (publication.sales || 0) + item.quantity;
       await publication.save({ session: dbSession });
 
-      subtotal += publication.price * item.quantity;
+      bookSubtotal += publication.price * item.quantity;
 
       orderItems.push({
         publication: publication._id,
-        title: publication.title,
-        price: publication.price,
-        quantity: item.quantity,
-        image: publication.images?.[0]?.url || '',
+        title:       publication.title,
+        price:       publication.price,
+        quantity:    item.quantity,
+        image:       publication.images?.[0]?.url || '',
       });
     }
 
+    // ── Totals ─────────────────────────────────────────────────────────────
+    // Use Stripe's verified amount_total as the source of truth for total
     const total = stripeSession.amount_total / 100;
 
-    const order = await Order.create([{
-      email: stripeSession.customer_details.email,
-      items: orderItems,
-      subtotal,
-      shippingCost: shippingFee,
-      shippingLocation: shippingLocation,
-      tax: 0,
-      total,
-      paymentStatus: 'completed',
-      stripeSessionId: stripeSession.id,
-      stripePaymentIntentId: stripeSession.payment_intent,
-      shippingAddress: {
-        name: stripeSession.customer_details.name,
-        line1: stripeSession.customer_details.address?.line1,
-        line2: stripeSession.customer_details.address?.line2,
-        city: stripeSession.customer_details.address?.city,
-        state: stripeSession.customer_details.address?.state,
-        postalCode: stripeSession.customer_details.address?.postal_code,
-        country: stripeSession.customer_details.address?.country, 
-      },
-      
-    }], { session: dbSession });
+    // Cross-check: server-derived vs Stripe-collected (log discrepancies)
+    const serverDerivedTotal = parseFloat(stripeSession.metadata?.grandTotal || '0');
+    if (serverDerivedTotal && Math.abs(total - serverDerivedTotal) > 0.01) {
+      console.warn(
+        `⚠️  Total mismatch on session ${stripeSession.id}: ` +
+        `Stripe £${total} vs metadata £${serverDerivedTotal}`
+      );
+    }
+
+    // ── Create order ───────────────────────────────────────────────────────
+    const order = await Order.create(
+      [
+        {
+          email:    stripeSession.customer_details.email,
+          items:    orderItems,
+
+          stickers: {
+            quantity:  stickerQty,
+            unitPrice: stickerUnitPrice,
+            total:     stickerTotal,
+          },
+
+          subtotal:         bookSubtotal,
+          shippingCost,
+          shippingLocation,
+          tax:              0,
+          total,
+          paymentStatus:    'completed',
+          trackingNumber:   generateTrackingNumber(),
+
+          stripeSessionId:       stripeSession.id,
+          stripePaymentIntentId: stripeSession.payment_intent,
+
+          shippingAddress: {
+            name:       stripeSession.shipping_details?.name
+                          || stripeSession.customer_details?.name,
+            line1:      stripeSession.shipping_details?.address?.line1,
+            line2:      stripeSession.shipping_details?.address?.line2,
+            city:       stripeSession.shipping_details?.address?.city,
+            state:      stripeSession.shipping_details?.address?.state,
+            postalCode: stripeSession.shipping_details?.address?.postal_code,
+            country:    stripeSession.shipping_details?.address?.country,
+          },
+        },
+      ],
+      { session: dbSession }
+    );
 
     await dbSession.commitTransaction();
     dbSession.endSession();

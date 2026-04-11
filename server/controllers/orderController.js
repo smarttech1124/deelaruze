@@ -34,9 +34,7 @@ exports.createCheckoutSession = async (req, res) => {
     const {
       items,
       shippingLocation = 'UK',
-      shippingfee,
-      stickers = null,
-      total
+      stickers = null
     } = req.body;
 
     if (!items || items.length === 0) {
@@ -57,7 +55,6 @@ exports.createCheckoutSession = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid sticker quantity' });
     }
     const stickerTotal = stickerQty * STICKER_PRICE;
-    console.log(`Sticker add-on: ${stickerQty} × £${STICKER_PRICE} = £${stickerTotal}`);
 
     // ── Book line items ─────────────────────────────────────────────────────
     let bookSubtotal = 0;

@@ -6,10 +6,6 @@ const orderSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    // user: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'User',
-    // },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -23,45 +19,37 @@ const orderSchema = new mongoose.Schema(
           ref: 'Publication',
           required: true,
         },
-        title: String,
-        price: Number,
-        quantity: {
-          type: Number,
-          required: true,
-          min: 1,
-        },
-        image: String,
-        shippingFee: Number
+        title:      String,
+        price:      Number,
+        quantity:   { type: Number, required: true, min: 1 },
+        image:      String,
+        shippingFee: Number,
       },
     ],
+
+    // ── Sticker add-on (optional) ──────────────────────────────────────────
+    stickers: {
+      quantity:   { type: Number, default: 0 },
+      unitPrice:  { type: Number, default: 0 },
+      total:      { type: Number, default: 0 },
+    },
+
     shippingAddress: {
-      name: String,
-      line1: String,
-      line2: String,
-      city: String,
-      state: String,
+      name:       String,
+      line1:      String,
+      line2:      String,
+      city:       String,
+      state:      String,
       postalCode: String,
-      country: String,
+      country:    String,
     },
-    subtotal: {
-      type: Number,
-      required: true,
-    },
-    shippingCost: {
-      type: Number,
-      default: 0,
-    },
-    shippingLocation: {
-      type: String,
-    },
-    tax: {
-      type: Number,
-      default: 0,
-    },
-    total: {
-      type: Number,
-      required: true,
-    },
+
+    subtotal:         { type: Number, required: true },
+    shippingCost:     { type: Number, default: 0 },
+    shippingLocation: { type: String },
+    tax:              { type: Number, default: 0 },
+    total:            { type: Number, required: true },
+
     status: {
       type: String,
       enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
@@ -72,28 +60,16 @@ const orderSchema = new mongoose.Schema(
       enum: ['pending', 'completed', 'failed', 'refunded'],
       default: 'pending',
     },
-    stripeSessionId: { 
-      type: String,
-    },
-    stripePaymentIntentId: {
-      type: String, 
-    },
-    trackingNumber: {
-      type: String,
-    },
-    shippedAt: {
-      type: Date,
-    },
-    deliveredAt: {
-      type: Date,
-    },
+
+    stripeSessionId:       { type: String },
+    stripePaymentIntentId: { type: String },
+    trackingNumber:        { type: String },
+    shippedAt:             { type: Date },
+    deliveredAt:           { type: Date },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Generate order number before saving
 orderSchema.pre('save', async function (next) {
   if (!this.orderNumber) {
     const count = await mongoose.model('Order').countDocuments();
@@ -102,7 +78,6 @@ orderSchema.pre('save', async function (next) {
   next();
 });
 
-// Index for faster queries
 orderSchema.index({ orderNumber: 1 });
 orderSchema.index({ email: 1 });
 orderSchema.index({ status: 1, createdAt: -1 });
