@@ -233,47 +233,44 @@ exports.handleWebhook = async (req, res) => {
 
       const customerEmail    = session.customer_details?.email;
       const customerName     = session.customer_details?.name || 'Customer';
-      const shippingAddress  = session.shipping_details?.address || {};
+      // const shippingAddress  = session.shipping_details?.address || {};
 
       // ── Pull sticker info from session metadata ─────────────────────────
-      const stickerQty       = parseInt(session.metadata?.stickerQuantity  || '0', 10);
-      const stickerUnitPrice = parseFloat(session.metadata?.stickerUnitPrice || '0');
-      const stickerTotal     = parseFloat(session.metadata?.stickerTotal    || '0');
-      const hasStickers      = stickerQty > 0;
+      // const stickerQty       = parseInt(session.metadata?.stickerQuantity  || '0', 10);
+      // const stickerUnitPrice = parseFloat(session.metadata?.stickerUnitPrice || '0');
+      // const stickerTotal     = parseFloat(session.metadata?.stickerTotal    || '0');
+      // const hasStickers      = stickerQty > 0;
 
       // ── Pull shipping info from session metadata ─────────────────────────
-      const shippingLocation = session.metadata?.shippingLocation  || 'UK';
-      const totalShippingFee = parseFloat(session.metadata?.totalShippingFee || '0');
+      // const shippingLocation = session.metadata?.shippingLocation  || 'UK';
+      // const totalShippingFee = parseFloat(session.metadata?.totalShippingFee || '0');
       const totalQuantity    = parseInt(session.metadata?.totalQuantity      || '0', 10);
 
       // ── Shared order variables ───────────────────────────────────────────
       const commonVariables = {
         orderId:         order._id.toString(),
         orderDate:       new Date().toLocaleDateString('en-GB', {
-                           day: '2-digit', month: 'long', year: 'numeric',
-                         }),
+                          day: '2-digit', month: 'long', year: 'numeric',
+                        }),
         trackingNumber:  order.trackingNumber || 'Pending',
-        subtotal:        (order.totalPrice - totalShippingFee - stickerTotal).toFixed(2),
-        shippingFee:     totalShippingFee.toFixed(2),
-        shippingLocation,
+        subtotal:        order.subtotal.toFixed(2),           // ✅ from Order model
+        shippingFee:     order.shippingCost.toFixed(2),       // ✅ shippingCost not shippingFee
+        shippingLocation: order.shippingLocation,
         totalBooks:      totalQuantity.toString(),
-        totalAmount:     order.totalPrice.toFixed(2),
+        totalAmount:     order.total.toFixed(2),              // ✅ total not totalPrice
 
-        // Sticker fields — template can conditionally render these
-        hasStickers:        hasStickers.toString(),   // 'true' | 'false'
-        stickerQuantity:    stickerQty.toString(),
-        stickerUnitPrice:   stickerUnitPrice.toFixed(2),
-        stickerTotal:       stickerTotal.toFixed(2),
+        hasStickers:     order.stickers?.quantity > 0,
+        stickerQuantity: (order.stickers?.quantity  ?? 0).toString(),
+        stickerUnitPrice:(order.stickers?.unitPrice ?? 0).toFixed(2),
+        stickerTotal:    (order.stickers?.total     ?? 0).toFixed(2),
 
-        // Shipping address (useful for admin + customer confirmation)
-        shippingLine1:   shippingAddress.line1    || '',
-        shippingLine2:   shippingAddress.line2    || '',
-        shippingCity:    shippingAddress.city     || '',
-        shippingCountry: shippingAddress.country  || '',
-        shippingPostcode: shippingAddress.postal_code || '',
+        booksLabel:      totalQuantity === 1 ? 'copy' : 'copies',
 
-        booksLabel:   totalQuantity === 1 ? 'copy' : 'copies',
-        hasStickers:  stickerQty > 0,
+        shippingLine1:    order.shippingAddress?.line1    || '',
+        shippingLine2:    order.shippingAddress?.line2    || '',
+        shippingCity:     order.shippingAddress?.city     || '',
+        shippingCountry:  order.shippingAddress?.country  || '',
+        shippingPostcode: order.shippingAddress?.postalCode || '',
       };
 
       // ── Customer confirmation email ──────────────────────────────────────
