@@ -272,7 +272,7 @@ exports.handleWebhook = async (req, res) => {
         shippingCountry:  order.shippingAddress?.country    || '',
       };
 
-      console.log('Common email variables:', commonVariables);
+      console.log('Common email variables:', commonVariables); 
 
       // ── Customer confirmation email ──────────────────────────────────────
       if (customerEmail) {
