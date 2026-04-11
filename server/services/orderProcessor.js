@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
+const dbConnect  = require('../config/database');
 const Order = require('../models/Order');
 const Publication = require('../models/Publication');
 const generateTrackingNumber = require('../utils/trackingNumber');
 
 const processOrderFromSession = async (stripeSession) => {
+
+  await dbConnect();
+  
   const dbSession = await mongoose.startSession();
   dbSession.startTransaction();
 

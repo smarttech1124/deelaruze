@@ -210,8 +210,7 @@ exports.verifyCheckoutSession = async (req, res) => {
 // @route   POST /api/orders/webhook
 // @access  Public
 exports.handleWebhook = async (req, res) => {
-  await dbConnect();
-
+  
   const sig = req.headers['stripe-signature'];
   let event;
 
@@ -229,22 +228,13 @@ exports.handleWebhook = async (req, res) => {
     const session = event.data.object;
 
     try {
+      await dbConnect();
+      
       const order = await processOrderFromSession(session);
-      console.log(`Order information: ${JSON.stringify(order)}`);
 
       const customerEmail    = session.customer_details?.email;
       const customerName     = session.customer_details?.name || 'Customer';
-      // const shippingAddress  = session.shipping_details?.address || {};
 
-      // ── Pull sticker info from session metadata ─────────────────────────
-      // const stickerQty       = parseInt(session.metadata?.stickerQuantity  || '0', 10);
-      // const stickerUnitPrice = parseFloat(session.metadata?.stickerUnitPrice || '0');
-      // const stickerTotal     = parseFloat(session.metadata?.stickerTotal    || '0');
-      // const hasStickers      = stickerQty > 0;
-
-      // ── Pull shipping info from session metadata ─────────────────────────
-      // const shippingLocation = session.metadata?.shippingLocation  || 'UK';
-      // const totalShippingFee = parseFloat(session.metadata?.totalShippingFee || '0');
       const totalQuantity    = parseInt(session.metadata?.totalQuantity      || '0', 10);
 
       // ── Shared order variables ───────────────────────────────────────────
@@ -273,7 +263,6 @@ exports.handleWebhook = async (req, res) => {
         shippingCountry:  order.shippingAddress?.country  || '',
         shippingPostcode: order.shippingAddress?.postalCode || '',
       };
-      console.log(`Common email variables: ${JSON.stringify(commonVariables)}`);
 
       // ── Customer confirmation email ──────────────────────────────────────
       if (customerEmail) {
