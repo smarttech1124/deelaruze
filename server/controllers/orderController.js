@@ -238,32 +238,39 @@ exports.handleWebhook = async (req, res) => {
       const totalQuantity    = parseInt(session.metadata?.totalQuantity      || '0', 10);
 
       // ── Shared order variables ───────────────────────────────────────────
+      const hasStickers  = (order.stickers?.quantity ?? 0) > 0;
+      const hasLine2     = !!(order.shippingAddress?.line2);
+
       const commonVariables = {
-        orderId:         order._id.toString(),
-        orderDate:       new Date().toLocaleDateString('en-GB', {
-                          day: '2-digit', month: 'long', year: 'numeric',
-                        }),
-        trackingNumber:  order.trackingNumber || 'Pending',
-        subtotal:        order.subtotal.toFixed(2),           // ✅ from Order model
-        shippingFee:     order.shippingCost.toFixed(2),       // ✅ shippingCost not shippingFee
+        orderId:          order._id.toString(),
+        orderDate:        new Date().toLocaleDateString('en-GB', {
+                            day: '2-digit', month: 'long', year: 'numeric',
+                          }),
+        trackingNumber:   order.trackingNumber || 'Pending',
+        totalBooks:       totalQuantity.toString(),
+        booksLabel:       totalQuantity === 1 ? 'copy' : 'copies',
+        subtotal:         order.subtotal.toFixed(2),
+        shippingFee:      order.shippingCost.toFixed(2),
         shippingLocation: order.shippingLocation,
-        totalBooks:      totalQuantity.toString(),
-        totalAmount:     order.total.toFixed(2),              // ✅ total not totalPrice        
+        totalAmount:      order.total.toFixed(2),
 
-        booksLabel:      totalQuantity === 1 ? 'copy' : 'copies',
+        hasStickers: hasStickers
+          ? {
+              stickerQuantity:  order.stickers.quantity.toString(),
+              stickerUnitPrice: order.stickers.unitPrice.toFixed(2),
+              stickerTotal:     order.stickers.total.toFixed(2),
+            }
+          : false,
 
-        shippingLine1:    order.shippingAddress?.line1    || '',
-        shippingLine2:    order.shippingAddress?.line2    || '',
-        shippingCity:     order.shippingAddress?.city     || '',
-        shippingCountry:  order.shippingAddress?.country  || '',
+        // ── Shipping address ─────────────────────────────────────────────────
+        shippingLine1:    order.shippingAddress?.line1      || '',
+        shippingLine2: hasLine2
+          ? { shippingLine2: order.shippingAddress.line2 }
+          : false,
+        shippingCity:     order.shippingAddress?.city       || '',
         shippingPostcode: order.shippingAddress?.postalCode || '',
+        shippingCountry:  order.shippingAddress?.country    || '',
       };
-
-      if (order.stickers.quantity > 0) {
-        commonVariables.hasStickers.stickerQuantity = order.stickers.quantity.toString();
-        commonVariables.hasStickers.stickerUnitPrice = order.stickers.unitPrice.toFixed(2);
-        commonVariables.hasStickers.stickerTotal = order.stickers.total.toFixed(2);
-      }
 
       console.log('Common email variables:', commonVariables);
 
