@@ -400,9 +400,16 @@ exports.getOrder = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    console.log(req.body)
 
-    const order = await Order.findById(req.params.id);  
+    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
+      });
+    }
+
+    const order = await Order.findById(req.params.id);
 
     if (!order) {
       return res.status(404).json({
@@ -413,35 +420,96 @@ exports.updateOrderStatus = async (req, res) => {
 
     order.status = status;
 
-    if (status === 'processing') {      
-      order.trackingNumber = generateTrackingNumber();
-    }    
+    if (status === 'processing') {
+      // order.trackingNumber = generateTrackingNumber(); 
+    }
 
     if (status === 'shipped') {
       order.shippedAt = Date.now();
-      
-      // Send shipping email
-      await sendEmail({
-        to: order.email,
-        subject: `Your Order Has Shipped #${order.orderNumber} - Deelaruze`,
-        text: `Your order has been shipped!\n\nOrder Number: ${order.orderNumber}\nTracking Number: ${order.trackingNumber || 'N/A'}\n\nDeelaruze Team`,
-      });
-    } else if (status === 'delivered') {
+    }
+
+    if (status === 'delivered') {
       order.deliveredAt = Date.now();
     }
 
     await order.save();
 
+    // ── Status emails (non-blocking) ─────────────────────────────────────
+    const emailTemplateMap = {
+      shipped:   process.env.ORDER_SHIPPED_TEMPLATE_ID,
+      delivered: process.env.ORDER_DELIVERED_TEMPLATE_ID,
+      cancelled: process.env.ORDER_CANCELLED_TEMPLATE_ID,
+    };
+
+    const templateId = emailTemplateMap[status];
+
+    if (templateId && order.email) {
+      const hasStickers  = (order.stickers?.quantity ?? 0) > 0;
+      const hasLine2     = !!(order.shippingAddress?.line2);
+
+      const shippingVariables = {
+        orderId:          order._id.toString(),
+        orderNumber:      order.orderNumber,
+        orderDate:        new Date(order.createdAt).toLocaleDateString('en-GB', {
+                            day: '2-digit', month: 'long', year: 'numeric',
+                          }),
+        trackingNumber:   order.trackingNumber || 'Pending',
+        totalBooks:       order.items.reduce((sum, i) => sum + i.quantity, 0).toString(),
+        booksLabel:       order.items.reduce((sum, i) => sum + i.quantity, 0) === 1 ? 'copy' : 'copies',
+        subtotal:         order.subtotal.toFixed(2),
+        shippingFee:      order.shippingCost.toFixed(2),
+        shippingLocation: order.shippingLocation,
+        totalAmount:      order.total.toFixed(2),
+        status,
+
+        hasStickers: hasStickers
+          ? {
+              stickerQuantity:  order.stickers.quantity,
+              stickerUnitPrice: order.stickers.unitPrice,
+              stickerTotal:     order.stickers.total,
+            }
+          : false,
+
+        shippingLine1:    order.shippingAddress?.line1      || '',
+        shippingLine2:    hasLine2
+                            ? { shippingLine2: order.shippingAddress.line2 }
+                            : false,
+        shippingCity:     order.shippingAddress?.city       || '',
+        shippingPostcode: order.shippingAddress?.postalCode || '',
+        shippingCountry:  order.shippingAddress?.country    || '',
+
+        // Shipped-specific
+        shippedAt:    status === 'shipped'
+                        ? new Date().toLocaleDateString('en-GB', {
+                            day: '2-digit', month: 'long', year: 'numeric',
+                          })
+                        : '',
+        // Delivered-specific
+        deliveredAt:  status === 'delivered'
+                        ? new Date().toLocaleDateString('en-GB', {
+                            day: '2-digit', month: 'long', year: 'numeric',
+                          })
+                        : '',
+      };
+
+      sendEmail({
+        to:         order.email,
+        templateId,
+        variables:  shippingVariables,
+      }).catch((err) => console.error(`❌ ${status} email error:`, err));
+    }
+
     res.json({
       success: true,
       data: order,
     });
+
   } catch (error) {
-    console.log(error)
+    console.error('❌ Update order status error:', error);
     res.status(400).json({
       success: false,
       message: 'Error updating order',
-      error: error.message,
+      error:   error.message,
     });
   }
 };
