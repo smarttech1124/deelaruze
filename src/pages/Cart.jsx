@@ -25,7 +25,7 @@ const shippingOptions = [
   { label: 'USA/CANADA/MEXICO Tracked',     value: 14.20 },
   { label: 'AUSTRALIA Tracked',             value: 15.70 },
   { label: 'JAPAN Tracked',                 value: 14.60 },
-  { label: 'Rest of the World',             value: 20.00 },
+  { label: 'Rest of the World',             value: 16.00 },
 ];
 
 const EXTRA_BOOK_SHIPPING = 2; // £2 per additional book beyond the first
@@ -95,7 +95,7 @@ const Cart = () => {
   const { cart, cartTotal, clearCart } = useCart();
 
   const [loading, setLoading]               = useState(false);
-  const [shippingLocation, setShippingLocation] = useState('UK');
+  const [shippingLocation, setShippingLocation] = useState('UK 48Tracked');
   const [stickerQty, setStickerQty]         = useState(0);
 
   // Total number of books across all cart items
