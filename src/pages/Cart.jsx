@@ -20,14 +20,15 @@ import {
 
 // ─── Shipping ────────────────────────────────────────────────────────────────
 const shippingOptions = [
-  { label: 'UK',               value: 5  },
-  { label: 'Europe',           value: 8  },
-  { label: 'North America',    value: 11 },
-  { label: 'South America',    value: 11 },
-  { label: 'Rest of the World', value: 13 },
+  { label: 'UK 48Tracked',                  value: 3.00  },
+  { label: 'EUROPE Tracked',                value: 10.50  },
+  { label: 'USA/CANADA/MEXICO Tracked',     value: 14.20 },
+  { label: 'AUSTRALIA Tracked',             value: 15.70 },
+  { label: 'JAPAN Tracked',                 value: 14.60 },
+  { label: 'Rest of the World',             value: 20.00 },
 ];
 
-const EXTRA_BOOK_SHIPPING = 3; // £3 per additional book beyond the first
+const EXTRA_BOOK_SHIPPING = 2; // £2 per additional book beyond the first
 const STICKER_PRICE       = 5; // £5 per sticker pack
 
 // ─── Sticker Add-on Component ────────────────────────────────────────────────
