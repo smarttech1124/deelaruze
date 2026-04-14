@@ -142,9 +142,9 @@ exports.createCheckoutSession = async (req, res) => {
       line_items: lineItems,
       success_url: `${process.env.CLIENT_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${process.env.CLIENT_URL}/cart`,
-      shipping_address_collection: {
-        allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'NG'],
-      },
+      // shipping_address_collection: {
+      //   allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'NG'],
+      // },
       metadata: {
         items:            JSON.stringify(items.map((i) => ({ publicationId: i._id, quantity: i.quantity || 1 }))),
         shippingLocation,
