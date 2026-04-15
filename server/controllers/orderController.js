@@ -21,7 +21,7 @@ countries = [
   "MK","NO","PL","PT","RO","RU","SM","RS","SK","SI","ES","SE","CH","UA","VA",
   "US", "CA", "MX", "AU", "NZ", "JP", "NG","ZA","EG","KE","GH","MA","DZ","TN",
   "CN","IN","KR","SG","MY","TH","ID","PH","VN","PK","BD", "BR","AR","CL","CO","PE","VE",
-  "SA","AE","IL","TR","QA","KW","OM","BH", "FJ","PG"
+  "SA","AE","IL","TR","QA","KW","OM","BH", "FJ","PG","GB"
 ];
 
 const EXTRA_BOOK_SHIPPING = 2; // £2 per book beyond the first
