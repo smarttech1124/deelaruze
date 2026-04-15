@@ -15,6 +15,15 @@ const shippingOptions = [
   { label: 'Rest of the World',             value: 16.00 },
 ];
 
+countries = [
+  "AL","AD","AT","BY","BE","BA","BG","HR","CY","CZ","DK","EE","FI","FR","DE",
+  "GI","GR","HU","IS","IE","IT","LV","LI","LT","LU","MT","MD","MC","ME","NL",
+  "MK","NO","PL","PT","RO","RU","SM","RS","SK","SI","ES","SE","CH","UA","VA",
+  "US", "CA", "MX", "AU", "NZ", "JP", "NG","ZA","EG","KE","GH","MA","DZ","TN",
+  "CN","IN","KR","SG","MY","TH","ID","PH","VN","PK","BD", "BR","AR","CL","CO","PE","VE",
+  "SA","AE","IL","TR","QA","KW","OM","BH", "FJ","PG"
+];
+
 const EXTRA_BOOK_SHIPPING = 2; // £2 per book beyond the first
 const STICKER_PRICE       = 5; // £5 per sticker pack
 
@@ -142,9 +151,9 @@ exports.createCheckoutSession = async (req, res) => {
       line_items: lineItems,
       success_url: `${process.env.CLIENT_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${process.env.CLIENT_URL}/cart`,
-      // shipping_address_collection: {
-      //   allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'NG'],
-      // },
+      shipping_address_collection: {
+        allowed_countries: countries,
+      },
       metadata: {
         items:            JSON.stringify(items.map((i) => ({ publicationId: i._id, quantity: i.quantity || 1 }))),
         shippingLocation,
