@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const dbConnect  = require('../config/database');
 const Order = require('../models/Order');
 const Publication = require('../models/Publication');
-const generateTrackingNumber = require('../utils/trackingNumber');
+const generateOrderNumber = require('../utils/trackingNumber');
 
 const processOrderFromSession = async (stripeSession) => {
 
@@ -102,7 +102,7 @@ const processOrderFromSession = async (stripeSession) => {
           tax:              0,
           total,
           paymentStatus:    'completed',
-          trackingNumber:   generateTrackingNumber(),
+          orderNumber:   generateOrderNumber(),
 
           stripeSessionId:       stripeSession.id,
           stripePaymentIntentId: stripeSession.payment_intent,

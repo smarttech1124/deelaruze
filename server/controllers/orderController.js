@@ -3,7 +3,7 @@ const Publication = require('../models/Publication');
 const stripe = require('../config/stripe');
 const dbConnect = require('../config/database');
 const { sendEmail } = require('../utils/email');
-const generateTrackingNumber = require('../utils/trackingNumber');
+// const generateTrackingNumber = require('../utils/trackingNumber');
 const { processOrderFromSession } = require('../services/orderProcessor');
 
 const shippingOptions = [
@@ -253,34 +253,36 @@ exports.handleWebhook = async (req, res) => {
       const hasLine2     = !!(order.shippingAddress?.line2);
 
       const commonVariables = {
-        orderId:          order._id.toString(),
-        orderDate:        new Date().toLocaleDateString('en-GB', {
-                            day: '2-digit', month: 'long', year: 'numeric',
-                          }),
-        trackingNumber:   order.trackingNumber || 'Pending',
-        totalBooks:       totalQuantity.toString(),
-        booksLabel:       totalQuantity === 1 ? 'copy' : 'copies',
-        subtotal:         order.subtotal.toFixed(2),
-        shippingFee:      order.shippingCost.toFixed(2),
-        shippingLocation: order.shippingLocation,
-        totalAmount:      order.total.toFixed(2),
+        name:                       customerName,
+        orderId:                    order._id.toString(),
+        orderDate:                  new Date().toLocaleDateString('en-GB', {
+                                      day: '2-digit', month: 'long', year: 'numeric',
+                                    }),
+        orderNumber:                order.orderNumber || 'Pending',
+        totalBooks:                 totalQuantity.toString(),
+        booksLabel:                 totalQuantity === 1 ? 'copy' : 'copies',
+        subtotal:                   order.subtotal.toFixed(2),
+        shippingFee:                order.shippingCost.toFixed(2),
+        shippingLocation:           order.shippingLocation,
+        totalAmount:                order.total.toFixed(2),
 
-        hasStickers: hasStickers
+        hasStickers:                hasStickers
           ? {
-              stickerQuantity:  order.stickers.quantity,
-              stickerUnitPrice: order.stickers.unitPrice,
-              stickerTotal:     order.stickers.total,
+              stickerQuantity:      order.stickers.quantity,
+              stickerUnitPrice:     order.stickers.unitPrice,
+              stickerTotal:         order.stickers.total,
             }
           : false,
 
         // ── Shipping address ─────────────────────────────────────────────────
-        shippingLine1:    order.shippingAddress?.line1      || '',
-        shippingLine2: hasLine2
-          ? { shippingLine2: order.shippingAddress.line2 }
+        shippingName:               order.shippingAddress?.name      || '',
+        shippingLine1:              order.shippingAddress?.line1      || '',
+        shippingLine2:              hasLine2
+          ? { shippingLine2:        order.shippingAddress.line2 }
           : false,
-        shippingCity:     order.shippingAddress?.city       || '',
-        shippingPostcode: order.shippingAddress?.postalCode || '',
-        shippingCountry:  order.shippingAddress?.country    || '',
+        shippingCity:               order.shippingAddress?.city       || '',
+        shippingPostcode:           order.shippingAddress?.postalCode || '',
+        shippingCountry:            order.shippingAddress?.country    || '',
       };
 
       // ── Customer confirmation email ──────────────────────────────────────
@@ -408,7 +410,7 @@ exports.getOrder = async (req, res) => {
 // @access  Private/Admin
 exports.updateOrderStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, trackingNumber } = req.body;
 
     const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
@@ -429,12 +431,15 @@ exports.updateOrderStatus = async (req, res) => {
 
     order.status = status;
 
-    if (status === 'processing') {
-      // order.trackingNumber = generateTrackingNumber(); 
+    if (status === 'processing' && trackingNumber) {
+      order.trackingNumber = trackingNumber; 
     }
 
     if (status === 'shipped') {
       order.shippedAt = Date.now();
+      if (trackingNumber && trackingNumber.trim()) {
+        order.trackingNumber = trackingNumber.trim();
+      }
     }
 
     if (status === 'delivered') {
@@ -463,6 +468,7 @@ exports.updateOrderStatus = async (req, res) => {
                             day: '2-digit', month: 'long', year: 'numeric',
                           }),
         trackingNumber:   order.trackingNumber || 'Pending',
+        // name:             customerName,
         totalBooks:       order.items.reduce((sum, i) => sum + i.quantity, 0).toString(),
         booksLabel:       order.items.reduce((sum, i) => sum + i.quantity, 0) === 1 ? 'copy' : 'copies',
         subtotal:         order.subtotal.toFixed(2),
@@ -478,8 +484,9 @@ exports.updateOrderStatus = async (req, res) => {
               stickerTotal:     order.stickers.total,
             }
           : false,
-
-        shippingLine1:    order.shippingAddress?.line1      || '',
+        
+        shippingName:     order.shippingAddress?.name      || '',
+        shippingLine1:    order.shippingAddress?.line1      || '', 
         shippingLine2:    hasLine2
                             ? { shippingLine2: order.shippingAddress.line2 }
                             : false,
@@ -500,7 +507,7 @@ exports.updateOrderStatus = async (req, res) => {
                           })
                         : '',
       };
-
+      
       sendEmail({
         to:         order.email,
         templateId,

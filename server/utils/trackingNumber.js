@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-const generateTrackingNumber = () => {
+const generateOrderNumber = () => {
   const prefix = 'DLZ';
   const timestamp = Date.now().toString().slice(-6); // last 6 digits
   const random = crypto.randomBytes(3).toString('hex').toUpperCase();
@@ -8,4 +8,4 @@ const generateTrackingNumber = () => {
   return `${prefix}-${timestamp}-${random}`;
 };
 
-module.exports = generateTrackingNumber;
+module.exports = generateOrderNumber;

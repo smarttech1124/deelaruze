@@ -61,11 +61,12 @@ const orderSchema = new mongoose.Schema(
       default: 'pending',
     },
 
-    stripeSessionId:       { type: String },
-    stripePaymentIntentId: { type: String },
-    trackingNumber:        { type: String },
-    shippedAt:             { type: Date },
-    deliveredAt:           { type: Date },
+    stripeSessionId:        { type: String },
+    stripePaymentIntentId:  { type: String },
+    orderNumber:            { type: String },
+    trackingNumber:         { type: String },
+    shippedAt:              { type: Date },
+    deliveredAt:            { type: Date },
   },
   { timestamps: true }
 );
