@@ -11,7 +11,7 @@ const processOrderFromSession = async (stripeSession) => {
   const dbSession = await mongoose.startSession();
   dbSession.startTransaction();
 
-  console.log(`Processing Stripe session:  ${stripeSession}`);
+  console.log(`Processing Stripe session:  ${JSON.stringify(stripeSession)}`);
 
   try {
     // ── Idempotency guard ──────────────────────────────────────────────────
