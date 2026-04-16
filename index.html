@@ -3,10 +3,153 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Deelaruze - Street Art Publishing</title>
-    <meta name="description" content="Independent art publishing for the underground" />
+
+    <!-- ── Primary SEO ─────────────────────────────────────────────────── -->
+    <title>Deelaruze | London Street Artist & Creator of THEEZ ARE OUR STREETZ (TAOS)</title>
+    <meta
+      name="description"
+      content="Deelaruze is a London-based Slovak street artist and creator of THEEZ ARE OUR STREETZ (TAOS). Discover global sticker art, graffiti culture, limited-edition books, and underground artists shaping urban art worldwide."
+    />
+    <meta
+      name="keywords"
+      content="Deelaruze, London street artist, Slovak street artist, sticker art, graffiti culture, THEEZ ARE OUR STREETZ, TAOS books, street art books, urban art, underground artists, sticker artists worldwide, graffiti stickers, street art activism, independent art publishing"
+    />
+    <meta name="author" content="Deelaruze" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="canonical" href="https://deelaruze.com/" />
+
+    <!-- ── Open Graph (Facebook, WhatsApp, LinkedIn) ───────────────────── -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="Deelaruze" />
+    <meta property="og:url"         content="https://deelaruze.com/" />
+    <meta property="og:title"       content="Deelaruze | Street Art Publishing" />
+    <meta
+      property="og:description"
+      content="Independent street art publishing house. Limited-edition art books, exclusive sticker packs and prints from underground artists. Worldwide shipping."
+    />
+    <meta property="og:image"       content="https://deelaruze.com/images/PIC 1.jpg" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt"    content="Deelaruze — Street Art Publishing" />
+    <meta property="og:locale"      content="en_GB" />
+
+    <!-- ── Twitter / X Card ───────────────────────────────────────────── -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:site"        content="@deelaruze" />
+    <meta name="twitter:creator"     content="@deelaruze" />
+    <meta name="twitter:title"       content="Deelaruze | Street Art Publishing" />
+    <meta
+      name="twitter:description"
+      content="Limited-edition art books, sticker packs and prints from underground street artists. Shop now. Worldwide shipping."
+    />
+    <meta name="twitter:image"       content="https://deelaruze.com/images/PIC 1.jpg" />
+    <meta name="twitter:image:alt"   content="Deelaruze — Street Art Publishing" />
+
+    <!-- ── Structured Data: Organisation ──────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Deelaruze",
+      "url": "https://deelaruze.com",
+      "logo": "https://deelaruze.com/images/logo.png",
+      "description": "Independent street art publishing house producing limited-edition art books, sticker packs and prints from underground artists worldwide.",
+      "foundingLocation": {
+        "@type": "Place",
+        "name": "London, United Kingdom"
+      },
+      "sameAs": [
+        "https://www.instagram.com/deelaruze",
+        "https://twitter.com/deelaruze"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "deelaruze@hotmail.com"
+      }
+    }
+    </script>
+
+    <!-- ── Structured Data: Online Store ──────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "Deelaruze Shop",
+      "url": "https://deelaruze.com/shop",
+      "description": "Shop limited-edition street art books, sticker packs and prints. Independent publishing for the underground.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Credit Card",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Street Art Publications",
+        "itemListElement": [
+          {
+            "@type": "OfferCatalog",
+            "name": "Art Books"
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Sticker Packs"
+          }
+        ]
+      }
+    }
+    </script>
+
+    <!-- ── Structured Data: BreadcrumbList (homepage) ─────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://deelaruze.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Shop",
+          "item": "https://deelaruze.com/shop"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "About",
+          "item": "https://deelaruze.com/about"
+        }
+      ]
+    }
+    </script>
+
+    <!-- ── Favicon ─────────────────────────────────────────────────────── -->
+    <link rel="icon"             href="/favicon.ico" />
+    <link rel="icon"             type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon"             type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180"               href="/apple-touch-icon.png" />
+    <link rel="manifest"                                         href="/site.webmanifest" />
+
+    <!-- ── Performance: preconnect for Google Fonts ───────────────────── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
+    <!-- Accessible no-JS fallback for crawlers -->
+    <noscript>
+      <div style="padding:2rem;text-align:center;font-family:sans-serif;background:#000;color:#fff;">
+        <h1>Deelaruze — Street Art Publishing</h1>
+        <p>
+          Independent publishing house for underground street art culture.
+          Limited-edition art books, sticker packs and prints.
+          <a href="https://deelaruze.com/shop" style="color:#FF3366;">Shop now</a>.
+        </p>
+      </div>
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="/src/index.jsx"></script>
   </body>
