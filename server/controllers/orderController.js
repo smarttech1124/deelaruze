@@ -242,6 +242,7 @@ exports.handleWebhook = async (req, res) => {
       await dbConnect();
 
       const order = await processOrderFromSession(session);
+      console.log('Order created from session:', order); // Debug log
 
       const customerEmail    = session.customer_details?.email;
       const customerName     = session.customer_details?.name || 'Customer';
