@@ -242,7 +242,6 @@ exports.handleWebhook = async (req, res) => {
       await dbConnect();
 
       const order = await processOrderFromSession(session);
-      console.log('Order created from session:', order); // Debug log
 
       const customerEmail    = session.customer_details?.email;
       const customerName     = session.customer_details?.name || 'Customer';
@@ -283,8 +282,6 @@ exports.handleWebhook = async (req, res) => {
         shippingPostcode: order.shippingAddress?.postalCode || '',
         shippingCountry:  order.shippingAddress?.country    || '',
       };
-
-      console.log('Common email variables:', commonVariables); 
 
       // ── Customer confirmation email ──────────────────────────────────────
       if (customerEmail) {
