@@ -411,7 +411,6 @@ exports.getOrder = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status, trackingNumber } = req.body;
-    console.log(`Updating order ${req.params.id} to status "${status}" with tracking number "${trackingNumber}"`); // Debug log
 
     const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
