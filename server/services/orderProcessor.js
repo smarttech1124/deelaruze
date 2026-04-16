@@ -11,6 +11,8 @@ const processOrderFromSession = async (stripeSession) => {
   const dbSession = await mongoose.startSession();
   dbSession.startTransaction();
 
+  // console.log(`Processing Stripe session:  ${JSON.stringify(stripeSession)}`);
+
   try {
     // ── Idempotency guard ──────────────────────────────────────────────────
     const existingOrder = await Order.findOne({
@@ -106,13 +108,13 @@ const processOrderFromSession = async (stripeSession) => {
           stripePaymentIntentId: stripeSession.payment_intent,
 
           shippingAddress: {
-            name:       stripeSession.customer_details?.name,
-            line1:      stripeSession.customer_details?.address?.line1,
-            line2:      stripeSession.customer_details?.address?.line2, 
-            city:       stripeSession.customer_details?.address?.city,
-            state:      stripeSession.customer_details?.address?.state,
-            postalCode: stripeSession.customer_details?.address?.postal_code,
-            country:    stripeSession.customer_details?.address?.country,
+            name:       stripeSession.collected_information?.shipping_details?.name,
+            line1:      stripeSession.collected_information?.shipping_details?.address?.line1,
+            line2:      stripeSession.collected_information?.shipping_details?.address?.line2, 
+            city:       stripeSession.collected_information?.shipping_details?.address?.city,
+            state:      stripeSession.collected_information?.shipping_details?.address?.state,
+            postalCode: stripeSession.collected_information?.shipping_details?.address?.postal_code,
+            country:    stripeSession.collected_information?.shipping_details?.address?.country,
           },
         },
       ],
