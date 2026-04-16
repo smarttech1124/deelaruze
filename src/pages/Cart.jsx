@@ -95,8 +95,9 @@ const Cart = () => {
   const { cart, cartTotal, clearCart } = useCart();
 
   const [loading, setLoading]               = useState(false);
-  const [shippingLocation, setShippingLocation] = useState('UK 48Tracked');
+  const [shippingLocation, setShippingLocation] = useState('');
   const [stickerQty, setStickerQty]         = useState(0);
+  const [shippingError, setShippingError]   = useState(false);
 
   // Total number of books across all cart items
   const totalQuantity = useMemo(
@@ -115,7 +116,26 @@ const Cart = () => {
 
   const grandTotal = cartTotal + shippingFee + stickerTotal;
 
+  // Shipping location is required before checkout
+  const shippingSelected = shippingLocation !== '';
+
+   const handleShippingChange = (e) => {
+    setShippingLocation(e.target.value);
+    setShippingError(false); // clear error once user selects
+  };
+
   const handleCheckout = async () => {
+
+    // Enforce shipping selection
+    if (!shippingSelected) {
+      setShippingError(true);
+      // Scroll the select into view on mobile
+      document.getElementById('shipping-select')?.scrollIntoView({
+        behavior: 'smooth', block: 'center',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await orderService.createCheckoutSession({
@@ -260,13 +280,24 @@ const Cart = () => {
                   <div className="summary-row flex justify-between items-center text-gray-400">
                     <span>Ship to</span>
                     <select
+                      id="shipping-select"
                       value={shippingLocation}
-                      onChange={(e) => setShippingLocation(e.target.value)}
-                      className="bg-black border border-white/20 text-white px-3 py-1 text-sm"
+                      onChange={handleShippingChange}
+                      className={`w-full bg-black border text-white px-3 py-2 text-sm outline-none transition-colors
+                        ${shippingError
+                          ? 'border-red-500 focus:border-red-400'
+                          : shippingSelected
+                            ? 'border-green-500/50 focus:border-green-400'
+                            : 'border-white/20 focus:border-white/50'
+                        }`}
                     >
+                      {/* Placeholder option */}
+                      <option value="" disabled>
+                        — Select your shipping location —
+                      </option>
                       {shippingOptions.map(option => (
                         <option key={option.label} value={option.label}>
-                          {option.label} (£{option.value})
+                          {option.label} (£{option.value.toFixed(2)})
                         </option>
                       ))}
                     </select>
