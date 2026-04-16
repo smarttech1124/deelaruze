@@ -73,7 +73,7 @@ const orderSchema = new mongoose.Schema(
 orderSchema.pre('save', async function (next) {
   if (!this.orderNumber) {
     const randomNum = Math.floor(100000 + Math.random() * 900000);
-    this.orderNumber = `DLZ-${randomNum}`;
+    this.orderNumber = `DLZ-${randomNum}`; 
   }
   next();
 });
