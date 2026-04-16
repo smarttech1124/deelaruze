@@ -508,12 +508,12 @@ exports.updateOrderStatus = async (req, res) => {
                           })
                         : '',
       };
-      console.log('sending mail with variables:', shippingVariables); // Debug log
-      // sendEmail({
-      //   to:         order.email,
-      //   templateId,
-      //   variables:  shippingVariables,
-      // }).catch((err) => console.error(`❌ ${status} email error:`, err));
+      
+      sendEmail({
+        to:         order.email,
+        templateId,
+        variables:  shippingVariables,
+      }).catch((err) => console.error(`❌ ${status} email error:`, err));
     }
 
     res.json({
