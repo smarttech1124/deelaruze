@@ -72,8 +72,8 @@ const orderSchema = new mongoose.Schema(
 
 orderSchema.pre('save', async function (next) {
   if (!this.orderNumber) {
-    const count = await mongoose.model('Order').countDocuments();
-    this.orderNumber = `DLZ-${String(count + 1).padStart(6, '0')}`;
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    this.orderNumber = `DLZ-${randomNum}`;
   }
   next();
 });
