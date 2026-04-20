@@ -148,6 +148,9 @@ exports.createCheckoutSession = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
+      phone_number_collection: {
+        enabled: true,
+      },
       line_items: lineItems,
       success_url: `${process.env.CLIENT_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${process.env.CLIENT_URL}/cart`,
@@ -245,6 +248,7 @@ exports.handleWebhook = async (req, res) => {
 
       const customerEmail    = session.customer_details?.email;
       const customerName     = session.customer_details?.name || 'Customer';
+      const customerPhone    = session.customer_details?.phone || 'N/A';
 
       const totalQuantity    = parseInt(session.metadata?.totalQuantity      || '0', 10);
 
@@ -253,7 +257,7 @@ exports.handleWebhook = async (req, res) => {
       const hasLine2     = !!(order.shippingAddress?.line2);
 
       const commonVariables = {
-        name:                       customerName,
+        name:                       customerName, 
         orderId:                    order._id.toString(),
         orderDate:                  new Date().toLocaleDateString('en-GB', {
                                       day: '2-digit', month: 'long', year: 'numeric',
@@ -307,6 +311,7 @@ exports.handleWebhook = async (req, res) => {
           variables: {
             ...commonVariables,
             customerName,
+            customerPhone,
             customerEmail: customerEmail || 'N/A', 
           },
         }).catch((error) => {
