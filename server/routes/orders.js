@@ -7,6 +7,8 @@ const {
   getAllOrders,
   getOrder,
   updateOrderStatus,
+  getAllSessions,
+  getSessionDetails
 } = require('../controllers/orderController');
 
 // Public routes
@@ -17,6 +19,10 @@ router.get('/verify-session', verifyCheckoutSession);
 router.get('/my-orders', getMyOrders);
 router.get('/', getAllOrders);
 router.get('/:id', getOrder);
-router.put('/:id/status', updateOrderStatus);  
+router.put('/:id/status', updateOrderStatus); 
+
+// route to display stripe session details for testing
+router.get('/stripe/sessions', getAllSessions);
+router.get('/session/:sessionId', getSessionDetails);
 
 module.exports = router;

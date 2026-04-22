@@ -35,6 +35,7 @@ import Newsletter from './pages/admin/Newsletter';
 import FromTheStreet from './pages/admin/fromthestreet';
 import SetFromTheStreet from './pages/admin/SetFromTheStreet';
 import Profile from './pages/admin/Profile';
+import StripeAdmin from './pages/admin/Stripe';
 
 import './styles/index.css';
 
@@ -87,6 +88,7 @@ function App() {
             <Route path="fromthestreet/new" element={<SetFromTheStreet />} />
             <Route path="fromthestreet/edit/:id" element={<SetFromTheStreet />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="stripe" element={<StripeAdmin />} />
           </Route>
 
           {/* ===== 404 ===== */}
