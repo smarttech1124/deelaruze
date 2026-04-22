@@ -33,7 +33,7 @@ const AdminLayout = () => {
     // { path: '/admin/submissions', icon: Upload, label: 'Submissions' },
     { path: '/admin/about', icon: BookA, label: 'About Deelaruze' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
-    { path: '/admin/stripe', icon: ShoppingCart, label: 'Orders Stripe' },
+    // { path: '/admin/stripe', icon: ShoppingCart, label: 'Orders Stripe' },
     { path: '/admin/messages', icon: Mail, label: 'Messages' },
     { path: '/admin/fromthestreet', icon: Image, label: 'From The Street' },
     { path: '/admin/newsletter', icon: Users, label: 'Newsletter' },

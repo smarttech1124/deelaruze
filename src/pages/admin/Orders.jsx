@@ -95,6 +95,10 @@ const OrderModal = ({ order, onClose, onUpdateStatus }) => {
                   {order.paymentStatus.toUpperCase()}
                 </span>
               </div>
+              <div>
+                <p className="text-gray-500 text-xs mb-1">Phone Number</p>
+                <span className="font-bold">{order.phone || 'N/A'}</span>
+              </div>
             </div>
           </section>
 
