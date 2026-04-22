@@ -534,3 +534,58 @@ exports.updateOrderStatus = async (req, res) => {
     });
   }
 };
+
+
+// @desc    Get Stripe session details (for testing)
+// @route   GET /api/orders/session/:sessionId
+// @access  Private/Admin
+exports.getSessionDetails = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Session not found' });
+    }
+    res.json({ success: true, data: session });
+  } catch (error) {
+    console.error('❌ Get session details error:', error);
+    res.status(400).json({ success: false, message: 'Error retrieving session', error: error.message });
+  }
+};
+
+// @desc    Get all Stripe sessions
+// @route   GET /api/orders/stripe-sessions
+// @access  Private/Admin
+exports.getAllSessions = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10; // default 10
+    const startingAfter = req.query.starting_after || null;
+
+    const params = {
+      limit,
+    };
+
+    if (startingAfter) {
+      params.starting_after = startingAfter;
+    }
+
+    const sessions = await stripe.checkout.sessions.list({
+      limit: 10,
+      expand: ['data.customer'],
+    });
+
+    res.json({
+      success: true,
+      data: sessions.data,
+      has_more: sessions.has_more,
+    });
+  } catch (error) {
+    console.error('❌ Get all sessions error:', error);
+    res.status(400).json({
+      success: false,
+      message: 'Error retrieving sessions',
+      error: error.message,
+    });
+  }
+};

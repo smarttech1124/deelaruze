@@ -88,6 +88,7 @@ const processOrderFromSession = async (stripeSession) => {
       [
         {
           email:    stripeSession.customer_details.email,
+          phone:    stripeSession.customer_details.phone,
           items:    orderItems,
 
           stickers: {
