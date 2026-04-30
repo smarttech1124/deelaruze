@@ -39,6 +39,7 @@
     "nodemailer": "^6.9.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-phone-number-input": "^3.4.16",
     "react-router-dom": "^6.21.0",
     "stripe": "^14.11.0"
   },

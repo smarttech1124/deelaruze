@@ -88,7 +88,7 @@ const processOrderFromSession = async (stripeSession) => {
       [
         {
           email:    stripeSession.customer_details.email,
-          phone:    stripeSession.customer_details.phone,
+          phone:    stripeSession.metadata?.postalNumber || 'N/A',
           items:    orderItems,
 
           stickers: {

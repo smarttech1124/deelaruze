@@ -2,7 +2,7 @@ import api from './api';
 
 export const orderService = {
   // Create Stripe checkout session
-  createCheckoutSession: async ({ items, shippingLocation, shippingfee, stickers, total }) => {
+  createCheckoutSession: async ({ items, shippingLocation, shippingfee, stickers, total, postalNumber }) => {
     try {
       const response = await api.post('/orders/create-checkout-session', {
         items,
@@ -10,6 +10,7 @@ export const orderService = {
         shippingfee,
         stickers,
         total,
+        postalNumber
       });
       
       return response.data;

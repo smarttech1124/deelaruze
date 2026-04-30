@@ -2287,3 +2287,41 @@ body {
   @apply border border-white text-white font-bold px-6 py-3
   hover:bg-white hover:text-black transition;
 }
+
+
+
+/* Wrapper border styling */
+.phone-input-wrapper {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+
+.phone-input-wrapper.error {
+  border-color: #ef4444; /* red-500 */
+}
+
+/* Country select (flag + code) */
+.phone-input-wrapper .PhoneInputCountry {
+  color: black;
+}
+
+/* Dropdown arrow + text */
+.PhoneInputCountrySelect {
+  color: black;
+}
+
+/* Phone input field */
+.phone-input-wrapper .PhoneInputInput {
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+/* Placeholder */
+.phone-input-wrapper .PhoneInputInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}

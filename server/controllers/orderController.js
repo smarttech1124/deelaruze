@@ -44,6 +44,7 @@ exports.createCheckoutSession = async (req, res) => {
     const {
       items,
       shippingLocation = 'UK 48Tracked',
+      postalNumber,
       stickers = null
     } = req.body;
 
@@ -168,6 +169,7 @@ exports.createCheckoutSession = async (req, res) => {
         stickerUnitPrice: STICKER_PRICE.toString(),
         stickerTotal:     stickerTotal.toFixed(2),
         grandTotal:       grandTotal.toString(),   // ← full server-derived total
+        postalNumber:     postalNumber || 'N/A',
       },
     });
 
@@ -249,6 +251,7 @@ exports.handleWebhook = async (req, res) => {
       const customerEmail    = session.customer_details?.email;
       const customerName     = session.customer_details?.name || 'Customer';
       const customerPhone    = session.customer_details?.phone || 'N/A';
+      const postalNumber     = session.metadata?.postalNumber || 'N/A';
 
       const totalQuantity    = parseInt(session.metadata?.totalQuantity      || '0', 10);
 

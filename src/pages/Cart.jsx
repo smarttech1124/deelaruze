@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import CartItem from '../components/shop/CartItem';
 import { orderService } from '../services/orderService';
+import 'react-phone-number-input/style.css';
+import PhoneInput from 'react-phone-number-input';
 import {
   ShoppingCart,
   ShoppingBag,
@@ -98,6 +100,26 @@ const Cart = () => {
   const [shippingLocation, setShippingLocation] = useState('');
   const [stickerQty, setStickerQty]         = useState(0);
   const [shippingError, setShippingError]   = useState(false);
+  const [postalNumber, setPostalNumber]   = useState('');
+  const [postalError, setPostalError]   = useState(false);
+  const [defaultCountry, setDefaultCountry] = useState('');
+  
+  useEffect(() => {
+    // Attempt to auto-detect user's country for phone input
+    const detectCountry = async () => {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        console.log('Detected country code:', data.country_code); // Debug log
+        if (data && data.country_code) {
+          setDefaultCountry(data.country_code);
+        }
+      } catch (error) {
+        console.error('Country detection failed:', error);
+      }
+    };
+    detectCountry();
+  }, []);
 
   // Total number of books across all cart items
   const totalQuantity = useMemo(
@@ -136,6 +158,15 @@ const Cart = () => {
       return;
     }
 
+    // Enforce phone number entry
+    if (postalNumber.trim() === '') {
+      document.getElementById('postalNumber')?.scrollIntoView({
+        behavior: 'smooth', block: 'center',
+      });
+      setPostalError(true);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await orderService.createCheckoutSession({
@@ -146,6 +177,7 @@ const Cart = () => {
           ? { quantity: stickerQty, unitPrice: STICKER_PRICE, total: stickerTotal }
           : null,
         total: grandTotal,
+        postalNumber: postalNumber,
       });
       window.location.href = response.url;
     } catch (error) {
@@ -316,6 +348,37 @@ const Cart = () => {
                     <b>PLEASE NOTE: BOOKS WILL BE SHIPPED WITHIN 2 WEEKS</b>
                   </div>
 
+                  {/* Phone Number */}
+                  {/* <div className="summary-row flex justify-between text-gray-400">
+                    <input
+                      type="text"
+                      id="postalNumber"
+                      value={postalNumber}
+                      onChange={(e) => {
+                        setPostalNumber(e.target.value);
+                        setPostalError(false);
+                      }}
+                      className={`w-full max-w-xs bg-black border text-white px-3 py-2 text-sm outline-none ${postalError ? 'border-red-500' : 'border-white/20'}`}
+                      placeholder="Enter your phone number for delivery updates"
+                    />
+                  </div> */}
+                  <div className="flex flex-col text-gray-400">
+                    <small>Phone number for delivery updates</small>
+                    <div className={`phone-input-wrapper w-full max-w-xs ${postalError ? 'error' : ''}`}>
+                      <PhoneInput
+                        international
+                        defaultCountry={defaultCountry}
+                        id="postalNumber"
+                        value={postalNumber}
+                        onChange={(value) => {
+                          setPostalNumber(value || '');
+                          setPostalError(false);
+                        }}
+                        placeholder="Enter phone number"
+                      />
+                    </div>
+                  </div>
+
                   <div className="my-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
                   {/* Grand Total */}
@@ -324,6 +387,8 @@ const Cart = () => {
                     <span className="total-amount text-3xl">£{grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
+
+                
 
                 {/* Checkout Button */}
                 <button
