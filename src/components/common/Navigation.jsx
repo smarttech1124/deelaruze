@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingCart } from 'lucide-react';
 import { useCart } from '../../hooks/useCart';
 
-const Navigation = ({ bannerVisible = false }) => {
+const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -50,7 +50,7 @@ const Navigation = ({ bannerVisible = false }) => {
 
   return (
     <nav
-      className={`fixed ${bannerVisible ? 'top-10' : 'top-0'} w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled ? 'bg-black shadow-lg' : 'bg-transparent'
       }`}
     >
