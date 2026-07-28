@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navigation from '../common/Navigation';
 import Footer from '../common/Footer';
 import FloatingCartOverlay from '../common/FloatingCartOverlay';
-import AnnouncementBar from '../common/AnnouncementBar';
+// import AnnouncementBar from '../common/AnnouncementBar';
 
 const PublicLayout = () => {
   const location = useLocation();
@@ -11,7 +11,7 @@ const PublicLayout = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-      {isHome && <AnnouncementBar />}
+      {/* {isHome && <AnnouncementBar />} */}
       <Navigation bannerVisible={isHome} />
       <main>
         <Outlet />
