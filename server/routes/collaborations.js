@@ -4,4 +4,5 @@ const { validateCollaboration } = require('../middleware/validate');
 
 module.exports = createContentRouter(controller, {
   validators: validateCollaboration,
+  imageFields: [{ name: 'images', maxCount: 5 }],
 });

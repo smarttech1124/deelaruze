@@ -45,6 +45,7 @@ const Collaborations = () => (
     primaryField="collaborator"
     secondaryField="title"
     imageLabel="Collaboration artwork"
+    gallery={{ field: 'images', min: 1, max: 5 }}
   />
 );
 

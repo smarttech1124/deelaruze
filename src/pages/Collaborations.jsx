@@ -11,91 +11,126 @@ const DEFAULTS = {
   description: '',
 };
 
-// A card is a link when the admin supplied one, a plain figure otherwise.
+// Each collaboration carries between 1 and 5 artworks; the first is the cover
+// and the rest are reachable from a thumbnail strip under it.
 const CollaborationCard = ({ collaboration: item, index }) => {
-  const hasLink = Boolean(item.link);
-  const Wrapper = hasLink ? 'a' : 'div';
+  const [active, setActive] = useState(0);
 
-  const wrapperProps = hasLink
-    ? {
-        href: item.link,
-        target: '_blank',
-        rel: 'noopener noreferrer',
-        'aria-label': `${item.collaborator} — open collaboration link`,
-      }
-    : {};
+  // `image` is the pre-gallery shape, kept so older entries still render.
+  const images =
+    item.images?.length > 0
+      ? item.images
+      : item.image?.url
+        ? [item.image]
+        : [];
+
+  const cover = images[active] || images[0];
+  const hasLink = Boolean(item.link);
 
   return (
     <article
-      className="content-reveal"
+      className="collab-card group content-reveal bg-white/[0.02] border border-white/10 overflow-hidden transition-all duration-300 hover:border-white/40 hover:-translate-y-1"
       style={{ animationDelay: `${Math.min(index, 9) * 0.08}s` }}
     >
-      <Wrapper
-        {...wrapperProps}
-        className={`collab-card group block relative bg-white/[0.02] border border-white/10 overflow-hidden transition-all duration-300 hover:border-white/40 hover:-translate-y-1 ${
-          hasLink
-            ? 'focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black'
-            : ''
-        }`}
-      >
-        {/* Fixed 4:5 frame keeps mixed artwork ratios aligned across the grid */}
-        <div className="relative w-full aspect-[4/5] bg-gray-900 overflow-hidden">
-          {item.image?.url ? (
-            <img
-              src={item.image.url}
-              alt={item.image.alt || `Collaboration with ${item.collaborator}`}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-700">
-              <Users className="w-10 h-10" aria-hidden="true" />
-            </div>
-          )}
-
-          <div
-            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-95"
-            aria-hidden="true"
+      {/* Fixed 4:5 frame keeps mixed artwork ratios aligned across the grid */}
+      <div className="relative w-full aspect-[4/5] bg-gray-900 overflow-hidden">
+        {cover ? (
+          <img
+            key={cover.url}
+            src={cover.url}
+            alt={
+              cover.alt ||
+              `Collaboration with ${item.collaborator}${
+                images.length > 1 ? ` — artwork ${active + 1} of ${images.length}` : ''
+              }`
+            }
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-700">
+            <Users className="w-10 h-10" aria-hidden="true" />
+          </div>
+        )}
 
-          {hasLink && (
-            <span
-              className="absolute top-4 right-4 p-2 bg-black/60 border border-white/20 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
-              aria-hidden="true"
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-95"
+          aria-hidden="true"
+        />
+
+        {images.length > 1 && (
+          <span className="absolute top-4 right-4 bg-black/70 border border-white/20 text-white text-xs font-bold px-2 py-1">
+            {active + 1}/{images.length}
+          </span>
+        )}
+      </div>
+
+      {/* Thumbnail strip */}
+      {images.length > 1 && (
+        <div className="flex gap-2 px-5 sm:px-6 pt-4 flex-wrap">
+          {images.map((image, i) => (
+            <button
+              key={image._id || image.url}
+              type="button"
+              onClick={() => setActive(i)}
+              aria-label={`Show artwork ${i + 1} of ${images.length} for ${item.collaborator}`}
+              aria-current={i === active}
+              className={`w-12 h-12 overflow-hidden border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                i === active
+                  ? 'border-white'
+                  : 'border-white/20 opacity-60 hover:opacity-100 hover:border-white/50'
+              }`}
             >
-              <ArrowUpRight size={16} />
-            </span>
-          )}
+              <img
+                src={image.url}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
         </div>
+      )}
 
-        {/* Collaborator name */}
-        <div className="p-5 sm:p-6">
-          <div
-            className="h-1 w-10 mb-4 transition-all duration-300 group-hover:w-20"
-            style={{
-              background: 'linear-gradient(90deg, #00FF94 0%, transparent 100%)',
-            }}
-            aria-hidden="true"
-          />
+      {/* Collaborator name */}
+      <div className="p-5 sm:p-6">
+        <div
+          className="h-1 w-10 mb-4 transition-all duration-300 group-hover:w-20"
+          style={{
+            background: 'linear-gradient(90deg, #00FF94 0%, transparent 100%)',
+          }}
+          aria-hidden="true"
+        />
 
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white leading-tight break-words">
-            {item.collaborator}
-          </h2>
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white leading-tight break-words">
+          {item.collaborator}
+        </h2>
 
-          {item.title && (
-            <p className="text-sm text-green-400 tracking-wide mt-2">
-              {item.title}
-            </p>
-          )}
+        {item.title && (
+          <p className="text-sm text-green-400 tracking-wide mt-2">{item.title}</p>
+        )}
 
-          {item.description && (
-            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mt-3 line-clamp-3">
-              {item.description}
-            </p>
-          )}
-        </div>
-      </Wrapper>
+        {item.description && (
+          <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mt-3 line-clamp-3">
+            {item.description}
+          </p>
+        )}
+
+        {hasLink && (
+          <a
+            href={item.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-4 text-sm font-bold tracking-wider text-white border-b border-white/30 pb-1 transition-colors hover:border-white focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            aria-label={`View the collaboration with ${item.collaborator}`}
+          >
+            VIEW
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+        )}
+      </div>
     </article>
   );
 };

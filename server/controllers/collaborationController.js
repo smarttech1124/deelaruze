@@ -5,4 +5,5 @@ module.exports = createContentController({
   Model: Collaboration,
   folder: 'deelaruze/collaborations',
   label: 'collaboration',
+  gallery: { field: 'images', min: 1, max: 5 },
 });

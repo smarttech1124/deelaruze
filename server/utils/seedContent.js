@@ -93,6 +93,7 @@ const seedCollection = async ({
   transformation = ARTWORK_TRANSFORMATION,
   buildDoc,
   fileOrder,
+  imageField = 'image',
 }) => {
   let files = listFiles(assetFolder);
   if (files.length === 0) return;
@@ -126,7 +127,7 @@ const seedCollection = async ({
       continue;
     }
 
-    const existing = await Model.findOne({ 'image.publicId': publicId });
+    const existing = await Model.findOne({ [`${imageField}.publicId`]: publicId });
 
     if (existing) {
       skipped += 1;
@@ -212,9 +213,11 @@ const run = async () => {
     label: 'Collaborations',
     assetFolder: 'collaboration',
     cloudinaryFolder: 'deelaruze/collaborations',
+    imageField: 'images',
     buildDoc: (file, index, image) => ({
       collaborator: titleFromFile(file),
-      image: { ...image, alt: 'Deelaruze collaboration artwork' },
+      // One artwork each to start with; admins can add up to five per entry.
+      images: [{ ...image, alt: 'Deelaruze collaboration artwork' }],
       status: 'draft',
     }),
   });

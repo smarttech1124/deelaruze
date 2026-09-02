@@ -25,11 +25,14 @@ const collaborationSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
-    image: {
-      url: { type: String, default: '' },
-      publicId: { type: String, default: '' },
-      alt: { type: String, default: '' },
-    },
+    // Between 1 and 5 artworks per collaboration; the first is the cover.
+    images: [
+      {
+        url: { type: String, required: true },
+        publicId: { type: String, required: true },
+        alt: { type: String, default: '' },
+      },
+    ],
     order: {
       type: Number,
       default: 0,

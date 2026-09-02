@@ -361,7 +361,9 @@ the same REST surface. Replace `:resource` with `roaring-records`, `stickers`,
 - `GET /api/:resource` - Published entries, in the admin-defined order
 - `GET /api/:resource/all` - All entries including drafts (admin)
 - `GET /api/:resource/:id` - Single entry
-- `POST /api/:resource` - Create, multipart with an `image` file (admin)
+- `POST /api/:resource` - Create, multipart with an `image` file (admin).
+  Collaborations instead take 1-5 files under `images`, and accept
+  `deleteImages` / `imageOrder` JSON on update to remove and reorder them.
 - `PUT /api/:resource/:id` - Update (admin)
 - `PATCH /api/:resource/:id/status` - Publish / unpublish (admin)
 - `PATCH /api/:resource/reorder` - Save display order, `{ items: [{ id, order }] }` (admin)

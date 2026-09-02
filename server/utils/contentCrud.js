@@ -44,6 +44,8 @@ const fileFor = (req, field) => {
  * @param {string[]} config.imageFields   file fields handled for this type
  * @param {string}   config.requiredImage image field that must exist on create
  * @param {string}   config.preset        transformation preset key
+ * @param {Object}   config.gallery       { field, min, max } to store an array
+ *                                        of images instead of a single one
  */
 const createContentController = ({
   Model,
@@ -52,8 +54,40 @@ const createContentController = ({
   imageFields = ['image'],
   requiredImage = 'image',
   preset = 'artwork',
+  gallery = null,
 }) => {
   const transformation = TRANSFORMATIONS[preset] || TRANSFORMATIONS.artwork;
+  const galleryField = gallery ? gallery.field || 'images' : null;
+  const minImages = gallery ? gallery.min ?? 1 : 0;
+  const maxImages = gallery ? gallery.max ?? 10 : 0;
+
+  const countError = (count) => {
+    if (count < minImages) {
+      return `At least ${minImages} image${minImages === 1 ? ' is' : 's are'} required`;
+    }
+    if (count > maxImages) {
+      return `No more than ${maxImages} images are allowed`;
+    }
+    return null;
+  };
+
+  const galleryFilesIn = (req) =>
+    (req.files && !Array.isArray(req.files) && req.files[galleryField]) || [];
+
+  // Uploads every file sent under the gallery field, in the order supplied.
+  const uploadGallery = async (req, alt) => {
+    const files = galleryFilesIn(req);
+
+    const results = await Promise.all(
+      files.map((file) => uploadToCloudinary(file.buffer, folder, { transformation }))
+    );
+
+    return results.map((result) => ({
+      url: result.secure_url,
+      publicId: result.public_id,
+      alt: alt || '',
+    }));
+  };
 
   // Uploads any files present on the request and returns { field: imageObject }
   const uploadImages = async (req) => {
@@ -149,17 +183,32 @@ const createContentController = ({
     // @access Private/Admin
     create: async (req, res) => {
       try {
-        const uploaded = await uploadImages(req);
+        const payload = { ...req.body };
 
-        if (requiredImage && !uploaded[requiredImage]) {
-          return res.status(400).json({
-            success: false,
-            message: 'An image is required',
-          });
+        if (gallery) {
+          // Check the count before uploading so a rejected request never
+          // leaves orphaned assets on Cloudinary.
+          const problem = countError(galleryFilesIn(req).length);
+
+          if (problem) {
+            return res.status(400).json({ success: false, message: problem });
+          }
+
+          payload[galleryField] = await uploadGallery(req, req.body.imageAlt);
+          delete payload.imageAlt;
+        } else {
+          const uploaded = await uploadImages(req);
+
+          if (requiredImage && !uploaded[requiredImage]) {
+            return res.status(400).json({
+              success: false,
+              message: 'An image is required',
+            });
+          }
+
+          Object.assign(payload, uploaded);
+          applyImageAlt(payload, null);
         }
-
-        const payload = { ...req.body, ...uploaded };
-        applyImageAlt(payload, null);
 
         // New entries go to the end of the list unless a position is supplied.
         payload.order =
@@ -190,21 +239,83 @@ const createContentController = ({
           return res.status(404).json({ success: false, message: label + ' not found' });
         }
 
-        const uploaded = await uploadImages(req);
-        const updateData = { ...req.body, ...uploaded };
-        applyImageAlt(updateData, item.image);
+        const updateData = { ...req.body };
 
-        // Replace-in-place: drop the superseded asset from Cloudinary.
-        for (const field of Object.keys(uploaded)) {
-          await destroyImage(item[field]);
-        }
+        if (gallery) {
+          const alt = req.body.imageAlt;
+          const current = (item[galleryField] || []).map((img) =>
+            img.toObject ? img.toObject() : { ...img }
+          );
 
-        // Explicit removal of the optional secondary artwork
-        if (updateData.clearMobileImage === 'true' && !uploaded.mobileImage) {
-          await destroyImage(item.mobileImage);
-          updateData.mobileImage = { url: '', publicId: '' };
+          // 1. Work out which saved images the admin wants removed.
+          let toDelete = [];
+          if (updateData.deleteImages) {
+            try {
+              const parsed = JSON.parse(updateData.deleteImages);
+              if (Array.isArray(parsed)) toDelete = parsed.map(String);
+            } catch (parseError) {
+              console.error('Invalid deleteImages payload:', parseError.message);
+            }
+          }
+          delete updateData.deleteImages;
+
+          const kept = current.filter((img) => !toDelete.includes(String(img._id)));
+          const removed = current.filter((img) => toDelete.includes(String(img._id)));
+
+          // 2. Validate the resulting count BEFORE anything is uploaded or
+          //    destroyed, so a rejected request leaves the entry untouched.
+          const problem = countError(kept.length + galleryFilesIn(req).length);
+          if (problem) {
+            return res.status(400).json({ success: false, message: problem });
+          }
+
+          // 3. Apply any new running order to the images being kept.
+          if (updateData.imageOrder) {
+            try {
+              const order = JSON.parse(updateData.imageOrder);
+              if (Array.isArray(order) && order.length > 0) {
+                const rank = new Map(order.map((entry, i) => [entry.id, entry.order ?? i]));
+                kept.sort(
+                  (a, b) =>
+                    (rank.get(String(a._id)) ?? 999) - (rank.get(String(b._id)) ?? 999)
+                );
+              }
+            } catch (parseError) {
+              console.error('Invalid imageOrder payload:', parseError.message);
+            }
+          }
+          delete updateData.imageOrder;
+
+          // 4. Commit: upload the new artwork, then drop the removed assets.
+          let images = [...kept, ...(await uploadGallery(req, alt))];
+
+          if (alt !== undefined) {
+            images = images.map((img) => ({ ...img, alt }));
+          }
+
+          for (const img of removed) {
+            await destroyImage(img);
+          }
+
+          updateData[galleryField] = images;
+          delete updateData.imageAlt;
+        } else {
+          const uploaded = await uploadImages(req);
+          Object.assign(updateData, uploaded);
+          applyImageAlt(updateData, item.image);
+
+          // Replace-in-place: drop the superseded asset from Cloudinary.
+          for (const field of Object.keys(uploaded)) {
+            await destroyImage(item[field]);
+          }
+
+          // Explicit removal of the optional secondary artwork
+          if (updateData.clearMobileImage === 'true' && !uploaded.mobileImage) {
+            await destroyImage(item.mobileImage);
+            updateData.mobileImage = { url: '', publicId: '' };
+          }
+          delete updateData.clearMobileImage;
         }
-        delete updateData.clearMobileImage;
 
         if (updateData.order !== undefined && updateData.order !== '') {
           updateData.order = Number(updateData.order);
@@ -307,8 +418,14 @@ const createContentController = ({
           return res.status(404).json({ success: false, message: label + ' not found' });
         }
 
-        for (const field of imageFields) {
-          await destroyImage(item[field]);
+        if (gallery) {
+          for (const img of item[galleryField] || []) {
+            await destroyImage(img);
+          }
+        } else {
+          for (const field of imageFields) {
+            await destroyImage(item[field]);
+          }
         }
 
         await item.deleteOne();

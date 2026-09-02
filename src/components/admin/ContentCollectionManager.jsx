@@ -41,6 +41,7 @@ const ContentCollectionManager = ({
   multiUpload = false,
   bulkTitleFromFilename = true,
   bulkAltText = '',
+  gallery = null,
 }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +57,22 @@ const ContentCollectionManager = ({
   const [busyId, setBusyId] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [bulkProgress, setBulkProgress] = useState(null); // { done, total }
+
+  // Gallery mode (several images per entry)
+  const galleryField = gallery?.field || 'images';
+  const minImages = gallery?.min ?? 1;
+  const maxImages = gallery?.max ?? 5;
+
+  const [galleryFiles, setGalleryFiles] = useState([]);   // newly picked files
+  const [existingImages, setExistingImages] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [draggedImage, setDraggedImage] = useState(null);
+
+  // Images already saved that are not marked for removal
+  const keptImages = existingImages.filter(
+    (img) => !imagesToDelete.includes(img._id)
+  );
+  const totalImages = keptImages.length + galleryFiles.length;
 
   const emptyForm = useMemo(() => {
     const base = { status: 'draft', imageAlt: '' };
@@ -95,10 +112,17 @@ const ContentCollectionManager = ({
 
   /* ----------------------------- Form ----------------------------- */
 
-  const openCreate = () => {
-    setForm({ ...emptyForm });
+  const resetImageState = () => {
     setImageFile(null);
     setSecondaryFile(null);
+    setGalleryFiles([]);
+    setExistingImages([]);
+    setImagesToDelete([]);
+  };
+
+  const openCreate = () => {
+    setForm({ ...emptyForm });
+    resetImageState();
     setError('');
     setEditing({});
   };
@@ -110,8 +134,15 @@ const ContentCollectionManager = ({
     });
 
     setForm(next);
-    setImageFile(null);
-    setSecondaryFile(null);
+    resetImageState();
+
+    if (gallery) {
+      setExistingImages(item[galleryField] || []);
+      // Alt text is shared across an entry's images.
+      next.imageAlt = item[galleryField]?.[0]?.alt || '';
+      setForm({ ...next });
+    }
+
     setError('');
     setEditing(item);
   };
@@ -120,6 +151,9 @@ const ContentCollectionManager = ({
     setEditing(null);
     setImageFile(null);
     setSecondaryFile(null);
+    setGalleryFiles([]);
+    setExistingImages([]);
+    setImagesToDelete([]);
   }, []);
 
   // While the dialog is open, hold the page still behind it and let Escape close it.
@@ -145,13 +179,82 @@ const ContentCollectionManager = ({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  /* --------------------------- Gallery images ---------------------------- */
+
+  const addGalleryFiles = (event) => {
+    const picked = Array.from(event.target.files || []);
+    event.target.value = '';
+    if (picked.length === 0) return;
+
+    const room = maxImages - totalImages;
+
+    if (room <= 0) {
+      setError(`You can upload at most ${maxImages} images`);
+      return;
+    }
+
+    if (picked.length > room) {
+      setError(`Only ${room} more image(s) can be added — the rest were ignored`);
+    } else {
+      setError('');
+    }
+
+    setGalleryFiles((prev) => [...prev, ...picked.slice(0, room)]);
+  };
+
+  const removeGalleryFile = (index) => {
+    setGalleryFiles((prev) => prev.filter((_, i) => i !== index));
+    setError('');
+  };
+
+  const markImageForDeletion = (imageId) => {
+    setImagesToDelete((prev) => [...prev, imageId]);
+    setError('');
+  };
+
+  const restoreImage = (imageId) => {
+    setImagesToDelete((prev) => prev.filter((id) => id !== imageId));
+  };
+
+  // Drag to reorder the already-saved images
+  const handleImageDrop = (event, dropIndex) => {
+    event.preventDefault();
+
+    if (draggedImage === null || draggedImage === dropIndex) {
+      setDraggedImage(null);
+      return;
+    }
+
+    setExistingImages((prev) => {
+      const kept = prev.filter((img) => !imagesToDelete.includes(img._id));
+      const removed = prev.filter((img) => imagesToDelete.includes(img._id));
+      const reordered = [...kept];
+      const [moved] = reordered.splice(draggedImage, 1);
+      reordered.splice(dropIndex, 0, moved);
+      return [...reordered, ...removed];
+    });
+
+    setDraggedImage(null);
+  };
+
   const isEditing = Boolean(editing && editing._id);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (saving) return;
 
-    if (!isEditing && !imageFile) {
+    if (gallery) {
+      if (totalImages < minImages) {
+        setError(
+          `At least ${minImages} image${minImages === 1 ? ' is' : 's are'} required`
+        );
+        return;
+      }
+      if (totalImages > maxImages) {
+        setError(`No more than ${maxImages} images are allowed`);
+        return;
+      }
+    } else if (!isEditing && !imageFile) {
       setError('An image is required');
       return;
     }
@@ -168,9 +271,24 @@ const ContentCollectionManager = ({
       data.append('status', form.status);
       data.append('imageAlt', (form.imageAlt ?? '').trim());
 
-      if (imageFile) data.append('image', imageFile);
-      if (secondaryImage && secondaryFile) {
-        data.append(secondaryImage.name, secondaryFile);
+      if (gallery) {
+        galleryFiles.forEach((file) => data.append(galleryField, file));
+
+        if (isEditing) {
+          data.append(
+            'imageOrder',
+            JSON.stringify(keptImages.map((img, index) => ({ id: img._id, order: index })))
+          );
+
+          if (imagesToDelete.length > 0) {
+            data.append('deleteImages', JSON.stringify(imagesToDelete));
+          }
+        }
+      } else {
+        if (imageFile) data.append('image', imageFile);
+        if (secondaryImage && secondaryFile) {
+          data.append(secondaryImage.name, secondaryFile);
+        }
       }
 
       if (isEditing) {
@@ -317,6 +435,10 @@ const ContentCollectionManager = ({
   };
 
   /* ----------------------------- Render ---------------------------- */
+
+  // The image shown in the admin list: the single image, or a gallery's cover.
+  const coverOf = (item) =>
+    gallery ? item[galleryField]?.[0] || null : item.image?.url ? item.image : null;
 
   const StatusBadge = ({ status }) => (
     <span
@@ -567,14 +689,21 @@ const ContentCollectionManager = ({
                     </button>
                   </div>
 
-                  {/* Thumbnail */}
+                  {/* Thumbnail — cover image, with a count when there are more */}
                   <div className="relative w-full sm:w-28 h-48 sm:h-28 bg-gray-800 flex-shrink-0 overflow-hidden">
-                    {item.image?.url ? (
-                      <img
-                        src={item.image.url}
-                        alt={item.image.alt || item[primaryField] || ''}
-                        className="w-full h-full object-cover"
-                      />
+                    {coverOf(item) ? (
+                      <>
+                        <img
+                          src={coverOf(item).url}
+                          alt={coverOf(item).alt || item[primaryField] || ''}
+                          className="w-full h-full object-cover"
+                        />
+                        {gallery && (item[galleryField]?.length || 0) > 1 && (
+                          <span className="absolute top-1.5 right-1.5 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                            +{item[galleryField].length - 1}
+                          </span>
+                        )}
+                      </>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-600 text-sm">
                         No Image
@@ -700,7 +829,150 @@ const ContentCollectionManager = ({
                 </div>
               ))}
 
-              {/* Primary image */}
+              {/* Gallery images (1–max per entry) */}
+              {gallery ? (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="admin-label block mb-0" htmlFor="gallery-images">
+                      {imageLabel}
+                      <span className="text-red-500"> *</span>
+                    </label>
+                    <span
+                      className={`text-xs font-bold ${
+                        totalImages > maxImages || totalImages < minImages
+                          ? 'text-red-400'
+                          : 'text-gray-500'
+                      }`}
+                    >
+                      {totalImages} / {maxImages}
+                    </span>
+                  </div>
+
+                  <input
+                    type="file"
+                    id="gallery-images"
+                    accept="image/*"
+                    multiple
+                    disabled={totalImages >= maxImages}
+                    onChange={addGalleryFiles}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="gallery-images"
+                    className={`upload-zone p-6 rounded text-center flex flex-col items-center gap-3 block border border-gray-800 transition-colors ${
+                      totalImages >= maxImages
+                        ? 'opacity-50 cursor-not-allowed'
+                        : 'cursor-pointer hover:border-gray-600'
+                    }`}
+                  >
+                    <ImageIcon className="w-10 h-10 text-gray-500" aria-hidden="true" />
+                    <div>
+                      <p className="text-white font-bold">
+                        {totalImages >= maxImages
+                          ? `Maximum of ${maxImages} images reached`
+                          : 'Click to add images'}
+                      </p>
+                      <p className="text-gray-500 text-sm">
+                        {minImages}–{maxImages} images · JPG, PNG, WEBP or GIF · max 10MB each
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Saved images — drag to reorder, × to remove */}
+                  {keptImages.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-xs text-gray-500 mb-2">
+                        Saved images — drag to reorder · the first is the cover
+                      </p>
+                      <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                        {keptImages.map((img, index) => (
+                          <div
+                            key={img._id || index}
+                            draggable
+                            onDragStart={(event) => {
+                              setDraggedImage(index);
+                              event.dataTransfer.effectAllowed = 'move';
+                            }}
+                            onDragOver={(event) => event.preventDefault()}
+                            onDrop={(event) => handleImageDrop(event, index)}
+                            onDragEnd={() => setDraggedImage(null)}
+                            className={`relative h-24 border border-gray-800 overflow-hidden group ${
+                              draggedImage === index ? 'opacity-50' : ''
+                            }`}
+                          >
+                            <img
+                              src={img.url}
+                              alt={img.alt || `Artwork ${index + 1}`}
+                              className="w-full h-full object-cover"
+                              draggable={false}
+                            />
+                            <span className="absolute bottom-0 left-0 bg-black/70 text-white text-[10px] px-1.5 py-0.5">
+                              {index === 0 ? 'COVER' : `#${index + 1}`}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => markImageForDeletion(img._id)}
+                              className="absolute top-1 right-1 p-1 bg-black/70 border border-red-600 text-red-400 hover:bg-red-600 hover:text-white transition-colors"
+                              aria-label={`Remove image ${index + 1}`}
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Newly picked files, not yet uploaded */}
+                  {galleryFiles.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-xs text-gray-500 mb-2">
+                        New — uploaded when you save
+                      </p>
+                      <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                        {galleryFiles.map((file, index) => (
+                          <div
+                            key={`${file.name}-${index}`}
+                            className="relative h-24 border border-green-700 overflow-hidden"
+                          >
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`New artwork ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute bottom-0 left-0 bg-green-700 text-white text-[10px] px-1.5 py-0.5">
+                              NEW
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => removeGalleryFile(index)}
+                              className="absolute top-1 right-1 p-1 bg-black/70 border border-red-600 text-red-400 hover:bg-red-600 hover:text-white transition-colors"
+                              aria-label={`Remove new image ${index + 1}`}
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {imagesToDelete.length > 0 && (
+                    <p className="text-yellow-500 text-sm mt-3 flex items-center gap-2">
+                      <Trash2 size={14} />
+                      {imagesToDelete.length} image(s) will be deleted when you save.
+                      <button
+                        type="button"
+                        onClick={() => setImagesToDelete([])}
+                        className="underline hover:text-yellow-300"
+                      >
+                        Undo
+                      </button>
+                    </p>
+                  )}
+                </div>
+              ) : (
+              /* Primary image */
               <div>
                 <label className="admin-label block" htmlFor="content-image">
                   {imageLabel}
@@ -754,6 +1026,8 @@ const ContentCollectionManager = ({
                 )}
               </div>
 
+              )}
+
               {/* Alt text */}
               <div>
                 <label className="admin-label block" htmlFor="field-imageAlt">
@@ -767,6 +1041,11 @@ const ContentCollectionManager = ({
                   placeholder="Describe the artwork for screen readers"
                   className="admin-input"
                 />
+                {gallery && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    Applied to every image in this entry.
+                  </p>
+                )}
               </div>
 
               {/* Optional second image (hero mobile crop) */}

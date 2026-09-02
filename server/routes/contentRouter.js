@@ -19,14 +19,19 @@ const imageUpload = require('../middleware/imageUpload');
  * @param {Object}   controller    handlers from utils/contentCrud
  * @param {Object}   [options]
  * @param {Array}    options.validators  express-validator chain for create/update
- * @param {string[]} options.imageFields file fields accepted on upload
+ * @param {Array}    options.imageFields file fields accepted on upload — either
+ *                                       a field name or { name, maxCount }
  */
 const createContentRouter = (controller, options = {}) => {
   const router = express.Router();
   const { validators = [], imageFields = ['image'] } = options;
 
   const upload = imageUpload().fields(
-    imageFields.map((name) => ({ name, maxCount: 1 }))
+    imageFields.map((field) =>
+      typeof field === 'string'
+        ? { name: field, maxCount: 1 }
+        : { name: field.name, maxCount: field.maxCount || 1 }
+    )
   );
 
   // ── Public ──────────────────────────────────────────────────────────────
