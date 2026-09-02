@@ -352,6 +352,44 @@ npm test -- ProductCard.test.js
 - `POST /api/contact` - Send message
 - `POST /api/newsletter` - Subscribe to newsletter
 
+### Admin-managed content
+
+Roaring Records, Stickers, Collaborations and the homepage Hero Slider all share
+the same REST surface. Replace `:resource` with `roaring-records`, `stickers`,
+`collaborations` or `hero-slides`:
+
+- `GET /api/:resource` - Published entries, in the admin-defined order
+- `GET /api/:resource/all` - All entries including drafts (admin)
+- `GET /api/:resource/:id` - Single entry
+- `POST /api/:resource` - Create, multipart with an `image` file (admin)
+- `PUT /api/:resource/:id` - Update (admin)
+- `PATCH /api/:resource/:id/status` - Publish / unpublish (admin)
+- `PATCH /api/:resource/reorder` - Save display order, `{ items: [{ id, order }] }` (admin)
+- `DELETE /api/:resource/:id` - Delete, also removes the Cloudinary asset (admin)
+
+Page-level copy (heading, intro, description, image) for the three content pages:
+
+- `GET /api/page-content` - All page blocks
+- `GET /api/page-content/:slug` - One page block (`roaring-records`, `stickers`, `collaborations`)
+- `PUT /api/page-content/:slug` - Create or update (admin)
+
+### Seeding the supplied artwork
+
+The artwork ZIPs in `images/` are extracted to `images/extracted/<name>/`, then:
+
+```bash
+# Preview the mapping without touching Cloudinary or the database
+node server/utils/seedContent.js --dry-run
+
+# Upload and create the entries (requires MongoDB to be running)
+npm run seed:content
+```
+
+Uploads each asset to Cloudinary and creates the matching content entries. The
+script is idempotent — re-running it skips assets that are already present.
+Everything it creates is editable afterwards from the admin portal, so routine
+content changes never need a code change.
+
 ## 🎨 Frontend Development
 
 ### Component Structure

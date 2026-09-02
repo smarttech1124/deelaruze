@@ -25,7 +25,10 @@ const Navigation = () => {
 
   const navLinks = [
     { path: '/about', label: 'ABOUT' },
-    { path: '/shop', label: 'SHOP' },
+    { path: '/roaring-records', label: 'ROARING RECORDS' },
+    { path: '/shop', label: 'BOOKS' },
+    { path: '/stickers', label: 'STICKERS' },
+    { path: '/collaborations', label: 'COLLABORATIONS' },
     { path: '/submit', label: 'SUBMIT' },
     { path: '/contact', label: 'CONTACT' },
   ];
@@ -66,12 +69,12 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-5 xl:space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-bold tracking-wide hover:text-gray-400 transition-colors ${
+                className={`text-xs xl:text-sm font-bold tracking-wide whitespace-nowrap hover:text-gray-400 transition-colors ${
                   isActive(link.path)
                     ? 'text-white border-b-2 border-white'
                     : 'text-gray-400'
@@ -84,7 +87,7 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Right Controls */}
-          <div className="md:hidden flex items-center space-x-4">
+          <div className="lg:hidden flex items-center space-x-4">
             <CartIcon size={22} />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -100,7 +103,7 @@ const Navigation = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-black border-t border-gray-800">
+        <div className="lg:hidden bg-black border-t border-gray-800">
           <div className="px-4 py-6 space-y-4">
             {navLinks.map((link) => (
               <Link
