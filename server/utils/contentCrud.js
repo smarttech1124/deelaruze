@@ -15,6 +15,12 @@ const TRANSFORMATIONS = {
   ],
 };
 
+// The single ordering used by every read, so the admin list and the public
+// site can never disagree about the sequence. `_id` is the final tiebreaker:
+// without a unique key MongoDB's sort is not stable, so entries sharing an
+// `order` could come back in a different sequence from one query to the next.
+const LIST_SORT = { order: 1, createdAt: 1, _id: 1 };
+
 const destroyImage = async (image) => {
   if (image && image.publicId) {
     try {
@@ -131,10 +137,7 @@ const createContentController = ({
     // @access Public
     list: async (req, res) => {
       try {
-        const items = await Model.find({ status: 'published' }).sort({
-          order: 1,
-          createdAt: 1,
-        });
+        const items = await Model.find({ status: 'published' }).sort(LIST_SORT);
 
         res.json({ success: true, count: items.length, data: items });
       } catch (error) {
@@ -150,7 +153,7 @@ const createContentController = ({
     // @access Private/Admin
     listAll: async (req, res) => {
       try {
-        const items = await Model.find().sort({ order: 1, createdAt: 1 });
+        const items = await Model.find().sort(LIST_SORT);
 
         res.json({ success: true, count: items.length, data: items });
       } catch (error) {
@@ -384,20 +387,28 @@ const createContentController = ({
           });
         }
 
-        await Model.bulkWrite(
+        // The position in the submitted array is the order — rewriting it as a
+        // contiguous 0..n-1 run keeps the sequence gap-free and unambiguous,
+        // whatever the client sent.
+        const result = await Model.bulkWrite(
           items.map((entry, index) => ({
             updateOne: {
               filter: { _id: entry.id },
-              update: {
-                $set: {
-                  order: typeof entry.order === 'number' ? entry.order : index,
-                },
-              },
+              update: { $set: { order: index } },
             },
           }))
         );
 
-        const updated = await Model.find().sort({ order: 1, createdAt: 1 });
+        // A filter that matches nothing means the ids never reached the
+        // documents — surface it rather than silently reporting success.
+        if (result.matchedCount === 0) {
+          return res.status(400).json({
+            success: false,
+            message: 'None of the supplied ids matched an existing ' + label,
+          });
+        }
+
+        const updated = await Model.find().sort(LIST_SORT);
 
         res.json({ success: true, count: updated.length, data: updated });
       } catch (error) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { heroSlideService } from '../../services/contentService';
 
 const FADE_MS = 500; // fade-out duration = fade-in duration
@@ -20,25 +20,55 @@ const HeroSlider = () => {
 
   /* ----------------------------- Data ----------------------------- */
 
+  const mountedRef = useRef(true);
+
   useEffect(() => {
-    let mounted = true;
-
-    const loadSlides = async () => {
-      try {
-        const response = await heroSlideService.getAll();
-        if (mounted) setSlides(response.data || []);
-      } catch (error) {
-        console.error('Error loading hero slides:', error);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    loadSlides();
+    mountedRef.current = true;
     return () => {
-      mounted = false;
+      mountedRef.current = false;
     };
   }, []);
+
+  // The API returns published slides already in the admin-defined order, so the
+  // array is rendered exactly as received — the saved order is the source of truth.
+  const loadSlides = useCallback(async () => {
+    try {
+      const response = await heroSlideService.getAll();
+      if (mountedRef.current) setSlides(response.data || []);
+    } catch (error) {
+      console.error('Error loading hero slides:', error);
+    } finally {
+      if (mountedRef.current) setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSlides();
+  }, [loadSlides]);
+
+  // Pick up admin changes (a new order, added or unpublished slides) when the
+  // visitor returns to the tab, so the carousel does not need a hard refresh.
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === 'visible') loadSlides();
+    };
+
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener('focus', refresh);
+
+    return () => {
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, [loadSlides]);
+
+  // Keep the carousel position valid if the published set shrinks.
+  useEffect(() => {
+    if (slides.length === 0) return;
+
+    setTargetSlide((current) => (current < slides.length ? current : 0));
+    setVisibleSlide((current) => (current < slides.length ? current : 0));
+  }, [slides.length]);
 
   /* --------------------------- Responsive -------------------------- */
 

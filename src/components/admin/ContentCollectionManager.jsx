@@ -387,10 +387,18 @@ const ContentCollectionManager = ({
   };
 
   const persistOrder = async (ordered) => {
+    // Show the new sequence straight away, then adopt whatever the server
+    // stored — the saved order is what the public site renders, so the admin
+    // list must end up showing exactly that.
     setItems(ordered);
 
     try {
-      await service.reorder(ordered.map((item, index) => ({ id: item._id, order: index })));
+      const response = await service.reorder(
+        ordered.map((item, index) => ({ id: item._id, order: index }))
+      );
+
+      if (response?.data) setItems(response.data);
+      setError('');
     } catch (err) {
       setError(apiError(err, 'Failed to save the new order'));
       loadItems();
