@@ -32,43 +32,42 @@ const CollaborationCard = ({ collaboration: item, index }) => {
       className="collab-card group content-reveal bg-white/[0.02] border border-white/10 overflow-hidden transition-all duration-300 hover:border-white/40 hover:-translate-y-1"
       style={{ animationDelay: `${Math.min(index, 9) * 0.08}s` }}
     >
-      {/* Fixed 4:5 frame keeps mixed artwork ratios aligned across the grid */}
-      <div className="relative w-full aspect-[4/5] bg-gray-900 overflow-hidden">
-        {cover ? (
-          <img
-            key={cover.url}
-            src={cover.url}
-            alt={
-              cover.alt ||
-              `Collaboration with ${item.collaborator}${
-                images.length > 1 ? ` — artwork ${active + 1} of ${images.length}` : ''
-              }`
-            }
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-700">
-            <Users className="w-10 h-10" aria-hidden="true" />
-          </div>
-        )}
+      {/* Artwork sits in the same bordered, inset tile the Stickers page uses,
+          so the image reads smaller than the card that holds it. */}
+      <div className="p-4 sm:p-5">
+        <div className="relative w-full aspect-square bg-white/[0.03] border border-white/10 overflow-hidden transition-colors duration-300 group-hover:border-white/40">
+          {cover ? (
+            <img
+              key={cover.url}
+              src={cover.url}
+              alt={
+                cover.alt ||
+                `Collaboration with ${item.collaborator}${
+                  images.length > 1 ? ` — artwork ${active + 1} of ${images.length}` : ''
+                }`
+              }
+              loading="lazy"
+              decoding="async"
+              // contain keeps mixed artwork ratios from cropping badly
+              className="w-full h-full object-contain p-3 sm:p-4 transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-700">
+              <Users className="w-10 h-10" aria-hidden="true" />
+            </div>
+          )}
 
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-95"
-          aria-hidden="true"
-        />
-
-        {images.length > 1 && (
-          <span className="absolute top-4 right-4 bg-black/70 border border-white/20 text-white text-xs font-bold px-2 py-1">
-            {active + 1}/{images.length}
-          </span>
-        )}
+          {images.length > 1 && (
+            <span className="absolute top-2 right-2 bg-black/70 border border-white/20 text-white text-xs font-bold px-2 py-1">
+              {active + 1}/{images.length}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Thumbnail strip */}
       {images.length > 1 && (
-        <div className="flex gap-2 px-5 sm:px-6 pt-4 flex-wrap">
+        <div className="flex gap-2 px-4 sm:px-5 flex-wrap">
           {images.map((image, i) => (
             <button
               key={image._id || image.url}
@@ -95,7 +94,7 @@ const CollaborationCard = ({ collaboration: item, index }) => {
       )}
 
       {/* Collaborator name */}
-      <div className="p-5 sm:p-6">
+      <div className="px-4 sm:px-5 pt-4 pb-5 sm:pb-6">
         <div
           className="h-1 w-10 mb-4 transition-all duration-300 group-hover:w-20"
           style={{
@@ -221,7 +220,7 @@ const Collaborations = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
               {collaborations.map((item, index) => (
                 <CollaborationCard key={item._id} collaboration={item} index={index} />
               ))}
