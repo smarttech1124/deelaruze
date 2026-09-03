@@ -181,6 +181,25 @@ const RoaringRecords = () => {
                 // stacks the artwork first so the rhythm still reads top-down.
                 const imageFirst = index % 2 === 0;
 
+                // The lead record keeps the full-width frame; the rest sit
+                // smaller and carry the Stickers page's bordered tile styling.
+                const isLead = index === 0;
+
+                const artworkSize = isLead
+                  ? 'w-full'
+                  : 'w-[85%] sm:w-[75%] md:w-[80%] lg:w-[72%] mx-auto';
+
+                // Keep each smaller frame hugging the edge its column sits on.
+                const artworkAlign = isLead
+                  ? ''
+                  : imageFirst
+                    ? 'md:ml-0 md:mr-auto'
+                    : 'md:mr-0 md:ml-auto';
+
+                const artworkFrame = isLead
+                  ? 'bg-gray-900 border border-white/10'
+                  : 'bg-white/[0.03] border border-white/10 transition-colors duration-300 hover:border-white/40';
+
                 return (
                   <article
                     key={record._id}
@@ -190,7 +209,7 @@ const RoaringRecords = () => {
                   >
                     {/* Artwork */}
                     <div
-                      className={`record-artwork relative w-full aspect-square overflow-hidden bg-gray-900 border border-white/10 ${
+                      className={`record-artwork relative aspect-square overflow-hidden ${artworkSize} ${artworkAlign} ${artworkFrame} ${
                         imageFirst ? 'md:order-1' : 'md:order-2'
                       }`}
                     >

@@ -42,6 +42,7 @@ const ContentCollectionManager = ({
   bulkTitleFromFilename = true,
   bulkAltText = '',
   gallery = null,
+  layout = 'rows', // 'rows' | 'grid' — grid suits image-led types like stickers
 }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -651,9 +652,122 @@ const ContentCollectionManager = ({
         ) : (
           <>
             <p className="text-xs text-gray-500 mb-4">
-              Drag rows (or use the arrows) to set the order shown on the site.
+              Drag {layout === 'grid' ? 'tiles' : 'rows'} (or use the arrows) to set the
+              order shown on the site — position 1 appears first.
             </p>
 
+            {layout === 'grid' ? (
+              <ul className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 list-none p-0">
+                {items.map((item, index) => (
+                  <li
+                    key={item._id}
+                    draggable
+                    onDragStart={(event) => handleDragStart(event, index)}
+                    onDragOver={handleDragOver}
+                    onDrop={(event) => handleDrop(event, index)}
+                    onDragEnd={() => setDraggedIndex(null)}
+                    className={`bg-gray-900 border border-gray-800 flex flex-col transition-colors hover:border-gray-600 ${
+                      draggedIndex === index ? 'opacity-50' : ''
+                    }`}
+                  >
+                    {/* Artwork */}
+                    <div className="relative w-full aspect-square bg-black/40 overflow-hidden">
+                      {coverOf(item) ? (
+                        <img
+                          src={coverOf(item).url}
+                          alt={coverOf(item).alt || item[primaryField] || ''}
+                          className="w-full h-full object-contain p-3"
+                          draggable={false}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-600 text-sm">
+                          No Image
+                        </div>
+                      )}
+
+                      <span className="absolute top-2 left-2 bg-black/80 border border-white/20 text-white text-[10px] font-bold px-2 py-0.5">
+                        #{index + 1}
+                      </span>
+
+                      <span className="absolute top-2 right-2">
+                        <StatusBadge status={item.status} />
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <div className="px-3 pt-3 flex-1 min-w-0">
+                      <p className="text-sm font-bold truncate">
+                        {item[primaryField] || (
+                          <span className="italic text-gray-600 font-normal">Untitled</span>
+                        )}
+                      </p>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="p-3 flex items-center justify-between gap-2">
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => move(index, -1)}
+                          disabled={index === 0}
+                          className="p-1.5 border border-gray-700 hover:border-white disabled:opacity-30 disabled:hover:border-gray-700"
+                          aria-label={`Move ${item[primaryField] || itemLabel} earlier`}
+                          title="Move earlier"
+                        >
+                          <ChevronUp size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => move(index, 1)}
+                          disabled={index === items.length - 1}
+                          className="p-1.5 border border-gray-700 hover:border-white disabled:opacity-30 disabled:hover:border-gray-700"
+                          aria-label={`Move ${item[primaryField] || itemLabel} later`}
+                          title="Move later"
+                        >
+                          <ChevronDown size={14} />
+                        </button>
+                      </div>
+
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => toggleStatus(item)}
+                          disabled={busyId === item._id}
+                          className="p-1.5 border border-gray-700 hover:border-white transition-colors disabled:opacity-50"
+                          title={item.status === 'published' ? 'Unpublish' : 'Publish'}
+                          aria-label={
+                            item.status === 'published'
+                              ? `Unpublish ${item[primaryField] || itemLabel}`
+                              : `Publish ${item[primaryField] || itemLabel}`
+                          }
+                        >
+                          {item.status === 'published' ? <Eye size={14} /> : <EyeOff size={14} />}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openEdit(item)}
+                          className="p-1.5 border border-gray-700 hover:border-white transition-colors"
+                          title="Edit"
+                          aria-label={`Edit ${item[primaryField] || itemLabel}`}
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(item)}
+                          disabled={busyId === item._id}
+                          className="p-1.5 border border-red-600 hover:bg-red-600 transition-colors disabled:opacity-50"
+                          title="Delete"
+                          aria-label={`Delete ${item[primaryField] || itemLabel}`}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
             <div className="grid gap-4">
               {items.map((item, index) => (
                 <div
@@ -784,6 +898,7 @@ const ContentCollectionManager = ({
                 </div>
               ))}
             </div>
+            )}
           </>
         )}
       </div>

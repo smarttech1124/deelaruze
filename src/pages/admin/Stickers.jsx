@@ -22,6 +22,7 @@ const Stickers = () => (
     fields={FIELDS}
     primaryField="title"
     imageLabel="Sticker artwork"
+    layout="grid"
     multiUpload
     bulkTitleFromFilename={false}
     bulkAltText="Deelaruze sticker artwork"
