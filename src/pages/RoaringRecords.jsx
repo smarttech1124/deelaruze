@@ -181,24 +181,9 @@ const RoaringRecords = () => {
                 // stacks the artwork first so the rhythm still reads top-down.
                 const imageFirst = index % 2 === 0;
 
-                // The lead record keeps the full-width frame; the rest sit
-                // smaller and carry the Stickers page's bordered tile styling.
-                const isLead = index === 0;
-
-                const artworkSize = isLead
-                  ? 'w-full'
-                  : 'w-[85%] sm:w-[75%] md:w-[80%] lg:w-[72%] mx-auto';
-
-                // Keep each smaller frame hugging the edge its column sits on.
-                const artworkAlign = isLead
-                  ? ''
-                  : imageFirst
-                    ? 'md:ml-0 md:mr-auto'
-                    : 'md:mr-0 md:ml-auto';
-
-                const artworkFrame = isLead
-                  ? 'bg-gray-900 border border-white/10'
-                  : 'bg-white/[0.03] border border-white/10 transition-colors duration-300 hover:border-white/40';
+                // Keep the frame hugging the edge its column sits on, rather
+                // than floating centred within the wide 2-col row.
+                const artworkAlign = imageFirst ? 'md:mr-auto' : 'md:ml-auto';
 
                 return (
                   <article
@@ -207,9 +192,11 @@ const RoaringRecords = () => {
                     style={{ animationDelay: `${Math.min(index, 6) * 0.1}s` }}
                     aria-labelledby={`record-title-${record._id}`}
                   >
-                    {/* Artwork */}
+                    {/* Artwork — same sized tile and bordered frame as the
+                        Stickers page gallery, so artwork reads consistently
+                        across both pages. */}
                     <div
-                      className={`record-artwork relative aspect-square overflow-hidden ${artworkSize} ${artworkAlign} ${artworkFrame} ${
+                      className={`record-artwork group relative w-full max-w-[200px] sm:max-w-[240px] md:max-w-[220px] lg:max-w-[260px] xl:max-w-[300px] aspect-square mx-auto ${artworkAlign} bg-white/[0.03] border border-white/10 overflow-hidden transition-colors duration-300 hover:border-white/40 ${
                         imageFirst ? 'md:order-1' : 'md:order-2'
                       }`}
                     >
@@ -219,7 +206,8 @@ const RoaringRecords = () => {
                           alt={record.image.alt || `${record.title} artwork`}
                           loading="lazy"
                           decoding="async"
-                          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                          // contain keeps mixed artwork ratios from cropping badly
+                          className="w-full h-full object-contain p-3 sm:p-4 transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-700">
