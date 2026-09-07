@@ -13,6 +13,9 @@ import Home from './pages/Home';
 import About from './pages/About';
 // import Projects from './pages/Projects';
 import Shop from './pages/Shop';
+import RoaringRecords from './pages/RoaringRecords';
+import Stickers from './pages/Stickers';
+import Collaborations from './pages/Collaborations';
 import Publication from './pages/Publication';
 import Submit from './pages/Submit';
 import Contact from './pages/Contact';
@@ -36,6 +39,11 @@ import FromTheStreet from './pages/admin/fromthestreet';
 import SetFromTheStreet from './pages/admin/SetFromTheStreet';
 import Profile from './pages/admin/Profile';
 import StripeAdmin from './pages/admin/Stripe';
+import AdminRoaringRecords from './pages/admin/RoaringRecords';
+import AdminStickers from './pages/admin/Stickers';
+import AdminCollaborations from './pages/admin/Collaborations';
+import AdminHeroSlides from './pages/admin/HeroSlides';
+import AdminPageContent from './pages/admin/PageContentAdmin';
 
 import './styles/index.css';
 
@@ -53,7 +61,10 @@ function App() {
             <Route path="about" element={<About />} />
             {/* <Route path="projects" element={<Projects />} /> */}
             {/* <Route path="publication/:id" element={<Projects />} /> */}
+            <Route path="roaring-records" element={<RoaringRecords />} />
             <Route path="shop" element={<Shop />} />
+            <Route path="stickers" element={<Stickers />} />
+            <Route path="collaborations" element={<Collaborations />} />
             <Route path="publication/:id" element={<Publication />} />
             <Route path="submit" element={<Submit />} />
             <Route path="contact" element={<Contact />} />
@@ -89,6 +100,11 @@ function App() {
             <Route path="fromthestreet/edit/:id" element={<SetFromTheStreet />} />
             <Route path="profile" element={<Profile />} />
             <Route path="stripe" element={<StripeAdmin />} />
+            <Route path="roaring-records" element={<AdminRoaringRecords />} />
+            <Route path="stickers" element={<AdminStickers />} />
+            <Route path="collaborations" element={<AdminCollaborations />} />
+            <Route path="hero-slides" element={<AdminHeroSlides />} />
+            <Route path="page-content" element={<AdminPageContent />} />
           </Route>
 
           {/* ===== 404 ===== */}

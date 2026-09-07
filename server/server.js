@@ -83,6 +83,11 @@ app.use('/api/contact', require('./routes/contact'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/fromthestreet', require('./routes/fromthestreet'));
+app.use('/api/roaring-records', require('./routes/roaringRecords'));
+app.use('/api/stickers', require('./routes/stickers'));
+app.use('/api/collaborations', require('./routes/collaborations'));
+app.use('/api/hero-slides', require('./routes/heroSlides'));
+app.use('/api/page-content', require('./routes/pageContent'));
 
 // Health check
 app.get('/api/health', (req, res) => {

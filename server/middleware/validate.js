@@ -368,3 +368,143 @@ exports.isValidInstagram = (handle) => {
 };
 
 module.exports.validate = validate;
+// ── Admin-managed content types ─────────────────────────────────────────────
+
+// Roaring Records validation rules
+exports.validateRoaringRecord = [
+  body('title')
+    .trim()
+    .notEmpty()
+    .withMessage('Record name is required')
+    .isLength({ max: 200 })
+    .withMessage('Record name must not exceed 200 characters'),
+
+  body('subtitle')
+    .optional()
+    .trim()
+    .isLength({ max: 300 })
+    .withMessage('Subtitle must not exceed 300 characters'),
+
+  body('description')
+    .optional()
+    .trim(),
+
+  body('mediaUrl')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isURL({ protocols: ['http', 'https'], require_protocol: true })
+    .withMessage('Media link must be a full URL starting with http:// or https://'),
+
+  body('mediaLabel')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: 60 })
+    .withMessage('Button text must not exceed 60 characters'),
+
+  body('status')
+    .optional({ checkFalsy: true })
+    .isIn(['draft', 'published'])
+    .withMessage('Invalid status'),
+
+  validate,
+];
+
+// Sticker validation rules
+exports.validateSticker = [
+  body('title')
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage('Sticker name must not exceed 200 characters'),
+
+  body('status')
+    .optional({ checkFalsy: true })
+    .isIn(['draft', 'published'])
+    .withMessage('Invalid status'),
+
+  validate,
+];
+
+// Collaboration validation rules
+exports.validateCollaboration = [
+  body('collaborator')
+    .trim()
+    .notEmpty()
+    .withMessage('Collaborator name is required')
+    .isLength({ max: 200 })
+    .withMessage('Collaborator name must not exceed 200 characters'),
+
+  body('title')
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage('Title must not exceed 200 characters'),
+
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage('Description must not exceed 1000 characters'),
+
+  body('status')
+    .optional({ checkFalsy: true })
+    .isIn(['draft', 'published'])
+    .withMessage('Invalid status'),
+
+  validate,
+];
+
+// Hero slide validation rules
+exports.validateHeroSlide = [
+  body('title')
+    .optional()
+    .trim()
+    .isLength({ max: 300 })
+    .withMessage('Title must not exceed 300 characters'),
+
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Description must not exceed 500 characters'),
+
+  body('accent')
+    .optional({ checkFalsy: true })
+    .trim()
+    .matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+    .withMessage('Accent must be a hex colour, e.g. #FF3366'),
+
+  body('placement')
+    .optional({ checkFalsy: true })
+    .isIn(['center', 'top', 'bottom', 'left', 'right'])
+    .withMessage('Invalid image placement'),
+
+  body('textPlacement')
+    .optional({ checkFalsy: true })
+    .isIn(['center', 'top', 'bottom', 'left', 'right'])
+    .withMessage('Invalid text placement'),
+
+  body('status')
+    .optional({ checkFalsy: true })
+    .isIn(['draft', 'published'])
+    .withMessage('Invalid status'),
+
+  validate,
+];
+
+// Page-level content validation rules
+exports.validatePageContent = [
+  body('title')
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage('Title must not exceed 200 characters'),
+
+  body('subtitle')
+    .optional()
+    .trim()
+    .isLength({ max: 300 })
+    .withMessage('Subtitle must not exceed 300 characters'),
+
+  validate,
+];

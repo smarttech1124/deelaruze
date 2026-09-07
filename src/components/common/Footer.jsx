@@ -88,7 +88,7 @@ const Footer = () => {
 
           {/* Navigate Section */}
           <div
-            className="md:col-span-2 fade-in"
+            className="md:col-span-3 fade-in"
             style={{ animationDelay: '0.1s' }}
           >
             <h4 className="section-title font-bold text-sm tracking-widest text-white">
@@ -99,11 +99,17 @@ const Footer = () => {
               <Link to="/about" className="footer-link">
                 About
               </Link>
-              <Link to="/projects" className="footer-link">
-                Projects
+              <Link to="/roaring-records" className="footer-link">
+                Roaring Records
               </Link>
               <Link to="/shop" className="footer-link">
-                Shop
+                Books
+              </Link>
+              <Link to="/stickers" className="footer-link">
+                Stickers
+              </Link>
+              <Link to="/collaborations" className="footer-link">
+                Collaborations
               </Link>
               <Link to="/submit" className="footer-link">
                 Submit
