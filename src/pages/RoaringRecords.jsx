@@ -196,7 +196,7 @@ const RoaringRecords = () => {
                         Stickers page gallery, so artwork reads consistently
                         across both pages. */}
                     <div
-                      className={`record-artwork group relative w-full max-w-[200px] sm:max-w-[240px] md:max-w-[220px] lg:max-w-[260px] xl:max-w-[300px] aspect-square mx-auto ${artworkAlign} bg-white/[0.03] border border-white/10 overflow-hidden transition-colors duration-300 hover:border-white/40 ${
+                      className={`record-artwork group relative w-full max-w-[300px] sm:max-w-[360px] md:max-w-[330px] lg:max-w-[390px] xl:max-w-[450px] aspect-square mx-auto ${artworkAlign} bg-white/[0.03] border border-white/10 overflow-hidden transition-colors duration-300 hover:border-white/40 ${
                         imageFirst ? 'md:order-1' : 'md:order-2'
                       }`}
                     >
