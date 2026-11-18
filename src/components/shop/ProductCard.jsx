@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 import Button from '../common/Button';
+import PriceTag from './PriceTag';
 import { truncateText } from '../../utils/helpers';
 
 const ProductCard = ({ product }) => {
@@ -68,7 +69,11 @@ const ProductCard = ({ product }) => {
         )} */}
         
         <div className="flex items-center justify-between pt-2">
-          <p className="text-xl font-bold">£{product.price}</p>
+          <PriceTag
+            price={product.price}
+            originalPrice={product.originalPrice}
+            className="text-xl font-bold"
+          />
           {isAvailable && (
             <Button
               onClick={handleAddToCart}

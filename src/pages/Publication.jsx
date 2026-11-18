@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useCart } from '../hooks/useCart';
 import { useParams } from 'react-router-dom';
 import { publicationService } from '../services/publicationService';
+import PriceTag from '../components/shop/PriceTag';
 
 const ChevronLeft = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -320,8 +321,12 @@ const Publication = () => {
                 </p>
               )}
 
-              <p className="text-2xl font-bold mt-6">
-                £{publication.price}
+              <p className="mt-6">
+                <PriceTag
+                  price={publication.price}
+                  originalPrice={publication.originalPrice}
+                  className="text-2xl font-bold"
+                />
               </p>
 
               <div

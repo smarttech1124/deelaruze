@@ -28,6 +28,14 @@ const publicationSchema = new mongoose.Schema(
       required: [true, 'Price is required'],
       min: [0, 'Price cannot be negative'],
     },
+    // Optional "was" price. When set and higher than `price`, the shop shows it
+    // struck through next to the current (sale) price. `price` stays the amount
+    // actually charged at checkout.
+    originalPrice: {
+      type: Number,
+      default: null,
+      min: [0, 'Original price cannot be negative'],
+    },
     images: [
       {
         url: {

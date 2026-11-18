@@ -1,13 +1,20 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { heroSlideService } from '../../services/contentService';
+import { optimizeCloudinary } from '../../utils/cloudinary';
 
 const FADE_MS = 500; // crossfade duration for both the text swap and the background
 const AUTOPLAY_MS = 7000; // how long each slide stays on screen before advancing
 const MOBILE_QUERY = '(max-width: 767px)';
 
-// The image actually shown for a slide on the current device.
+// The image actually shown for a slide on the current device. Served through
+// Cloudinary's f_auto,q_auto transform so the browser gets a smaller, modern
+// format (WebP/AVIF) — the preload above and both background layers resolve to
+// this same URL, so a slide appears as fast as possible on first paint.
 const imageUrlFor = (slide, isMobile) =>
-  (isMobile && slide?.mobileImage?.url) || slide?.image?.url || '';
+  optimizeCloudinary(
+    (isMobile && slide?.mobileImage?.url) || slide?.image?.url || '',
+    { width: isMobile ? 900 : 1920 }
+  );
 
 const HeroSlider = () => {
   const [slides, setSlides] = useState([]);

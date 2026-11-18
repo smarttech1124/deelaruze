@@ -21,6 +21,7 @@ const NewPublication = () => {
     pages: '',
     slug: '',
     price: '',
+    originalPrice: '',
     stock: '',
     description: '',
     contributors: '',
@@ -52,6 +53,7 @@ const NewPublication = () => {
           pages: pub.pages ?? '',
           slug: pub.slug ?? '',
           price: pub.price ?? '',
+          originalPrice: pub.originalPrice ?? '',
           stock: pub.stock ?? '',
           description: pub.description ?? '',
           contributors: pub.contributors ?? '',
@@ -207,6 +209,13 @@ const NewPublication = () => {
       data.append('title', form.title.trim() || '');
       data.append('description', form.description.trim() || '');
       data.append('price', Number(form.price) || 0);
+      // Blank clears the "was" price; otherwise send the numeric value.
+      data.append(
+        'originalPrice',
+        form.originalPrice === '' || form.originalPrice === null
+          ? ''
+          : Number(form.originalPrice)
+      );
       data.append('stock', Number(form.stock) || 0);
       data.append('category', form.category || '');
 
@@ -623,7 +632,7 @@ const NewPublication = () => {
             </div>
 
             <div>
-              <label className="admin-label">Price</label>
+              <label className="admin-label">Price (£)</label>
               <input
                 type="number"
                 name="price"
@@ -631,6 +640,25 @@ const NewPublication = () => {
                 onChange={handleChange}
                 className="admin-input"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Amount actually charged at checkout.
+              </p>
+            </div>
+
+            <div>
+              <label className="admin-label">Original / "was" price (£)</label>
+              <input
+                type="number"
+                step="0.01"
+                name="originalPrice"
+                value={form.originalPrice}
+                onChange={handleChange}
+                className="admin-input"
+                placeholder="e.g. 39.99"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Optional. If higher than Price, it shows struck through (sale). Leave blank for none.
+              </p>
             </div>
 
             <div>

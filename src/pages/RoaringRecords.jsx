@@ -94,6 +94,99 @@ const MediaPlayer = ({ record }) => {
   );
 };
 
+// ── Featured EP highlight ───────────────────────────────────────────────────
+// Sits directly beneath the Roaring Records brand intro (the first record).
+// Layout: the two artworks side by side, with the write-up below them.
+// Artwork is served from /public/images; drop the real files in at the paths
+// below and they replace the placeholders automatically — no code change needed.
+const EP_FEATURE = {
+  title: 'EP DIFFERENT VIBRATIONS',
+  artist: 'BEETEECEE',
+  credit: 'Cover Art by DEELARUZE',
+  images: [
+    {
+      src: '/images/ep-different-vibrations-1.jpg',
+      alt: 'Different Vibrations EP cover art by Deelaruze',
+    },
+    {
+      src: '/images/ep-different-vibrations-2.jpg',
+      alt: 'Different Vibrations EP back cover and tracklist',
+    },
+  ],
+  paragraphs: [
+    'Striking artwork brings together African roots, traditional visual influences and modern street culture. Background is inspired by Nigerian fabrics, intricate spirals, geometric diamonds and bold zigzag motifs in black and gold. These patterns and colours create sense of rhythm and energy, visually reflecting diverse sounds and frequencies that define the EP. Contrasting patterns represent different perspectives and moods.',
+    'Beeteecee stands confidently at the centre, the golden outline separates the artist and richly pattern background, emphasising individuality and artistic presence.',
+    'Rather than replicating patterns Deelaruze interprets it through personal freehand style, giving the artwork its own character, creating something unique.',
+  ],
+};
+
+const EpArtwork = ({ src, alt }) => {
+  const [failed, setFailed] = useState(!src);
+
+  return (
+    <div className="relative aspect-square overflow-hidden bg-white/[0.03] border border-white/10 transition-colors duration-300 hover:border-white/40">
+      {!failed ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
+          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+        />
+      ) : (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-gray-600 p-4 text-center">
+          <Disc3 className="w-10 h-10" aria-hidden="true" />
+          <span className="text-[11px] sm:text-xs tracking-wider uppercase">
+            Artwork coming soon
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const EpDifferentVibrations = () => (
+  <section
+    className="record-row content-reveal"
+    aria-labelledby="ep-different-vibrations"
+  >
+    <div
+      className="h-1 w-16 mb-6"
+      style={{ background: 'linear-gradient(90deg, #FFB800 0%, transparent 100%)' }}
+      aria-hidden="true"
+    />
+
+    <h2
+      id="ep-different-vibrations"
+      className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mb-2"
+    >
+      {EP_FEATURE.title}{' '}
+      <span className="text-yellow-500">by {EP_FEATURE.artist}</span>
+    </h2>
+
+    <p className="text-base sm:text-lg text-red-500 tracking-wide mb-8">
+      {EP_FEATURE.credit}
+    </p>
+
+    {/* Two artworks next to each other */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+      {EP_FEATURE.images.map((img, i) => (
+        <EpArtwork key={i} src={img.src} alt={img.alt} />
+      ))}
+    </div>
+
+    {/* Write-up below the artwork */}
+    <div className="mt-8 space-y-4 max-w-4xl">
+      {EP_FEATURE.paragraphs.map((text, i) => (
+        <p key={i} className="text-sm sm:text-base text-gray-400 leading-relaxed">
+          {text}
+        </p>
+      ))}
+    </div>
+  </section>
+);
+
 const RoaringRecords = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -186,8 +279,8 @@ const RoaringRecords = () => {
                 const artworkAlign = imageFirst ? 'md:mr-auto' : 'md:ml-auto';
 
                 return (
+                  <React.Fragment key={record._id}>
                   <article
-                    key={record._id}
                     className="record-row grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center content-reveal"
                     style={{ animationDelay: `${Math.min(index, 6) * 0.1}s` }}
                     aria-labelledby={`record-title-${record._id}`}
@@ -251,6 +344,10 @@ const RoaringRecords = () => {
                       <MediaPlayer record={record} />
                     </div>
                   </article>
+
+                  {/* EP feature sits directly under the first record (the brand intro) */}
+                  {index === 0 && <EpDifferentVibrations />}
+                  </React.Fragment>
                 );
               })}
             </div>
