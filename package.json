@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "server": "node server/server.js",
     "seed:content": "node server/utils/seedContent.js",
+    "snapshot:hero": "node scripts/generate-hero-snapshot.mjs",
     "format": "prettier --write \"src/**/*.{js,jsx,css,md}\"",
     "test": "jest",
     "test:watch": "jest --watch"
