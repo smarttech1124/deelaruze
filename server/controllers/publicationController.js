@@ -186,6 +186,14 @@ exports.updatePublication = async (req, res) => {
       updateData.price = Number(updateData.price);
     }
 
+    if (updateData.originalPrice !== undefined) {
+      // Empty string clears the "was" price; otherwise store it as a number.
+      updateData.originalPrice =
+        updateData.originalPrice === '' || updateData.originalPrice === null
+          ? null
+          : Number(updateData.originalPrice);
+    }
+
     if (updateData.stock !== undefined) {
       updateData.stock = Number(updateData.stock);
     }

@@ -76,7 +76,7 @@ const Stickers = () => {
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-4 sm:gap-6 mb-4">
                 <StickerIcon
-                  className="icon-float w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-cyan-400 flex-shrink-0"
+                  className="icon-float w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-blue-500 flex-shrink-0"
                   aria-hidden="true"
                 />
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">

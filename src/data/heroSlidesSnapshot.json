@@ -1,0 +1,77 @@
+[
+  {
+    "_id": "6a986e9308168d058223acd5",
+    "title": "",
+    "description": "",
+    "image": {
+      "url": "https://res.cloudinary.com/dxpytqq73/image/upload/v1788531302/deelaruze/hero-slides/hjo1wqu0lgnpyi47jvk0.jpg",
+      "alt": ""
+    },
+    "mobileImage": {
+      "url": ""
+    },
+    "accent": "#FF3366",
+    "position": "center top",
+    "textPlacement": "center"
+  },
+  {
+    "_id": "6a986ef808168d058223acf4",
+    "title": "",
+    "description": "",
+    "image": {
+      "url": "https://res.cloudinary.com/dxpytqq73/image/upload/v1788374775/deelaruze/hero-slides/q4k1pu8ph1avakhai408.jpg",
+      "alt": ""
+    },
+    "mobileImage": {
+      "url": ""
+    },
+    "accent": "#FF3366",
+    "position": "center center",
+    "textPlacement": "center"
+  },
+  {
+    "_id": "6a986f2108168d058223ad08",
+    "title": "",
+    "description": "",
+    "image": {
+      "url": "https://res.cloudinary.com/dxpytqq73/image/upload/v1788531381/deelaruze/hero-slides/wxveax6mkxwqmet2nlah.jpg",
+      "alt": ""
+    },
+    "mobileImage": {
+      "url": ""
+    },
+    "accent": "#FF3366",
+    "position": "center center",
+    "textPlacement": "center"
+  },
+  {
+    "_id": "6a986f5518ff0de3b1a13c14",
+    "title": "",
+    "description": "",
+    "image": {
+      "url": "https://res.cloudinary.com/dxpytqq73/image/upload/v1788531581/deelaruze/hero-slides/ke3ciq44ti6duhdchm16.jpg",
+      "alt": ""
+    },
+    "mobileImage": {
+      "url": ""
+    },
+    "accent": "#FF3366",
+    "position": "center center",
+    "textPlacement": "center"
+  },
+  {
+    "_id": "6a9ad3a32971e4444e348a81",
+    "title": "",
+    "description": "",
+    "image": {
+      "url": "https://res.cloudinary.com/dxpytqq73/image/upload/v1788531618/deelaruze/hero-slides/mmppxjoxrlb3ses9gpps.jpg",
+      "alt": ""
+    },
+    "mobileImage": {
+      "url": ""
+    },
+    "accent": "#FF3366",
+    "position": "center center",
+    "textPlacement": "center"
+  }
+]

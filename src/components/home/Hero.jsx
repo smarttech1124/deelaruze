@@ -1,17 +1,54 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { heroSlideService } from '../../services/contentService';
+import { optimizeCloudinary } from '../../utils/cloudinary';
+import heroSlidesSnapshot from '../../data/heroSlidesSnapshot.json';
 
 const FADE_MS = 500; // crossfade duration for both the text swap and the background
 const AUTOPLAY_MS = 7000; // how long each slide stays on screen before advancing
 const MOBILE_QUERY = '(max-width: 767px)';
+const CACHE_KEY = 'heroSlidesCache';
 
-// The image actually shown for a slide on the current device.
+// What to paint on the very first frame, before the /api/hero-slides call
+// returns. That endpoint is a serverless function that can cold-start in ~5s,
+// and nothing can render until it answers — which was the black/empty gap on
+// first load. Instead we seed state synchronously from the visitor's own
+// last-seen slides (localStorage), falling back to a snapshot bundled at build
+// time, so artwork shows immediately. The live response then replaces it.
+const readInitialSlides = () => {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (Array.isArray(parsed) && parsed.length) return parsed;
+  } catch (error) {
+    /* storage blocked/unavailable — fall through to the bundled snapshot */
+  }
+  return Array.isArray(heroSlidesSnapshot) ? heroSlidesSnapshot : [];
+};
+
+const cacheSlides = (slides) => {
+  try {
+    if (Array.isArray(slides) && slides.length) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(slides));
+    }
+  } catch (error) {
+    /* storage full/unavailable — caching is best-effort */
+  }
+};
+
+// The image actually shown for a slide on the current device. Served through
+// Cloudinary's f_auto,q_auto transform so the browser gets a smaller, modern
+// format (WebP/AVIF) — the preload above and both background layers resolve to
+// this same URL, so a slide appears as fast as possible on first paint.
 const imageUrlFor = (slide, isMobile) =>
-  (isMobile && slide?.mobileImage?.url) || slide?.image?.url || '';
+  optimizeCloudinary(
+    (isMobile && slide?.mobileImage?.url) || slide?.image?.url || '',
+    { width: isMobile ? 900 : 1920 }
+  );
 
 const HeroSlider = () => {
-  const [slides, setSlides] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // Seed synchronously from cache/snapshot so the first frame already has art.
+  const [slides, setSlides] = useState(readInitialSlides);
+  const [loading, setLoading] = useState(() => slides.length === 0);
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches
   );
@@ -48,7 +85,9 @@ const HeroSlider = () => {
   const loadSlides = useCallback(async () => {
     try {
       const response = await heroSlideService.getAll();
-      if (mountedRef.current) setSlides(response.data || []);
+      const data = response.data || [];
+      if (mountedRef.current && data.length) setSlides(data);
+      cacheSlides(data); // next visit paints instantly from this
     } catch (error) {
       console.error('Error loading hero slides:', error);
     } finally {

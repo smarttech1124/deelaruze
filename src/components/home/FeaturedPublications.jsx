@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, ArrowUpRight } from 'lucide-react';
 import Loader from '../common/Loader';
+import PriceTag from '../shop/PriceTag';
 import { publicationService } from '../../services/publicationService';
 
 const FeaturedPublication = () => {
@@ -156,7 +157,7 @@ const FeaturedPublication = () => {
                                         <div>
                                             <div className="text-xs text-gray-500 mb-1 tracking-wider">PRICE</div>
                                             <div className="price-tag text-2xl font-black">
-                                                £{pub.price || '0.00'}
+                                                <PriceTag price={pub.price} originalPrice={pub.originalPrice} />
                                             </div>
                                         </div>
                                         <div className="text-right">

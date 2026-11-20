@@ -16,6 +16,7 @@ import Shop from './pages/Shop';
 import RoaringRecords from './pages/RoaringRecords';
 import Stickers from './pages/Stickers';
 import Collaborations from './pages/Collaborations';
+import Podcast from './pages/Podcast';
 import Publication from './pages/Publication';
 import Submit from './pages/Submit';
 import Contact from './pages/Contact';
@@ -65,6 +66,7 @@ function App() {
             <Route path="shop" element={<Shop />} />
             <Route path="stickers" element={<Stickers />} />
             <Route path="collaborations" element={<Collaborations />} />
+            <Route path="podcast" element={<Podcast />} />
             <Route path="publication/:id" element={<Publication />} />
             <Route path="submit" element={<Submit />} />
             <Route path="contact" element={<Contact />} />

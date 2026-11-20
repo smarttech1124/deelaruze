@@ -29,6 +29,7 @@ const Navigation = () => {
     { path: '/shop', label: 'BOOKS' },
     { path: '/stickers', label: 'STICKERS' },
     { path: '/collaborations', label: 'COLLABORATIONS' },
+    { path: '/podcast', label: 'PODCAST' },
     { path: '/submit', label: 'SUBMIT' },
     { path: '/contact', label: 'CONTACT' },
   ];

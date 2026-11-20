@@ -111,6 +111,9 @@ const Footer = () => {
               <Link to="/collaborations" className="footer-link">
                 Collaborations
               </Link>
+              <Link to="/podcast" className="footer-link">
+                Podcast
+              </Link>
               <Link to="/submit" className="footer-link">
                 Submit
               </Link>
