@@ -33,7 +33,13 @@ const PriceTag = ({ price = 0, originalPrice, className = '' }) => {
       <span className="text-gray-500 line-through font-normal text-[0.7em]">
         {formatPrice(was)}
       </span>
-      <span className="text-[10px] leading-none font-bold tracking-wider uppercase bg-red-600 text-white px-2 py-1 rounded-sm">
+      <span
+        className="text-[10px] leading-none font-bold tracking-wider uppercase bg-red-600 text-white px-2 py-1 rounded-sm"
+        // Some callers (e.g. the home "price-tag" gradient) set
+        // -webkit-text-fill-color: transparent on ancestors, which would blank
+        // this label to an empty red box — force it back to white here.
+        style={{ WebkitTextFillColor: '#fff' }}
+      >
         {label}
       </span>
     </span>

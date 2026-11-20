@@ -101,7 +101,7 @@ const MediaPlayer = ({ record }) => {
 // below and they replace the placeholders automatically — no code change needed.
 const EP_FEATURE = {
   title: 'EP DIFFERENT VIBRATIONS',
-  artist: 'BEETEECEE',
+  artist: 'Beeteecee',
   credit: 'Cover Art by DEELARUZE',
   images: [
     {
@@ -161,11 +161,16 @@ const EpDifferentVibrations = () => (
       id="ep-different-vibrations"
       className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mb-2"
     >
-      {EP_FEATURE.title}{' '}
-      <span className="text-yellow-500">by {EP_FEATURE.artist}</span>
+      {EP_FEATURE.title}
     </h2>
 
-    <p className="text-base sm:text-lg text-red-500 tracking-wide mb-8">
+    {/* normal-case opts out of the site-wide uppercase on <body> */}
+    <p className="text-sm sm:text-base font-semibold text-white tracking-wide normal-case">
+      {EP_FEATURE.artist}
+    </p>
+
+    {/* normal-case opts out of the site-wide uppercase on <body> */}
+    <p className="text-sm sm:text-base text-red-500 tracking-wide normal-case mt-1 mb-8">
       {EP_FEATURE.credit}
     </p>
 
@@ -176,8 +181,8 @@ const EpDifferentVibrations = () => (
       ))}
     </div>
 
-    {/* Write-up below the artwork */}
-    <div className="mt-8 space-y-4 max-w-4xl">
+    {/* Write-up below the artwork — spans the full content width */}
+    <div className="mt-8 space-y-4">
       {EP_FEATURE.paragraphs.map((text, i) => (
         <p key={i} className="text-sm sm:text-base text-gray-400 leading-relaxed">
           {text}
@@ -224,7 +229,7 @@ const RoaringRecords = () => {
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-4 sm:gap-6 mb-4">
                 <Disc3
-                  className="icon-float w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-red-500 flex-shrink-0"
+                  className="icon-float w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-blue-500 flex-shrink-0"
                   aria-hidden="true"
                 />
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">

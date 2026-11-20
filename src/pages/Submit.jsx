@@ -81,7 +81,7 @@ const Submit = () => {
 
             <div className="hero-fade mb-6" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center gap-6 mb-4">
-                <Upload className="upload-icon-pulse w-12 h-12 md:w-16 md:h-16 text-red-500" />
+                <Upload className="upload-icon-pulse w-12 h-12 md:w-16 md:h-16 text-blue-500" />
                 <h1 className="submit-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight">
                   SUBMIT
                   <br />
