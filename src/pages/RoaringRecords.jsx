@@ -101,7 +101,7 @@ const MediaPlayer = ({ record }) => {
 // below and they replace the placeholders automatically — no code change needed.
 const EP_FEATURE = {
   title: 'EP DIFFERENT VIBRATIONS',
-  artist: 'Beeteecee',
+  artist: 'BEETEECEE',
   credit: 'Cover Art by DEELARUZE',
   images: [
     {
@@ -115,7 +115,7 @@ const EP_FEATURE = {
   ],
   paragraphs: [
     'Striking artwork brings together African roots, traditional visual influences and modern street culture. Background is inspired by Nigerian fabrics, intricate spirals, geometric diamonds and bold zigzag motifs in black and gold. These patterns and colours create sense of rhythm and energy, visually reflecting diverse sounds and frequencies that define the EP. Contrasting patterns represent different perspectives and moods.',
-    'Beeteecee stands confidently at the centre, the golden outline separates the artist and richly pattern background, emphasising individuality and artistic presence.',
+    'BEETEECEE stands confidently at the centre, the golden outline separates the artist and richly pattern background, emphasising individuality and artistic presence.',
     'Rather than replicating patterns Deelaruze interprets it through personal freehand style, giving the artwork its own character, creating something unique.',
   ],
 };
@@ -170,7 +170,7 @@ const EpDifferentVibrations = () => (
     </p>
 
     {/* normal-case opts out of the site-wide uppercase on <body> */}
-    <p className="text-sm sm:text-base text-red-500 tracking-wide normal-case mt-1 mb-8">
+    <p className="text-sm sm:text-base text-white tracking-wide normal-case mt-1 mb-8">
       {EP_FEATURE.credit}
     </p>
 
