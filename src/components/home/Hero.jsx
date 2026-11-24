@@ -4,7 +4,7 @@ import { optimizeCloudinary } from '../../utils/cloudinary';
 import heroSlidesSnapshot from '../../data/heroSlidesSnapshot.json';
 
 const FADE_MS = 500; // crossfade duration for both the text swap and the background
-const AUTOPLAY_MS = 7000; // how long each slide stays on screen before advancing
+const AUTOPLAY_MS = 3000; // how long each slide stays on screen before advancing
 const MOBILE_QUERY = '(max-width: 767px)';
 const CACHE_KEY = 'heroSlidesCache';
 
